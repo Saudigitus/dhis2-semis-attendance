@@ -1,8 +1,9 @@
 import React from 'react'
+import { Attendance } from 'src/pages/intex'
 
 const App = () => {
     return (
-        <div>App</div>
+        <Attendance />
     )
 }
 
