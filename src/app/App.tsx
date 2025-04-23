@@ -1,9 +1,12 @@
 import React from 'react'
-import { Attendance } from 'src/pages/intex'
+import { AppWrapper } from 'dhis2-semis-components'
+import { Router } from '../components/routes'
 
 const App = () => {
     return (
-        <Attendance />
+        <AppWrapper dataStoreKey='semis/values'>
+            <Router/>
+        </AppWrapper>
     )
 }
 

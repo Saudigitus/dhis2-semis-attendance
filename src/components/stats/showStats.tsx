@@ -1,0 +1,73 @@
+import { Button, ButtonStrip, IconCheckmarkCircle16, Tag } from "@dhis2/ui";
+import { ModalComponent, SummaryCard, Table, useDataStoreKey, useProgramsKeys, WithPadding } from "dhis2-semis-components";
+import { InfoOutlined } from "@material-ui/icons";
+import styles from './showStats.module.css'
+import { Collapse } from "@mui/material";
+import { useState } from "react";
+import { useHeader, useViewPortWidth } from "dhis2-semis-functions";
+import { Modules, ProgramConfig, TableDataRefetch } from "dhis2-semis-types";
+import { useSetRecoilState } from "recoil";
+
+export default function ShowStats({ stats, open, setOpen }: { setOpen: (args: boolean) => void, open: boolean, stats: any }) {
+    const [showDetails, setShowDetails] = useState(false)
+    const dataStoreData: any = useDataStoreKey({ sectionType: "student" });
+    const programsValues: any = useProgramsKeys();
+    const programData = programsValues[0];
+    const { viewPortWidth } = useViewPortWidth();
+    const { columns } = useHeader({ dataStoreData, programConfigData: programData as unknown as ProgramConfig, tableColumns: [], programStage: "" });
+    const setRefetch = useSetRecoilState(TableDataRefetch);
+
+    return (
+        <ModalComponent
+            open={open}
+            handleClose={() => setOpen(!open)}
+            children={
+                <div>
+                    <Tag positive icon={<IconCheckmarkCircle16 />}> Students promotion preview </Tag>
+
+                    <WithPadding />
+                    <label className={styles.title}>Summary</label>
+                    <WithPadding />
+
+                    <ButtonStrip>
+                        <SummaryCard color="success" label="Promoted students" value={stats?.posted ?? 0} />
+                        <SummaryCard color="error" label="No promoted students" value={stats?.conflicts?.length ?? 0} />
+                    </ButtonStrip>
+
+                    <WithPadding />
+                    {stats?.conflicts?.length > 0 ?
+                        <>
+                            <ButtonStrip>
+                                <Button small icon={<InfoOutlined />} onClick={() => setShowDetails(!showDetails)}>More details</Button>
+                            </ButtonStrip>
+                            <br />
+                            <span style={{ color: "red" }}>The following students were not promoted. They already exist on the selected academic year</span>
+                        </>
+                        : null}
+                    <WithPadding />
+
+                    <Collapse in={showDetails} style={{ marginBottom: "20px" }} >
+                        <WithPadding>
+                            <Table
+                                programConfig={programData}
+                                viewPortWidth={viewPortWidth}
+                                columns={columns}
+                                tableData={stats.conflicts}
+                                showHeaderFilters={false}
+                                showWorkingListsContainer={false}
+                                paginate={false}
+                            />
+                        </WithPadding>
+                    </Collapse>
+
+                    <ButtonStrip end>
+                        <Button primary={true} onClick={() => { setOpen(false); setRefetch(prev => (!prev)) }} >
+                            Close
+                        </Button>
+                    </ButtonStrip>
+                </ div>
+            }
+            title="Students Promotion Summary"
+        />
+    )
+}
