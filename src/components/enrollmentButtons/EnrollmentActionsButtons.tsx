@@ -1,22 +1,27 @@
-import React, { useState } from 'react'
-import { ButtonStrip, IconUserGroup16, Button, IconCalendar24, IconAddCircle24 } from "@dhis2/ui";
+import React, { useEffect, useState } from 'react'
+import { ButtonStrip, IconUserGroup16, IconAddCircle24 } from "@dhis2/ui";
 import Tooltip from '@material-ui/core/Tooltip';
 import styles from './enrollmentActionsButtons.module.css'
-import { useGetSectionTypeLabel, useUrlParams } from 'dhis2-semis-functions';
+import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays } from 'dhis2-semis-functions';
 import { Form } from "react-final-form";
 import { ProgramConfig, selectedDataStoreKey } from 'dhis2-semis-types'
-import { DataExporter, DataImporter, CustomDropdown as DropdownButton } from 'dhis2-semis-components';
+import { DataExporter, DataImporter, CustomDropdown as DropdownButton, DropDownCalendar } from 'dhis2-semis-components';
 import ShowStats from '../stats/showStats';
 import { Event } from '@material-ui/icons';
+import { generateAttendanceDays } from '../../utils/header/generateAttendanceDays';
+import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeaders';
 
-function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrState, selected }: { selected: any, filetrState: any, programData: ProgramConfig, selectedDataStoreKey: selectedDataStoreKey }) {
+function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrState, loading, config, setAttendanceDays }: { setAttendanceDays: (args: any[]) => void, config: any, loading: boolean, filetrState: any, programData: ProgramConfig, selectedDataStoreKey: selectedDataStoreKey }) {
     const { urlParameters } = useUrlParams();
     const { school: orgUnit, class: section, grade, academicYear } = urlParameters();
     const { sectionName } = useGetSectionTypeLabel();
     const [stats, setStats] = useState<{ posted: number, conflicts: any[] }>({ posted: 0, conflicts: [] })
     const [open, setOpen] = useState<boolean>(false)
-    const [anchorElAddNew, setAnchorElAddNew] = useState<null | HTMLElement>(null);
-    const [anchorViewLast, setAnchorViewLast] = useState<null | HTMLElement>(null);
+    const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: new Date() })
+    const [editModeValue, setEditModeValue] = useState<any>("")
+    const { unavailableDays } = unavailableSchoolDays()
+    const { getValidDays } = generateAttendanceDays({ setAttendanceDays })
+    const { getDataElementsHeaders } = getAttendanceDEHeaders({ setAttendanceDays })
 
     const enrollmentOptions: any = [
         {
@@ -55,20 +60,27 @@ function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrSta
         }
     ];
 
+    useEffect(() => {
+        if (config) {
+            const start = new Date(viewModeValue?.selectedDate)
+            getValidDays(start, config)
+        }
+    }, [viewModeValue, config])
+
+    useEffect(() => {
+        if (editModeValue) getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage)
+    }, [editModeValue])
+
     return (
         <div className={styles.container}>
             <ShowStats open={open} setOpen={setOpen} stats={stats} />
-            <ButtonStrip className={styles.work_buttons}>
+            {!loading && <ButtonStrip className={styles.work_buttons}>
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <span onClick={(event: React.MouseEvent<HTMLElement>) => { setAnchorElAddNew(event.currentTarget) }}>
-                        <Button icon={<IconAddCircle24 />}>Take attendance</Button>
-                    </span>
+                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={setEditModeValue} value={editModeValue} />
                 </Tooltip>
 
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <span onClick={(event: React.MouseEvent<HTMLElement>) => { setAnchorViewLast(event.currentTarget ) }}>
-                        <Button icon={<Event />}>View attendance records</Button>
-                    </span>
+                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={setViewModeValue} value={viewModeValue} />
                 </Tooltip>
 
                 <DropdownButton
@@ -77,7 +89,7 @@ function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrSta
                     icon={<IconUserGroup16 />}
                     options={enrollmentOptions}
                 />
-            </ButtonStrip>
+            </ButtonStrip>}
         </div>
     )
 }
