@@ -3,7 +3,7 @@ import { AccessTime, HighlightOff, CheckCircleOutline, ExitToApp, RemoveCircleOu
 import { Chip, Tooltip } from "@mui/material";
 import style from "./icon.module.css";
 
-export const getIcon = (option: any, attendanceConst: any, disabled = false) => {
+export const getComponent = (option: any, attendanceConst: any, disabled = false) => {
     const styles = { color: 'rgba(0, 0, 0, 0.3)' }
 
     const codeComponent = {
@@ -15,10 +15,9 @@ export const getIcon = (option: any, attendanceConst: any, disabled = false) => 
             label={option?.key.substring(0, 1) + option?.key.substring(1, option?.key.length).toLowerCase()}
             size='small' className={style.reasonOfAbsense}
         />,
-        NonSchoolDay: <NotInterestedOutlined style={{ color: "#da344d2e" }} />
+        NonSchoolDay: <NotInterestedOutlined style={{ color: "#da344d2e" }} />,
     }
 
-    console.log(option)
     return <>
         {
             <Tooltip title={option?.key}

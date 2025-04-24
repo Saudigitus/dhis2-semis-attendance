@@ -1,6 +1,6 @@
 import { VariablesTypes } from "dhis2-semis-types"
 
-export function getAttendanceDEHeaders({ setAttendanceDays }: { setAttendanceDays: (args: any[]) => void }) {
+export function getAttendanceDEHeaders({ setattendanceHeaders }: { setattendanceHeaders: (args: any[]) => void }) {
 
     function getDataElementsHeaders(programData: any, attendanceStage: string) {
         const dataElements = programData?.programStages?.find((x: any) => x.id === attendanceStage)?.programStageDataElements?.map((x: any) => {
@@ -25,7 +25,7 @@ export function getAttendanceDEHeaders({ setAttendanceDays }: { setAttendanceDay
                 class: "center",
             }
         })
-        setAttendanceDays(dataElements)
+        setattendanceHeaders(dataElements)
     }
 
     return { getDataElementsHeaders }
