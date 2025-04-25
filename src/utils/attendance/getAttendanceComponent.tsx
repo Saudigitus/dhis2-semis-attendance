@@ -2,23 +2,23 @@ import React from "react";
 import { getComponent } from "./getComponent";
 import AttendaceComponent from "./attendanceComponent";
 
-export const getAttendanceComponent = ({ setSelectedState, selectedState }: any) => {
+export const getAttendanceComponent = () => {
 
-    function getAttendanceIcon(attendanceOptions: any, attendanceConst: any, component: string) {
+    function getAttendanceIcon(attendanceOptions: any, attendanceConst: any, component: string, status: string, props: any) {
 
         const codeComponent: any = {
             "Reason of absence": <AttendaceComponent
-                id={"no id"}
+                id={"no id_too"}
                 items={attendanceOptions?.map((option: any) => {
                     return {
                         code: option.code,
-                        type: "attendance",
-                        Component: getComponent(option, attendanceConst),
+                        type: "absence",
+                        Component: option.label,
                     }
                 })}
+                status={status}
                 disabled={false}
-                selectedState={selectedState}
-                setSelectedState={setSelectedState}
+                {...props}
             />,
             Attendance: <AttendaceComponent
                 id={"no id"}
@@ -29,9 +29,9 @@ export const getAttendanceComponent = ({ setSelectedState, selectedState }: any)
                         Component: getComponent(option, attendanceConst),
                     }
                 })}
+                status={status}
                 disabled={false}
-                selectedState={selectedState}
-                setSelectedState={setSelectedState}
+                {...props}
             />
         }
 

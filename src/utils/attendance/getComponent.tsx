@@ -12,7 +12,7 @@ export const getComponent = (option: any, attendanceConst: any, disabled = false
         [attendanceConst("absent")]: <HighlightOff style={disabled ? styles : { color: "#F05C5C" }} />,
         Empty: <RemoveCircleOutline style={{ color: "#ADAEB0" }} />,
         Absense: <Chip
-            label={option?.key.substring(0, 1) + option?.key.substring(1, option?.key.length).toLowerCase()}
+            label={option?.key1?.substring(0, 1) + option?.key?.substring(1, option?.key.length)?.toLowerCase()}
             size='small' className={style.reasonOfAbsense}
         />,
         NonSchoolDay: <NotInterestedOutlined style={{ color: "#da344d2e" }} />,

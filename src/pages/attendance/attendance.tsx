@@ -20,7 +20,7 @@ export default function Attendance() {
     const [attendanceHeaders, setattendanceHeaders] = useState<any>([])
     const [updatedData, updateData] = useState<any>([])
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
-    const [pagination, setPagination] = useState({ page: 1, pageSize: 2, totalPages: 0 })
+    const [pagination, setPagination] = useState({ page: 1, pageSize: 5, totalPages: 0 })
     const { academicYear, grade, class: section, schoolName, school } = urlParameters();
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
     const { columns } = useHeader({ dataStoreData, programConfigData: programData as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
@@ -53,11 +53,11 @@ export default function Attendance() {
             tableData.data,
             attendanceHeaders,
             dataStoreData.attendance.statusOptions,
-            dataStoreData?.['attendance'])
+            dataStoreData?.['attendance'],
+            selectedDay?.occurredAfter)
         )
     }, [tableData])
 
-    console.log(attendanceHeaders)
     useEffect(() => {
         const filters = [
             academicYear && `${dataStoreData.registration.academicYear}:in:${academicYear}`,

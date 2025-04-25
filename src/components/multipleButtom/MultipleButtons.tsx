@@ -1,29 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./button.module.css";
-import {ButtonGroup, Button} from "@material-ui/core";
+import { ButtonGroup, Button } from "@material-ui/core";
 import classNames from "classnames";
 import { ButtonProps } from "../../types/MultipleBtns/MultipleButtonsTypes";
+import usePostEvents from "../../hooks/events/useUploadEvents";
+import { useShowAlerts } from "dhis2-semis-functions";
+import { eventBody } from "../../utils/attendance/eventBody";
 
 export default function MultipleButtons(props: ButtonProps) {
-    const {
-        items,
-        selectedState,
-        setSelectedState,
-        disabled
-    } = props;
+    const { items, status, disabled, ...rest } = props;
+    const [selected, setSelected] = useState<any>("")
+    const { saveValues } = usePostEvents()
+    const { hide, show } = useShowAlerts()
+
+    useEffect(() => {
+        setSelected(status)
+    }, [status])
+
+    const onchangeValue = async (value: string) => {
+        await saveValues([eventBody(rest, value)]).then((resp: any) => {
+            if (resp?.validationReport?.errorReports?.length > 0) {
+                show({
+                    message: `${("Occurred unknown error!")}`,
+                    type: { critical: true }
+                });
+                setTimeout(hide, 5000);
+            } else {
+                setSelected(value)
+            }
+        })
+    }
 
     return (
         <ButtonGroup color="primary">
-            {items?.map((item) => (
-                <Button disabled={disabled} key={item?.code}
+            {items?.map((item) => {
+                return (
+                    <Button disabled={disabled} key={item?.code}
                         className={classNames(
-                            selectedState === item?.code && styles["active-button"],
+                            selected === item?.code && styles["active-button"],
                             styles.label
                         )}
-                        onClick={() => { setSelectedState(item.code, item.type) }} >
-                    <span className={styles.simpleButtonLabel}>{item.Component}</span>
-                </Button>
-            ))}
+                        onClick={() => { onchangeValue(item.code) }} >
+                        <span className={styles.simpleButtonLabel}>{item.Component}</span>
+                    </Button>
+                )
+            })}
         </ButtonGroup>
     );
 }

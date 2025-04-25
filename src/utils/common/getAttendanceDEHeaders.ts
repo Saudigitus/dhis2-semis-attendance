@@ -12,8 +12,8 @@ export function getAttendanceDEHeaders({ setattendanceHeaders }: { setattendance
                 name: x.dataElement.displayName,
                 labelName: x.dataElement.displayName,
                 valueType: 'custom',
-                options: undefined,
-                initialOptions: undefined,
+                options: { optionSet: x?.dataElement?.optionSet },
+                initialOptions: { optionSet: x?.dataElement?.optionSet },
                 visible: true,
                 disabled: false,
                 pattern: '',
@@ -21,7 +21,7 @@ export function getAttendanceDEHeaders({ setattendanceHeaders }: { setattendance
                 error: false,
                 content: '',
                 key: "",
-                type: VariablesTypes.Attendance,
+                type: VariablesTypes?.Attendance,
                 class: "center",
             }
         })
