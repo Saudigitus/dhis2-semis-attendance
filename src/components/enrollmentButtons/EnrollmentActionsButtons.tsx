@@ -4,14 +4,15 @@ import Tooltip from '@material-ui/core/Tooltip';
 import styles from './enrollmentActionsButtons.module.css'
 import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays } from 'dhis2-semis-functions';
 import { Form } from "react-final-form";
-import { ProgramConfig, selectedDataStoreKey } from 'dhis2-semis-types'
 import { DataExporter, DataImporter, CustomDropdown as DropdownButton, DropDownCalendar } from 'dhis2-semis-components';
 import ShowStats from '../stats/showStats';
 import { Event } from '@material-ui/icons';
-import { generateAttendanceDays } from '../../utils/header/generateAttendanceDays';
 import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeaders';
+import { EnrollmentButtonsProps } from 'src/types/enrollmentButons/enrollmentButtonsTypes';
+import { format } from "date-fns";
+import { generateattendanceHeaders } from '../../utils/header/generateAttendanceDays';
 
-function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrState, loading, config, setAttendanceDays }: { setAttendanceDays: (args: any[]) => void, config: any, loading: boolean, filetrState: any, programData: ProgramConfig, selectedDataStoreKey: selectedDataStoreKey }) {
+function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrState, loading, config, setattendanceHeaders, setSelectedDates }: EnrollmentButtonsProps) {
     const { urlParameters } = useUrlParams();
     const { school: orgUnit, class: section, grade, academicYear } = urlParameters();
     const { sectionName } = useGetSectionTypeLabel();
@@ -20,8 +21,8 @@ function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrSta
     const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: new Date() })
     const [editModeValue, setEditModeValue] = useState<any>("")
     const { unavailableDays } = unavailableSchoolDays()
-    const { getValidDays } = generateAttendanceDays({ setAttendanceDays })
-    const { getDataElementsHeaders } = getAttendanceDEHeaders({ setAttendanceDays })
+    const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
+    const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
 
     const enrollmentOptions: any = [
         {
@@ -68,7 +69,12 @@ function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrSta
     }, [viewModeValue, config])
 
     useEffect(() => {
-        if (editModeValue) getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage)
+        if (editModeValue) {
+            let currentDate = format(new Date(editModeValue?.selectedDate), "yyyy-MM-dd")
+
+            setSelectedDates({ occurredAfter: currentDate, occurredBefore: currentDate })
+            getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage)
+        }
     }, [editModeValue])
 
     return (

@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { unavailableSchoolDays } from "dhis2-semis-functions";
 import { Attribute, CustomAttributeProps, VariablesTypes } from "dhis2-semis-types";
 
-export function generateAttendanceDays({ setAttendanceDays }: { setAttendanceDays: (args: any[]) => void }) {
+export function generateattendanceHeaders({ setattendanceHeaders, setSelectedDates }: { setSelectedDates: (args: any) => void, setattendanceHeaders: (args: any[]) => void }) {
     const { unavailableDays } = unavailableSchoolDays()
 
     const getValidDays = (date: Date, config: any) => {
@@ -18,7 +18,7 @@ export function generateAttendanceDays({ setAttendanceDays }: { setAttendanceDay
             counter++
         } while (validDays.length < 5)
 
-        setAttendanceDays(validDays.map((dateString: { schoolDay: boolean, date: string }) => {
+        setattendanceHeaders(validDays.map((dateString: { schoolDay: boolean, date: string }) => {
             return {
                 id: dateString.date,
                 displayName: dateString.date,
@@ -41,6 +41,7 @@ export function generateAttendanceDays({ setAttendanceDays }: { setAttendanceDay
                 schoolDay: dateString.schoolDay
             }
         }))
+        setSelectedDates({ occurredAfter: validDays[0].date, occurredBefore: validDays[4].date })
     }
 
     return { getValidDays }
