@@ -7,10 +7,12 @@ interface MultipleButtonsProps {
 
 interface ButtonProps {
     id: string
-    selectedState: any
+    // selectedState: any
     items: MultipleButtonsProps[]
-    setSelectedState: any
+    // setSelectedState: any
     disabled?: boolean
+    status?: string
+    [key: string]: any;
 }
 
 export type { MultipleButtonsProps, ButtonProps }

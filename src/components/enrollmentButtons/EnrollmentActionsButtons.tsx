@@ -8,7 +8,7 @@ import { DataExporter, DataImporter, CustomDropdown as DropdownButton, DropDownC
 import ShowStats from '../stats/showStats';
 import { Event } from '@material-ui/icons';
 import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeaders';
-import { EnrollmentButtonsProps } from 'src/types/enrollmentButons/enrollmentButtonsTypes';
+import { EnrollmentButtonsProps } from '../../types/enrollmentButons/enrollmentButtonsTypes';
 import { format } from "date-fns";
 import { generateattendanceHeaders } from '../../utils/header/generateAttendanceDays';
 

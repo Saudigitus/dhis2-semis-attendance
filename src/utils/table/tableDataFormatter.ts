@@ -5,9 +5,15 @@ import { getAttendanceComponent } from "../attendance/getAttendanceComponent";
 
 export function tableDataFormatter() {
     const { attendanceConst } = useAttendanceConst()
-    const { getAttendanceIcon } = getAttendanceComponent({})
+    const { getAttendanceIcon } = getAttendanceComponent()
 
-    function formatData(data: any[], headers: any[], attendanceOptions: any[], attendanceKey: selectedDataStoreKey['attendance']): any[] {
+    function formatData(
+        data: any[],
+        headers: any[],
+        attendanceOptions: any[],
+        attendanceKey: selectedDataStoreKey['attendance'],
+        selectedDay: string
+    ): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/
         const empty = { key: 'Empty', code: 'Empty' }
         let copyData = [...data];
@@ -40,7 +46,29 @@ export function tableDataFormatter() {
         } else {
             for (const head of headers) {
                 for (let index = 0; index < copyData.length; index++) {
-                    const icon = getAttendanceIcon(attendanceKey.statusOptions, attendanceConst, head.header)
+                    let options: any = [], status = ""
+                    const props = {
+                        event: copyData[index]?.[selectedDay]?.eventId,
+                        ou: copyData[index]?.orgUnitId,
+                        tei: copyData[index]?.trackedEntity,
+                        program: copyData[index]?.programId,
+                        stage: attendanceKey.programStage,
+                        de: head.id,
+                        date: selectedDay,
+                        enrollment:copyData[index]?.enrollmentId
+                    }
+
+
+                    console.log(copyData[index])
+                    if (head.id === attendanceKey.status) options = attendanceKey.statusOptions
+                    else options = head?.options?.optionSet?.options?.map((option: any) => { return { ...option, code: option.value } }) ?? []
+
+                    if (copyData[index]?.[selectedDay]) {
+                        if (head.id === attendanceKey.absenceReason) status = options.find((x: any) => x.code === copyData[index][selectedDay]['absenceOption'])?.code
+                        else status = options.find((x: any) => x.code === copyData[index][selectedDay]['status'])?.code
+                    }
+
+                    const icon = getAttendanceIcon(options, attendanceConst, head.header, status, props)
                     copyData[index][head.id] = icon
                 }
             }
