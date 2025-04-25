@@ -3,6 +3,7 @@ export interface SingleSelectProps {
     options: any
     status: string
     id:string
+    [key: string]: any;
     // selectedState: any
     // setSelectedState: any
 }

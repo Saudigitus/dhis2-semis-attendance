@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { ProgramConfig, VariablesTypes } from 'dhis2-semis-types'
 import React, { useEffect, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
@@ -9,6 +9,7 @@ import { useGetSectionTypeLabel, useHeader, useTableData, useUrlParams, useViewP
 import { useGetSchoolDays } from '../../hooks/schoolDays/useGetSchoolDays';
 import { tableDataFormatter } from '../../utils/table/tableDataFormatter';
 import InfoPageHolder from '../info/infoPage';
+import { TableDataState } from '../../schema/table/tableDataSchema';
 
 export default function Attendance() {
     const { sectionName } = useGetSectionTypeLabel()
@@ -18,7 +19,6 @@ export default function Attendance() {
     const { viewPortWidth } = useViewPortWidth();
     const { urlParameters } = useUrlParams();
     const [attendanceHeaders, setattendanceHeaders] = useState<any>([])
-    const [updatedData, updateData] = useState<any>([])
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const [pagination, setPagination] = useState({ page: 1, pageSize: 5, totalPages: 0 })
     const { academicYear, grade, class: section, schoolName, school } = urlParameters();
@@ -27,8 +27,8 @@ export default function Attendance() {
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const refetch = useRecoilValue(TableDataRefetch);
     const { data, loadingSchoolDays } = useGetSchoolDays()
-    const updatedCols = [...columns.filter(x => (x.visible && x.type !== VariablesTypes.DataElement)), ...attendanceHeaders]
     const { formatData } = tableDataFormatter()
+    const [tableValues, setTableValues] = useRecoilState(TableDataState)
 
     useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
@@ -45,18 +45,28 @@ export default function Attendance() {
                 otherProgramStage: dataStoreData?.attendance.programStage
             })
         }
-    }, [filterState, refetch, pagination.page, pagination.pageSize, selectedDay])
+    }, [filterState, pagination.page, pagination.pageSize, selectedDay])
 
     useEffect(() => {
+        let copy: any = []
+        const toReplace = tableValues?.findIndex(x => x.replace)
+        const notUpdated = tableData.data?.find(x => x.trackedEntity == tableData.data?.[toReplace]?.trackedEntity)
+
+        if (toReplace >= 0) {
+            copy = [...tableValues]
+            copy[toReplace] = { ...notUpdated, [selectedDay?.occurredAfter]: tableValues?.[toReplace]?.[selectedDay?.occurredAfter] }
+            console.log( copy[toReplace] ,'iiiii')
+        }
+
         setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages }))
-        updateData(formatData(
-            tableData.data,
+        setTableValues(formatData(
+            [...(copy?.length > 0 ? copy : tableData.data)],
             attendanceHeaders,
             dataStoreData.attendance.statusOptions,
             dataStoreData?.['attendance'],
             selectedDay?.occurredAfter)
         )
-    }, [tableData])
+    }, [tableData, refetch])
 
     useEffect(() => {
         const filters = [
@@ -78,8 +88,11 @@ export default function Attendance() {
                             programConfig={programData as unknown as any}
                             title="Attendance"
                             viewPortWidth={viewPortWidth}
-                            columns={updatedCols}
-                            tableData={updatedData}
+                            columns={[
+                                ...columns.filter(x => (x.visible && x.type !== VariablesTypes.DataElement)),
+                                ...attendanceHeaders
+                            ]}
+                            tableData={tableValues}
                             defaultFilterNumber={5}
                             filterState={filterState}
                             loading={loading || loadingSchoolDays}
