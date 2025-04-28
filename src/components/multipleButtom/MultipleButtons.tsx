@@ -3,8 +3,7 @@ import styles from "./button.module.css";
 import { ButtonGroup, Button } from "@material-ui/core";
 import classNames from "classnames";
 import { ButtonProps } from "../../types/MultipleBtns/MultipleButtonsTypes";
-import usePostEvents from "../../hooks/events/useUploadEvents";
-import { useShowAlerts } from "dhis2-semis-functions";
+import { useShowAlerts, useUploadEvents } from "dhis2-semis-functions";
 import { eventBody } from "../../utils/attendance/eventBody";
 import { TableDataState } from "../../schema/table/tableDataSchema";
 import { useRecoilState } from "recoil";
@@ -13,18 +12,17 @@ import { TableDataRefetch } from "dhis2-semis-types";
 export default function MultipleButtons(props: ButtonProps) {
     const { items, status, disabled, ...rest } = props;
     const [selected, setSelected] = useState<any>("")
-    const { saveValues } = usePostEvents()
     const { hide, show } = useShowAlerts()
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const [refetch, setRefetch] = useRecoilState(TableDataRefetch);
+    const { uploadValues } = useUploadEvents()
 
     useEffect(() => {
         setSelected(status)
     }, [status])
 
     const onchangeValue = async (value: string) => {
-        await saveValues([eventBody(rest, value)]).then((resp: any) => {
-
+        await uploadValues({ events: [eventBody(rest, value)] }, 'COMMIT', 'CREATE_AND_UPDATE').then((resp: any) => {
             if (resp?.validationReport?.errorReports?.length > 0) {
                 show({
                     message: `${("Occurred unknown error!")}`,
