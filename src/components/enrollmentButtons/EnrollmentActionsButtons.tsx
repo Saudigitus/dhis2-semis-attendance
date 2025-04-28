@@ -5,20 +5,19 @@ import styles from './enrollmentActionsButtons.module.css'
 import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays } from 'dhis2-semis-functions';
 import { Form } from "react-final-form";
 import { DataExporter, DataImporter, CustomDropdown as DropdownButton, DropDownCalendar } from 'dhis2-semis-components';
-import ShowStats from '../stats/showStats';
 import { Event } from '@material-ui/icons';
 import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeaders';
 import { EnrollmentButtonsProps } from '../../types/enrollmentButons/enrollmentButtonsTypes';
 import { format } from "date-fns";
 import { generateattendanceHeaders } from '../../utils/header/generateAttendanceDays';
+import { Button } from "@dhis2/ui";
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 
-function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrState, loading, config, setattendanceHeaders, setSelectedDates }: EnrollmentButtonsProps) {
-    const { urlParameters } = useUrlParams();
-    const { school: orgUnit, class: section, grade, academicYear } = urlParameters();
+function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKey, filetrState, config, setattendanceHeaders, setSelectedDates, setSelectable }: EnrollmentButtonsProps) {
+    const { urlParameters, add } = useUrlParams();
+    const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters();
     const { sectionName } = useGetSectionTypeLabel();
-    const [stats, setStats] = useState<{ posted: number, conflicts: any[] }>({ posted: 0, conflicts: [] })
-    const [open, setOpen] = useState<boolean>(false)
-    const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: new Date() })
+    const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
     const [editModeValue, setEditModeValue] = useState<any>("")
     const { unavailableDays } = unavailableSchoolDays()
     const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
@@ -29,8 +28,8 @@ function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrSta
             label: <DataImporter
                 baseURL='http://localhost:8080'
                 importMode='COMMIT'
-                label={'Bulk Final Result'}
-                module='final-result'
+                label={'Import students atendances'}
+                module='attendance'
                 onError={(e: any) => { console.log(e) }}
                 programConfig={programData}
                 sectionType={sectionName}
@@ -47,8 +46,8 @@ function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrSta
                 baseURL='http://localhost:8080'
                 eventFilters={filetrState.dataElements}
                 fileName='teste'
-                label='Export Final Result'
-                module='final-result'
+                label='Export students atendances'
+                module='attendance'
                 onError={(e: any) => console.log(e)}
                 programConfig={programData}
                 sectionType={sectionName}
@@ -58,19 +57,23 @@ function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrSta
             />,
             divider: false,
             disabled: false,
-        }
+        },
     ];
 
     useEffect(() => {
-        if (config) {
-            const start = new Date(viewModeValue?.selectedDate)
+        if (config && attendanceMode != 'edit') {
+            const start = new Date(viewModeValue?.selectedDate ?? selectedDate)
+            add('attendanceMode', 'view')
+            add('selectedDate', format(new Date(start), "yyyy-MM-dd"))
             getValidDays(start, config)
         }
     }, [viewModeValue, config])
 
     useEffect(() => {
-        if (editModeValue) {
-            let currentDate = format(new Date(editModeValue?.selectedDate), "yyyy-MM-dd")
+        if (editModeValue || attendanceMode == 'edit') {
+            let currentDate = format(new Date(editModeValue?.selectedDate ?? selectedDate), "yyyy-MM-dd")
+            add('selectedDate', currentDate)
+            add('attendanceMode', 'edit')
 
             setSelectedDates({ occurredAfter: currentDate, occurredBefore: currentDate })
             getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage)
@@ -79,8 +82,8 @@ function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrSta
 
     return (
         <div className={styles.container}>
-            <ShowStats open={open} setOpen={setOpen} stats={stats} />
-            {!loading && <ButtonStrip className={styles.work_buttons}>
+            <ButtonStrip className={styles.work_buttons}>
+                {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckIcon />}> {selectable ? `Cancel multi-select` : `Multi-select`}</Button>}
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
                     <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={setEditModeValue} value={editModeValue} />
                 </Tooltip>
@@ -89,13 +92,13 @@ function EnrollmentActionsButtons({ programData, selectedDataStoreKey, filetrSta
                     <DropDownCalendar config={config} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={setViewModeValue} value={viewModeValue} />
                 </Tooltip>
 
-                <DropdownButton
+                {attendanceMode != 'edit' && <DropdownButton
                     name={<span className={styles.work_buttons_text}>Bulk Final Result</span> as unknown as string}
                     disabled={!!(orgUnit == undefined || section == undefined || grade == undefined || academicYear == undefined)}
                     icon={<IconUserGroup16 />}
                     options={enrollmentOptions}
-                />
-            </ButtonStrip>}
+                />}
+            </ButtonStrip>
         </div>
     )
 }
