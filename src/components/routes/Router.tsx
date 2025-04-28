@@ -4,7 +4,7 @@ import { FullLayout } from '../../layout';
 import { Attendance } from '../../pages';
 
 export default function Router() {
-    console.log("Router")
+
     return (
         <HashRouter>
             <Routes>

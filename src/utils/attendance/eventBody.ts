@@ -12,7 +12,11 @@ export function eventBody(rest: any, value: any) {
             {
                 dataElement: rest.de,
                 value: value
-            }
+            },
+            ...(rest?.absenceReason != rest?.de ? [{
+                dataElement: rest?.absenceReason,
+                value: undefined
+            }] : [])
         ],
         enrollment: rest.enrollment,
         eventDate: format(new Date(rest.date), "yyyy-MM-dd"),
