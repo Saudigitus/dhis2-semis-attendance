@@ -61,7 +61,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
     ];
 
     useEffect(() => {
-        if (config && attendanceMode != 'edit') {
+        if (config && attendanceMode != 'view') {
             const start = new Date(viewModeValue?.selectedDate ?? selectedDate)
             add('attendanceMode', 'view')
             add('selectedDate', format(new Date(start), "yyyy-MM-dd"))
@@ -70,7 +70,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
     }, [viewModeValue, config])
 
     useEffect(() => {
-        if (editModeValue || attendanceMode == 'edit') {
+        if (editModeValue || attendanceMode != 'edit') {
             let currentDate = format(new Date(editModeValue?.selectedDate ?? selectedDate), "yyyy-MM-dd")
             add('selectedDate', currentDate)
             add('attendanceMode', 'edit')
