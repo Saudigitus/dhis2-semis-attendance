@@ -28,8 +28,8 @@ export default function Attendance() {
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const dataStoreData: any = useDataStoreKey({ sectionType: sectionName });
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
-    const [pagination, setPagination] = useState({ page: 1, pageSize: 5, totalPages: 0 })
-    const { academicYear, grade, class: section, schoolName, school, selectedDate } = urlParameters();
+    const [pagination, setPagination] = useState({ page: 1, pageSize: 10, totalPages: 0 })
+    const { academicYear, grade, class: section, schoolName, school, selectedDate, attendanceMode } = urlParameters();
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: programData as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
@@ -40,16 +40,21 @@ export default function Attendance() {
                 page: pagination.page,
                 pageSize: pagination.pageSize,
                 program: programData.id as string,
-                orgUnit: "Shc3qNhrPAz",
+                orgUnit: school!,
                 baseProgramStage: dataStoreData?.registration?.programStage,
                 attributeFilters: filterState.attributes,
-                dataElementFilters: [`${dataStoreData.registration.academicYear}:in:2025`],
+                dataElementFilters: [
+                    ...(academicYear ? [`${dataStoreData.registration.academicYear}:in:${academicYear}`] : []),
+                    ...(grade ? [`${dataStoreData.registration.grade}:in:${grade}`] : []),
+                    ...(section ? [`${dataStoreData.registration.section}:in:${section}`] : []),
+                ],
                 attendanceConfig: dataStoreData?.attendance,
                 ...selectedDay,
-                otherProgramStage: dataStoreData?.attendance.programStage
+                otherProgramStage: dataStoreData?.attendance.programStage,
+                order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
             })
         }
-    }, [filterState, pagination.page, pagination.pageSize, selectedDay, refetch])
+    }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, refetch, academicYear, grade, section, school])
 
     useEffect(() => {
         let copy: any = []
@@ -63,22 +68,13 @@ export default function Attendance() {
 
         setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages }))
         setTableValues(formatData(
-            [...(copy?.length > 0 ? copy : tableData.data)],
+            [...(copy?.length > 0 ? copy : tableData?.data)],
             attendanceHeaders,
             dataStoreData.attendance.statusOptions,
             dataStoreData?.['attendance'],
             selectedDay?.occurredAfter ?? selectedDate)
         )
-    }, [tableData, reorganizeData])
-
-    useEffect(() => {
-        const filters = [
-            academicYear && `${dataStoreData.registration.academicYear}:in:${academicYear}`,
-            grade && `${dataStoreData.registration.grade}:in:${grade}`,
-            section && `${dataStoreData.registration.section}:in:${section}`,
-        ]
-        setFilterState(() => ({ dataElements: filters, attributes: [] }))
-    }, [academicYear, grade, section])
+    }, [tableData, reorganizeData, attendanceMode])
 
     return (
         <div style={{ height: "85vh" }}>

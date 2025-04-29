@@ -61,7 +61,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
     ];
 
     useEffect(() => {
-        if (config && attendanceMode != 'edit') {
+        if (config && attendanceMode != 'view') {
             const start = new Date(viewModeValue?.selectedDate ?? selectedDate)
             add('attendanceMode', 'view')
             add('selectedDate', format(new Date(start), "yyyy-MM-dd"))
@@ -70,7 +70,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
     }, [viewModeValue, config])
 
     useEffect(() => {
-        if (editModeValue || attendanceMode == 'edit') {
+        if (editModeValue || attendanceMode != 'edit') {
             let currentDate = format(new Date(editModeValue?.selectedDate ?? selectedDate), "yyyy-MM-dd")
             add('selectedDate', currentDate)
             add('attendanceMode', 'edit')
@@ -83,7 +83,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
     return (
         <div className={styles.container}>
             <ButtonStrip className={styles.work_buttons}>
-                {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckIcon />}> {selectable ? `Cancel multi-select` : `Multi-select`}</Button>}
+                {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckIcon />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>}
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
                     <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={setEditModeValue} value={editModeValue} />
                 </Tooltip>
