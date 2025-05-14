@@ -1,11 +1,11 @@
 import React from 'react'
-import { AppWrapper } from 'dhis2-semis-components'
 import { Router } from '../components/routes'
+import { AppWrapper } from 'dhis2-semis-components'
 
 const App = () => {
     return (
-        <AppWrapper dataStoreKey='semis/values'>
-            <Router/>
+        <AppWrapper dataStoreKey='dataStore/semis/values'>
+            <Router />
         </AppWrapper>
     )
 }

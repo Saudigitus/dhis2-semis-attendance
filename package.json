@@ -1,27 +1,39 @@
 {
   "name": "dhis2-semis-attendance",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "license": "BSD-3-Clause",
   "private": false,
-  "main": "src",
+  "main": "dist/index.js",
+  "types": "dist/declarations/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/declarations/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "d2-app-scripts build",
-    "start": "d2-app-scripts start --proxy https://emis.dhis2.org/startracker/",
+    "start": "d2-app-scripts start --proxy https://emis.dhis2.org/startracker",
     "test": "d2-app-scripts test",
-    "deploy": "d2-app-scripts deploy"
+    "deploy": "d2-app-scripts deploy",
+    "copy-files": "copyfiles -u 1 src/**/*.png src/**/*.svg src/**/*.css dist/",
+    "lib": "rimraf ./dist && npx tsc -b && yarn copy-files"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@dhis2/cli-app-scripts": "^12.0.0-alpha.23",
-    "@types/react": "^18.3.13",
-    "@types/react-dom": "^18.3.1",
-    "eslint": "^8.44.0",
-    "eslint-config-standard-with-typescript": "^36.0.0",
+   "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@dhis2/cli-app-scripts": "^12.3.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "copyfiles": "^2.4.1",
+    "eslint": "^8.57.1",
+    "eslint-config-standard-with-typescript": "^36.1.1",
     "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^16.0.1",
-    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.6.0",
     "eslint-plugin-react": "^7.32.2",
+    "rimraf": "^6.0.1",
     "typescript": "^5.7.2"
   },
   "dependencies": {
