@@ -29,7 +29,7 @@ export default function Attendance() {
     const dataStoreData: any = useDataStoreKey({ sectionType: sectionName });
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
     const [pagination, setPagination] = useState({ page: 1, pageSize: 5, totalPages: 0 })
-    const { academicYear, grade, class: section, schoolName, school, selectedDate } = urlParameters();
+    const { academicYear, grade, class: section, schoolName, school, selectedDate, sectionType } = urlParameters();
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: programData as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
@@ -49,7 +49,7 @@ export default function Attendance() {
                 otherProgramStage: dataStoreData?.attendance.programStage
             })
         }
-    }, [filterState, pagination.page, pagination.pageSize, selectedDay, refetch])
+    }, [sectionType, filterState, pagination.page, pagination.pageSize, selectedDay, refetch])
 
     useEffect(() => {
         let copy: any = []
