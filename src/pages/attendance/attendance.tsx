@@ -104,7 +104,6 @@ export default function Attendance() {
                                     setattendanceHeaders={setattendanceHeaders}
                                     config={data?.config}
                                     loading={!!(loading || loadingSchoolDays)}
-                                    filetrState={filterState}
                                     selectedDataStoreKey={dataStoreData}
                                     programData={programData as unknown as ProgramConfig}
                                     setSelectedDates={setSelectedDates}

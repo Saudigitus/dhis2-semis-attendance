@@ -13,7 +13,7 @@ import { generateattendanceHeaders } from '../../utils/header/generateAttendance
 import { Button } from "@dhis2/ui";
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 
-function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKey, filetrState, config, setattendanceHeaders, setSelectedDates, setSelectable }: EnrollmentButtonsProps) {
+function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKey, config, setattendanceHeaders, setSelectedDates, setSelectable }: EnrollmentButtonsProps) {
     const { urlParameters, add } = useUrlParams();
     const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters();
     const { sectionName } = useGetSectionTypeLabel();
@@ -44,7 +44,11 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
             label: <DataExporter
                 Form={Form}
                 baseURL='http://localhost:8080'
-                eventFilters={filetrState.dataElements}
+                eventFilters={[
+                    ...(academicYear ? [`${selectedDataStoreKey.registration.academicYear}:in:${academicYear}`] : []),
+                    ...(grade ? [`${selectedDataStoreKey.registration.grade}:in:${grade}`] : []),
+                    ...(section ? [`${selectedDataStoreKey.registration.section}:in:${section}`] : []),
+                ]}
                 fileName='teste'
                 label='Export students atendances'
                 module='attendance'
@@ -93,7 +97,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
                 </Tooltip>
 
                 {attendanceMode != 'edit' && <DropdownButton
-                    name={<span className={styles.work_buttons_text}>Bulk Final Result</span> as unknown as string}
+                    name={<span className={styles.work_buttons_text}>Bulk Attendance</span> as unknown as string}
                     disabled={!!(orgUnit == undefined || section == undefined || grade == undefined || academicYear == undefined)}
                     icon={<IconUserGroup16 />}
                     options={enrollmentOptions}
