@@ -27,7 +27,6 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
         {
             label: <DataImporter
                 baseURL='http://localhost:8080'
-                importMode='COMMIT'
                 label={'Import students atendances'}
                 module='attendance'
                 onError={(e: any) => { console.log(e) }}
