@@ -38,7 +38,6 @@ export default function Attendance() {
         })
     }, [])
 
-    console.log(pagination, 44)
     useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
             void getData({
