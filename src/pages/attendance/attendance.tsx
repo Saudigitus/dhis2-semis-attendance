@@ -14,7 +14,7 @@ import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 
 export default function Attendance() {
     const { program, dataStoreData } = useGetSelectedKeys()
-    const { urlParameters } = useUrlParams();
+    const { urlParameters, remove } = useUrlParams();
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
     const [selected, setSelected] = useState<any>([])
@@ -25,12 +25,20 @@ export default function Attendance() {
     const [attendanceHeaders, setattendanceHeaders] = useState<any>([])
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
-    const [pagination, setPagination] = useState({ page: 1, pageSize: 10, totalPages: 0 })
+    const [pagination, setPagination] = useState({ page: 1, pageSize: 10, totalPages: 0, totalElements: 0 })
     const { academicYear, grade, class: section, schoolName, school, selectedDate, sectionType } = urlParameters();
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
 
+    useEffect(() => {
+        return (() => {
+            remove("selectedDate")
+            remove("attendanceMode")
+        })
+    }, [])
+
+    console.log(pagination, 44)
     useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
             void getData({
@@ -40,7 +48,11 @@ export default function Attendance() {
                 orgUnit: school!,
                 baseProgramStage: dataStoreData?.registration?.programStage,
                 attributeFilters: filterState.attributes,
-                dataElementFilters: [`${dataStoreData.registration.academicYear}:in:${academicYear}`],
+                dataElementFilters: [
+                    academicYear !== null ? `${dataStoreData.registration.academicYear}:in:${academicYear}` : null,
+                    grade !== null ? `${dataStoreData.registration.grade}:in:${grade}` : null,
+                    section !== null ? `${dataStoreData.registration.section}:in:${section}` : null,
+                ].filter((filter): filter is string => filter !== null),
                 attendanceConfig: dataStoreData?.attendance as any,
                 ...selectedDay,
                 otherProgramStage: dataStoreData?.attendance.programStage
@@ -58,7 +70,8 @@ export default function Attendance() {
             copy[toReplace] = { ...notUpdated, [selectedDay?.occurredAfter]: tableValues?.[toReplace]?.[selectedDay?.occurredAfter] }
         }
 
-        setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages }))
+        console.log(tableData.pagination, 648)
+        setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages, totalElements: tableData.pagination.totalElements }))
         setTableValues(formatData(
             [...(copy?.length > 0 ? copy : tableData.data)],
             attendanceHeaders,
@@ -77,6 +90,8 @@ export default function Attendance() {
         setFilterState(() => ({ dataElements: filters, attributes: [] }))
     }, [academicYear, grade, section])
 
+    console.log(attendanceHeaders, 4)
+
     return (
         <div style={{ height: "85vh" }}>
             {
@@ -89,8 +104,8 @@ export default function Attendance() {
                             title="Attendance"
                             viewPortWidth={viewPortWidth}
                             columns={[
-                                ...columns!.filter(x => (x.visible && x.type !== VariablesTypes.DataElement)),
-                                ...attendanceHeaders
+                                ...(columns ?? []).filter(x => x.visible && x.type !== VariablesTypes.DataElement),
+                                ...(Array.isArray(attendanceHeaders) ? attendanceHeaders : []),
                             ]}
                             selected={selected}
                             setSelected={setSelected}
