@@ -41,7 +41,8 @@
   },
   "peerDependencies": {
     "dhis2-semis-components": "*",
-    "dhis2-semis-functions": "*"
+    "dhis2-semis-functions": "*",
+    "dhis2-semis-types": "*"
   },
   "dependencies": {
     "@dhis2/app-runtime": "^3.13.0",

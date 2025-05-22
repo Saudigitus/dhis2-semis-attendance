@@ -37,7 +37,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 updating={false}
-                title={"Bulk Final Result"}
+                title={"Bulk Attendance"}
             />,
             divider: true,
             disabled: false,
@@ -55,7 +55,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 empty={false}
-                stagesToExport={[selectedDataStoreKey?.['final-result']?.programStage as unknown as string]}
+                stagesToExport={[selectedDataStoreKey?.attendance?.programStage as unknown as string]}
             />,
             divider: false,
             disabled: false,
