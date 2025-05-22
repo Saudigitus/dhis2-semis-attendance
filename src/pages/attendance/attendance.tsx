@@ -62,7 +62,6 @@ export default function Attendance() {
             copy[toReplace] = { ...notUpdated, [selectedDay?.occurredAfter]: tableValues?.[toReplace]?.[selectedDay?.occurredAfter] }
         }
 
-        console.log(tableData.pagination, 648)
         setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages, totalElements: tableData.pagination.totalElements }))
         setTableValues(formatData(
             [...(copy?.length > 0 ? copy : tableData.data)],
@@ -81,8 +80,6 @@ export default function Attendance() {
         ]
         setFilterState(() => ({ dataElements: filters, attributes: [] }))
     }, [academicYear, grade, section])
-
-    console.log(attendanceHeaders, 4)
 
     return (
         <div style={{ height: "85vh" }}>

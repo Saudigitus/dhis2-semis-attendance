@@ -17,7 +17,7 @@ export const getAttendanceComponent = () => {
                     }
                 })}
                 status={status}
-                disabled={false}
+                disabled={props?.enrollmentStatus == 'CANCELLED'}
                 {...props}
             />,
             Attendance: <AttendaceComponent
@@ -30,7 +30,7 @@ export const getAttendanceComponent = () => {
                     }
                 })}
                 status={status}
-                disabled={false}
+                disabled={props?.enrollmentStatus == 'CANCELLED'}
                 {...props}
             />
         }

@@ -63,7 +63,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     ];
 
     useEffect(() => {
-        if (config && attendanceMode != 'edit') {
+        if (config && attendanceMode == 'edit') {
             const start = new Date(viewModeValue?.selectedDate ?? selectedDate)
             add('attendanceMode', 'view')
             add('selectedDate', format(new Date(start), "yyyy-MM-dd"))
@@ -72,7 +72,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     }, [viewModeValue, config])
 
     useEffect(() => {
-        if (editModeValue || attendanceMode == 'edit') {
+        if (editModeValue || attendanceMode != 'edit') {
             let currentDate = format(new Date(editModeValue?.selectedDate ?? selectedDate), "yyyy-MM-dd")
             add('selectedDate', currentDate)
             add('attendanceMode', 'edit')
@@ -87,11 +87,11 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
             <ButtonStrip className={styles.work_buttons}>
                 {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckIcon />}> {selectable ? `Cancel multi-select` : `Multi-select`}</Button>}
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={setEditModeValue} value={editModeValue} />
+                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue((prev: any) => ({ ...e }))} value={editModeValue} />
                 </Tooltip>
 
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={setViewModeValue} value={viewModeValue} />
+                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={(e) => setViewModeValue((prev: any) => ({ ...e }))} value={viewModeValue} />
                 </Tooltip>
 
                 {attendanceMode != 'edit' && <DropdownButton
