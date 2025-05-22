@@ -32,13 +32,6 @@ export default function Attendance() {
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
 
     useEffect(() => {
-        return (() => {
-            remove("selectedDate")
-            remove("attendanceMode")
-        })
-    }, [])
-
-    useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
             void getData({
                 page: pagination.page,
