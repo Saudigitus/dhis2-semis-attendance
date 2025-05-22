@@ -12,21 +12,24 @@ import { format } from "date-fns";
 import { generateattendanceHeaders } from '../../utils/header/generateAttendanceDays';
 import { Button } from "@dhis2/ui";
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
+import { useConfig } from '@dhis2/app-runtime';
 
-function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKey, filetrState, config, setattendanceHeaders, setSelectedDates, setSelectable }: EnrollmentButtonsProps) {
+function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
+    const { selectable, programData, selectedDataStoreKey, filetrState, config, setattendanceHeaders, setSelectedDates, setSelectable } = props
+    const { baseUrl } = useConfig()
     const { urlParameters, add } = useUrlParams();
-    const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters();
     const { sectionName } = useGetSectionTypeLabel();
-    const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
-    const [editModeValue, setEditModeValue] = useState<any>("")
     const { unavailableDays } = unavailableSchoolDays()
+    const [editModeValue, setEditModeValue] = useState<any>("")
+    const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters();
+    const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
     const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
 
     const enrollmentOptions: any = [
         {
             label: <DataImporter
-                baseURL='http://localhost:8080'
+                baseURL={baseUrl}
                 label={'Import students atendances'}
                 module='attendance'
                 onError={(e: any) => { console.log(e) }}
@@ -42,7 +45,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
         {
             label: <DataExporter
                 Form={Form}
-                baseURL='http://localhost:8080'
+                baseURL={baseUrl}
                 eventFilters={filetrState.dataElements}
                 fileName='teste'
                 label='Export students atendances'
