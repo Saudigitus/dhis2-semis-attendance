@@ -27,8 +27,8 @@ export function tableDataFormatter() {
                         copyData[index][head.id] = icon
                     } else {
                         const attendance = attendanceOptions.find(x => x.code === copyData[index][head.id]['status'])
-
-                        const icon = getComponent(attendance, attendanceConst)
+                        console.log(copyData[index], 'KAKAKA')
+                        const icon = getComponent(attendance, attendanceConst, copyData?.[index]?.status == 'CANCELLED')
                         copyData[index][head.id] = icon
                     }
                 }
@@ -55,9 +55,10 @@ export function tableDataFormatter() {
                         stage: attendanceKey.programStage,
                         de: head.id,
                         date: selectedDay,
+                        enrollmentStatus: copyData[index]?.status,
                         enrollment: copyData[index]?.enrollmentId,
                         absenceReason: attendanceKey.absenceReason,
-                        statusDataElement: attendanceKey.status,                        
+                        statusDataElement: attendanceKey.status,
                     }
 
                     if (head.id === attendanceKey.status) options = attendanceKey.statusOptions

@@ -2,23 +2,21 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { ProgramConfig, VariablesTypes } from 'dhis2-semis-types'
 import React, { useEffect, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
-import { useDataStoreKey } from 'dhis2-semis-components'
-import { Table, useProgramsKeys } from "dhis2-semis-components";
+import { Table } from "dhis2-semis-components";
 import EnrollmentActionsButtons from "../../components/enrollmentButtons/EnrollmentActionsButtons";
-import { useGetSectionTypeLabel, useHeader, useTableData, useUrlParams, useViewPortWidth } from "dhis2-semis-functions";
+import { useHeader, useTableData, useUrlParams, useViewPortWidth } from "dhis2-semis-functions";
 import { useGetSchoolDays } from '../../hooks/schoolDays/useGetSchoolDays';
 import { tableDataFormatter } from '../../utils/table/tableDataFormatter';
 import InfoPageHolder from '../info/infoPage';
 import { TableDataState } from '../../schema/table/tableDataSchema';
 import AsssignStatus from '../../components/assingStatus/assignStatus';
+import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 
 export default function Attendance() {
-    const programsValues: any = useProgramsKeys();
-    const programData = programsValues[0];
-    const { urlParameters } = useUrlParams();
+    const { program, dataStoreData } = useGetSelectedKeys()
+    const { urlParameters, remove } = useUrlParams();
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
-    const { sectionName } = useGetSectionTypeLabel()
     const [selected, setSelected] = useState<any>([])
     const { data, loadingSchoolDays } = useGetSchoolDays()
     const reorganizeData = useRecoilValue(TableDataRefetch);
@@ -26,20 +24,19 @@ export default function Attendance() {
     const [refetch, setRefetch] = useState<boolean>(false)
     const [attendanceHeaders, setattendanceHeaders] = useState<any>([])
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
-    const dataStoreData: any = useDataStoreKey({ sectionType: sectionName });
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
-    const [pagination, setPagination] = useState({ page: 1, pageSize: 10, totalPages: 0 })
-    const { academicYear, grade, class: section, schoolName, school, selectedDate, attendanceMode } = urlParameters();
+    const [pagination, setPagination] = useState({ page: 1, pageSize: 10, totalPages: 0, totalElements: 0 })
+    const { academicYear, grade, class: section, schoolName, school, selectedDate, sectionType,attendanceMode } = urlParameters();
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
-    const { columns } = useHeader({ dataStoreData, programConfigData: programData as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
+    const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
 
     useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
             void getData({
                 page: pagination.page,
                 pageSize: pagination.pageSize,
-                program: programData.id as string,
+                program: program!.id as string,
                 orgUnit: school!,
                 baseProgramStage: dataStoreData?.registration?.programStage,
                 attributeFilters: filterState.attributes,
@@ -56,6 +53,7 @@ export default function Attendance() {
         }
     }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, refetch, academicYear, grade, section, school])
 
+
     useEffect(() => {
         let copy: any = []
         const toReplace = tableValues?.findIndex(x => x.replace)
@@ -66,7 +64,7 @@ export default function Attendance() {
             copy[toReplace] = { ...notUpdated, [selectedDay?.occurredAfter]: tableValues?.[toReplace]?.[selectedDay?.occurredAfter] }
         }
 
-        setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages }))
+        setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages, totalElements: tableData.pagination.totalElements }))
         setTableValues(formatData(
             [...(copy?.length > 0 ? copy : tableData?.data)],
             attendanceHeaders,
@@ -84,12 +82,12 @@ export default function Attendance() {
                     :
                     <>
                         <Table
-                            programConfig={programData as unknown as any}
+                            programConfig={program as unknown as any}
                             title="Attendance"
                             viewPortWidth={viewPortWidth}
                             columns={[
-                                ...columns.filter(x => (x.visible && x.type !== VariablesTypes.DataElement)),
-                                ...attendanceHeaders
+                                ...(columns ?? []).filter(x => x.visible && x.type !== VariablesTypes.DataElement),
+                                ...(Array.isArray(attendanceHeaders) ? attendanceHeaders : []),
                             ]}
                             selected={selected}
                             setSelected={setSelected}
@@ -105,7 +103,7 @@ export default function Attendance() {
                                     config={data?.config}
                                     loading={!!(loading || loadingSchoolDays)}
                                     selectedDataStoreKey={dataStoreData}
-                                    programData={programData as unknown as ProgramConfig}
+                                    programData={program as unknown as ProgramConfig}
                                     setSelectedDates={setSelectedDates}
                                     setSelectable={setSelectable}
                                 />
@@ -114,7 +112,7 @@ export default function Attendance() {
                                 <AsssignStatus
                                     setSelected={setSelected}
                                     setRefetch={setRefetch}
-                                    programData={programData}
+                                    programData={program}
                                     dataStoreData={dataStoreData}
                                     date={selectedDay.occurredAfter}
                                     school={schoolName!}

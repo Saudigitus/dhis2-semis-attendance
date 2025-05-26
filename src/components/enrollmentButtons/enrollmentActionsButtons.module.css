@@ -14,7 +14,7 @@
     }
 }
 
-@media screen and (max-width: 715px) and (min-width: 618px) {
+@media screen and (max-width: 715px){
     .work_buttons button {
         font-size: 12px !important;
         padding: 5px 8px;
@@ -23,9 +23,14 @@
     .work_buttons svg {
         height: 18px !important;
     }
+
+    .container {
+       display: contents;
+    }
+
 }
 
-@media screen and (max-width: 617px) {
+/* @media screen and (max-width: 617px) {
     .work_buttons button span:nth-child(1) {
         margin: 0 !important;
         padding: 0 !important;
@@ -38,4 +43,4 @@
     .work_buttons_text {
         display: none !important;
     }
-}
+} */

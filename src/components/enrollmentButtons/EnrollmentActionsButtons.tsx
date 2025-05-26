@@ -12,22 +12,24 @@ import { format } from "date-fns";
 import { generateattendanceHeaders } from '../../utils/header/generateAttendanceDays';
 import { Button } from "@dhis2/ui";
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
+import { useConfig } from '@dhis2/app-runtime';
 
-function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKey, config, setattendanceHeaders, setSelectedDates, setSelectable }: EnrollmentButtonsProps) {
+function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
+    const { selectable, programData, selectedDataStoreKey, filetrState, config, setattendanceHeaders, setSelectedDates, setSelectable } = props
+    const { baseUrl } = useConfig()
     const { urlParameters, add } = useUrlParams();
-    const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters();
     const { sectionName } = useGetSectionTypeLabel();
-    const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
-    const [editModeValue, setEditModeValue] = useState<any>("")
     const { unavailableDays } = unavailableSchoolDays()
+    const [editModeValue, setEditModeValue] = useState<any>("")
+    const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters();
+    const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
     const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
 
     const enrollmentOptions: any = [
         {
             label: <DataImporter
-                baseURL='http://localhost:8080'
-                importMode='COMMIT'
+                baseURL={baseUrl}
                 label={'Import students atendances'}
                 module='attendance'
                 onError={(e: any) => { console.log(e) }}
@@ -35,7 +37,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 updating={false}
-                title={"Bulk Final Result"}
+                title={"Bulk Attendance"}
             />,
             divider: true,
             disabled: false,
@@ -43,12 +45,12 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
         {
             label: <DataExporter
                 Form={Form}
-                baseURL='http://localhost:8080'
                 eventFilters={[
                     ...(academicYear ? [`${selectedDataStoreKey.registration.academicYear}:in:${academicYear}`] : []),
                     ...(grade ? [`${selectedDataStoreKey.registration.grade}:in:${grade}`] : []),
                     ...(section ? [`${selectedDataStoreKey.registration.section}:in:${section}`] : []),
                 ]}
+        baseURL={baseUrl}
                 fileName='teste'
                 label='Export students atendances'
                 module='attendance'
@@ -57,7 +59,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 empty={false}
-                stagesToExport={[selectedDataStoreKey?.['final-result']?.programStage as unknown as string]}
+                stagesToExport={[selectedDataStoreKey?.attendance?.programStage as unknown as string]}
             />,
             divider: false,
             disabled: false,
@@ -65,7 +67,7 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
     ];
 
     useEffect(() => {
-        if (config && attendanceMode != 'view') {
+        if (config && attendanceMode == 'edit') {
             const start = new Date(viewModeValue?.selectedDate ?? selectedDate)
             add('attendanceMode', 'view')
             add('selectedDate', format(new Date(start), "yyyy-MM-dd"))
@@ -89,11 +91,11 @@ function EnrollmentActionsButtons({ selectable, programData, selectedDataStoreKe
             <ButtonStrip className={styles.work_buttons}>
                 {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckIcon />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>}
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={setEditModeValue} value={editModeValue} />
+                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue((prev: any) => ({ ...e }))} value={editModeValue} />
                 </Tooltip>
 
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={setViewModeValue} value={viewModeValue} />
+                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={(e) => setViewModeValue((prev: any) => ({ ...e }))} value={viewModeValue} />
                 </Tooltip>
 
                 {attendanceMode != 'edit' && <DropdownButton
