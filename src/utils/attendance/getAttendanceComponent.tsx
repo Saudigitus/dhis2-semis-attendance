@@ -8,7 +8,7 @@ export const getAttendanceComponent = () => {
 
         const codeComponent: any = {
             "Reason of absence": <AttendaceComponent
-                id={"no id_too"}
+                id={"no_id_too"}
                 items={attendanceOptions?.map((option: any) => {
                     return {
                         code: option.code,
@@ -21,7 +21,7 @@ export const getAttendanceComponent = () => {
                 {...props}
             />,
             Attendance: <AttendaceComponent
-                id={"no id"}
+                id={"no_id"}
                 items={attendanceOptions?.map((option: any) => {
                     return {
                         code: option.code,

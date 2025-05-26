@@ -14,19 +14,20 @@ import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 
 export default function Attendance() {
     const { program, dataStoreData } = useGetSelectedKeys()
-    const { urlParameters, remove } = useUrlParams();
+    const { urlParameters } = useUrlParams();
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
     const [selected, setSelected] = useState<any>([])
     const { data, loadingSchoolDays } = useGetSchoolDays()
-    const reorganizeData = useRecoilValue(TableDataRefetch);
-    const [selectable, setSelectable] = useState<boolean>(false)
     const [refetch, setRefetch] = useState<boolean>(false)
+    const reorganizeData = useRecoilValue(TableDataRefetch);
+    const [isTableReady, setIsTableReady] = useState(false);
+    const [selectable, setSelectable] = useState<boolean>(false)
     const [attendanceHeaders, setattendanceHeaders] = useState<any>([])
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
     const [pagination, setPagination] = useState({ page: 1, pageSize: 10, totalPages: 0, totalElements: 0 })
-    const { academicYear, grade, class: section, schoolName, school, selectedDate, sectionType,attendanceMode } = urlParameters();
+    const { academicYear, grade, class: section, schoolName, school, selectedDate, attendanceMode } = urlParameters();
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
@@ -45,14 +46,13 @@ export default function Attendance() {
                     ...(grade ? [`${dataStoreData.registration.grade}:in:${grade}`] : []),
                     ...(section ? [`${dataStoreData.registration.section}:in:${section}`] : []),
                 ],
-                attendanceConfig: dataStoreData?.attendance,
+                attendanceConfig: dataStoreData?.attendance as unknown as any,
                 ...selectedDay,
                 otherProgramStage: dataStoreData?.attendance.programStage,
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
-            })
+            }).then(() => setIsTableReady(true))
         }
-    }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, refetch, academicYear, grade, section, school])
-
+    }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, refetch, academicYear, grade, section, school, selectedDate, attendanceMode])
 
     useEffect(() => {
         let copy: any = []
@@ -94,11 +94,13 @@ export default function Attendance() {
                             selectable={selectable}
                             tableData={tableValues}
                             defaultFilterNumber={5}
+                            enableInactiveRowSelection={false}
                             filterState={filterState}
-                            loading={loading || loadingSchoolDays}
+                            loading={!isTableReady || loading || loadingSchoolDays}
                             rightElements={
                                 <EnrollmentActionsButtons
                                     selectable={selectable}
+                                    setIsTableReady={setIsTableReady}
                                     setattendanceHeaders={setattendanceHeaders}
                                     config={data?.config}
                                     loading={!!(loading || loadingSchoolDays)}
@@ -108,8 +110,8 @@ export default function Attendance() {
                                     setSelectable={setSelectable}
                                 />
                             }
-                            beforeSettings={selectable ?
-                                <AsssignStatus
+                            beforeSettings={
+                                attendanceMode == 'edit' ? <AsssignStatus
                                     setSelected={setSelected}
                                     setRefetch={setRefetch}
                                     programData={program}
@@ -117,8 +119,9 @@ export default function Attendance() {
                                     date={selectedDay.occurredAfter}
                                     school={schoolName!}
                                     selected={selected}
-                                /> :
-                                <></>
+                                    selectable={selectable}
+                                />
+                                :<></>
                             }
                             setFilterState={setFilterState}
                             pagination={pagination}

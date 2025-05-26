@@ -60,7 +60,7 @@ export default function MultipleButtons(props: ButtonProps) {
                     <Button disabled={!!(disabled || (position != undefined && position != `${item?.code}${rest.tei}`))} key={item?.code}
                         className={classNames(
                             selected === item?.code && styles["active-button"],
-                            styles.label
+                            styles.label,
                         )}
                         onClick={() => { onchangeValue(item.code) }} >
                         <span className={styles.simpleButtonLabel}> {(position != undefined && position == `${item?.code}${rest.tei}`) ? <CircularLoader small /> : item.Component}</span>

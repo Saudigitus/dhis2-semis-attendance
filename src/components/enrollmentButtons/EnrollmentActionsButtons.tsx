@@ -15,7 +15,7 @@ import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import { useConfig } from '@dhis2/app-runtime';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { selectable, programData, selectedDataStoreKey, filetrState, config, setattendanceHeaders, setSelectedDates, setSelectable } = props
+    const { selectable, programData, setIsTableReady, selectedDataStoreKey, config, setattendanceHeaders, setSelectedDates, setSelectable } = props
     const { baseUrl } = useConfig()
     const { urlParameters, add } = useUrlParams();
     const { sectionName } = useGetSectionTypeLabel();
@@ -50,7 +50,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                     ...(grade ? [`${selectedDataStoreKey.registration.grade}:in:${grade}`] : []),
                     ...(section ? [`${selectedDataStoreKey.registration.section}:in:${section}`] : []),
                 ]}
-        baseURL={baseUrl}
+                baseURL={baseUrl}
                 fileName='teste'
                 label='Export students atendances'
                 module='attendance'
@@ -67,21 +67,25 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     ];
 
     useEffect(() => {
-        if (config && attendanceMode == 'edit') {
+        if (config || editModeValue) {
+            setIsTableReady(false)
             const start = new Date(viewModeValue?.selectedDate ?? selectedDate)
+            const formated = format(new Date(start), "yyyy-MM-dd")
             add('attendanceMode', 'view')
-            add('selectedDate', format(new Date(start), "yyyy-MM-dd"))
+            add('selectedDate', formated)
             getValidDays(start, config)
+            setSelectedDates((prev: any) => ({ occurredAfter: formated, occurredBefore: formated }))
         }
     }, [viewModeValue, config])
 
     useEffect(() => {
-        if (editModeValue || attendanceMode != 'edit') {
+        if (editModeValue || attendanceMode == 'edit') {
+            setIsTableReady(false)
             let currentDate = format(new Date(editModeValue?.selectedDate ?? selectedDate), "yyyy-MM-dd")
             add('selectedDate', currentDate)
             add('attendanceMode', 'edit')
 
-            setSelectedDates({ occurredAfter: currentDate, occurredBefore: currentDate })
+            setSelectedDates((prev: any) => ({ occurredAfter: currentDate, occurredBefore: currentDate }))
             getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage)
         }
     }, [editModeValue])
