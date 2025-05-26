@@ -7,7 +7,6 @@ export interface EnrollmentButtonsProps {
     setattendanceHeaders: (args: any[]) => void
     config: any
     loading: boolean
-    filetrState: any
     programData: ProgramConfig
     selectedDataStoreKey: selectedDataStoreKey
 }

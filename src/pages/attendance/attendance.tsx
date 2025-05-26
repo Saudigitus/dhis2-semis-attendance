@@ -26,7 +26,7 @@ export default function Attendance() {
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
     const [pagination, setPagination] = useState({ page: 1, pageSize: 10, totalPages: 0, totalElements: 0 })
-    const { academicYear, grade, class: section, schoolName, school, selectedDate, sectionType } = urlParameters();
+    const { academicYear, grade, class: section, schoolName, school, selectedDate, sectionType,attendanceMode } = urlParameters();
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
@@ -41,16 +41,18 @@ export default function Attendance() {
                 baseProgramStage: dataStoreData?.registration?.programStage,
                 attributeFilters: filterState.attributes,
                 dataElementFilters: [
-                    academicYear !== null ? `${dataStoreData.registration.academicYear}:in:${academicYear}` : null,
-                    grade !== null ? `${dataStoreData.registration.grade}:in:${grade}` : null,
-                    section !== null ? `${dataStoreData.registration.section}:in:${section}` : null,
-                ].filter((filter): filter is string => filter !== null),
-                attendanceConfig: dataStoreData?.attendance as any,
+                    ...(academicYear ? [`${dataStoreData.registration.academicYear}:in:${academicYear}`] : []),
+                    ...(grade ? [`${dataStoreData.registration.grade}:in:${grade}`] : []),
+                    ...(section ? [`${dataStoreData.registration.section}:in:${section}`] : []),
+                ],
+                attendanceConfig: dataStoreData?.attendance,
                 ...selectedDay,
-                otherProgramStage: dataStoreData?.attendance.programStage
+                otherProgramStage: dataStoreData?.attendance.programStage,
+                order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
             })
         }
-    }, [sectionType, filterState, pagination.page, pagination.pageSize, selectedDay, refetch])
+    }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, refetch, academicYear, grade, section, school])
+
 
     useEffect(() => {
         let copy: any = []
@@ -64,22 +66,13 @@ export default function Attendance() {
 
         setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages, totalElements: tableData.pagination.totalElements }))
         setTableValues(formatData(
-            [...(copy?.length > 0 ? copy : tableData.data)],
+            [...(copy?.length > 0 ? copy : tableData?.data)],
             attendanceHeaders,
             dataStoreData.attendance.statusOptions,
             dataStoreData?.['attendance'],
             selectedDay?.occurredAfter ?? selectedDate)
         )
-    }, [tableData, reorganizeData])
-
-    useEffect(() => {
-        const filters = [
-            academicYear && `${dataStoreData.registration.academicYear}:in:${academicYear}`,
-            grade && `${dataStoreData.registration.grade}:in:${grade}`,
-            section && `${dataStoreData.registration.section}:in:${section}`,
-        ]
-        setFilterState(() => ({ dataElements: filters, attributes: [] }))
-    }, [academicYear, grade, section])
+    }, [tableData, reorganizeData, attendanceMode])
 
     return (
         <div style={{ height: "85vh" }}>
@@ -109,7 +102,6 @@ export default function Attendance() {
                                     setattendanceHeaders={setattendanceHeaders}
                                     config={data?.config}
                                     loading={!!(loading || loadingSchoolDays)}
-                                    filetrState={filterState}
                                     selectedDataStoreKey={dataStoreData}
                                     programData={program as unknown as ProgramConfig}
                                     setSelectedDates={setSelectedDates}

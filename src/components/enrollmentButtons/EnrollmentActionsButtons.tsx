@@ -45,8 +45,12 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         {
             label: <DataExporter
                 Form={Form}
-                baseURL={baseUrl}
-                eventFilters={filetrState.dataElements}
+                eventFilters={[
+                    ...(academicYear ? [`${selectedDataStoreKey.registration.academicYear}:in:${academicYear}`] : []),
+                    ...(grade ? [`${selectedDataStoreKey.registration.grade}:in:${grade}`] : []),
+                    ...(section ? [`${selectedDataStoreKey.registration.section}:in:${section}`] : []),
+                ]}
+        baseURL={baseUrl}
                 fileName='teste'
                 label='Export students atendances'
                 module='attendance'
@@ -85,7 +89,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     return (
         <div className={styles.container}>
             <ButtonStrip className={styles.work_buttons}>
-                {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckIcon />}> {selectable ? `Cancel multi-select` : `Multi-select`}</Button>}
+                {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckIcon />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>}
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
                     <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue((prev: any) => ({ ...e }))} value={editModeValue} />
                 </Tooltip>
@@ -95,7 +99,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 </Tooltip>
 
                 {attendanceMode != 'edit' && <DropdownButton
-                    name={<span className={styles.work_buttons_text}>Bulk Final Result</span> as unknown as string}
+                    name={<span className={styles.work_buttons_text}>Bulk Attendance</span> as unknown as string}
                     disabled={!!(orgUnit == undefined || section == undefined || grade == undefined || academicYear == undefined)}
                     icon={<IconUserGroup16 />}
                     options={enrollmentOptions}
