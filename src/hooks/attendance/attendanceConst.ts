@@ -1,9 +1,7 @@
-import { useDataStoreKey } from "dhis2-semis-components";
-import { useGetSectionTypeLabel } from "dhis2-semis-functions";
+import useGetSelectedKeys from "../config/useGetSelectedKeys";
 
 export const useAttendanceConst = () => {
-    const { sectionName } = useGetSectionTypeLabel()
-    const dataStoreData: any = useDataStoreKey({ sectionType: sectionName });
+    const { dataStoreData } = useGetSelectedKeys()
 
     function attendanceConst(key: "present" | "late" | "absent") {
         return dataStoreData.attendance.statusOptions.find((option: any) => option.key === key)?.code

@@ -5,14 +5,13 @@ import styles from './showStats.module.css'
 import { Collapse } from "@mui/material";
 import { useState } from "react";
 import { useHeader, useViewPortWidth } from "dhis2-semis-functions";
-import { Modules, ProgramConfig, TableDataRefetch } from "dhis2-semis-types";
+import { ProgramConfig, TableDataRefetch } from "dhis2-semis-types";
 import { useSetRecoilState } from "recoil";
+import useGetSelectedKeys from "src/hooks/config/useGetSelectedKeys";
 
 export default function ShowStats({ stats, open, setOpen }: { setOpen: (args: boolean) => void, open: boolean, stats: any }) {
     const [showDetails, setShowDetails] = useState(false)
-    const dataStoreData: any = useDataStoreKey({ sectionType: "student" });
-    const programsValues: any = useProgramsKeys();
-    const programData = programsValues[0];
+    const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { viewPortWidth } = useViewPortWidth();
     const { columns } = useHeader({ dataStoreData, programConfigData: programData as unknown as ProgramConfig, tableColumns: [], programStage: "" });
     const setRefetch = useSetRecoilState(TableDataRefetch);
@@ -49,7 +48,7 @@ export default function ShowStats({ stats, open, setOpen }: { setOpen: (args: bo
                     <Collapse in={showDetails} style={{ marginBottom: "20px" }} >
                         <WithPadding>
                             <Table
-                                programConfig={programData}
+                                programConfig={programData!}
                                 viewPortWidth={viewPortWidth}
                                 columns={columns}
                                 tableData={stats.conflicts}
