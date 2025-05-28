@@ -30,7 +30,7 @@ export default function Attendance() {
     const { academicYear, grade, class: section, schoolName, school, selectedDate, attendanceMode } = urlParameters();
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
-    const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, tableColumns: [], programStage: dataStoreData?.attendance?.programStage });
+    const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
 
     useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
