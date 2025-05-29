@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styles from "./button.module.css";
-import { ButtonGroup, Button } from "@material-ui/core";
 import classNames from "classnames";
 import { ButtonProps } from "../../types/MultipleBtns/MultipleButtonsTypes";
 import { useShowAlerts, useUploadEvents, useUrlParams } from "dhis2-semis-functions";
@@ -9,6 +8,7 @@ import { TableDataState } from "../../schema/table/tableDataSchema";
 import { useRecoilState } from "recoil";
 import { TableDataRefetch } from "dhis2-semis-types";
 import { CircularLoader } from "@dhis2/ui";
+import { Button, ButtonGroup } from "@mui/material";
 
 export default function MultipleButtons(props: ButtonProps) {
     const { items, status, disabled, ...rest } = props;

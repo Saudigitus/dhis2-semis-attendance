@@ -3,9 +3,7 @@ import { NoticeBox, Button } from "@dhis2/ui";
 import { WithBorder, ModalComponent, CustomForm, WithPadding } from "dhis2-semis-components";
 import { Form } from "react-final-form";
 import { staticForm } from "../../constants/attendaceForm";
-import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import styles from './assignStatus.module.css'
-import { CheckCircleOutline } from "@material-ui/icons";
 import classNames from "classnames";
 import { Tooltip } from "@mui/material";
 import { useSaveValues } from "../../hooks/attendance/saveValues";
@@ -14,6 +12,7 @@ import { TableDataState } from "../../schema/table/tableDataSchema";
 import { useAttendanceConst } from "../../hooks/attendance/attendanceConst";
 import { attendanceFormProps } from "../../types/attendance/attendanceTypes";
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns";
+import { CheckCircleOutline, PlaylistAddCheckCircleOutlined } from "@mui/icons-material";
 
 export default function AsssignStatus({ setSelected, selected, school, date, programData, dataStoreData, setRefetch, selectable }: attendanceFormProps) {
     const [open, setOpen] = useState(false)
@@ -42,7 +41,7 @@ export default function AsssignStatus({ setSelected, selected, school, date, pro
                             disabled={selected?.length === 0}
                             onClick={() => {
                                 setOpen(true);
-                            }} icon={<PlaylistAddCheckIcon />}
+                            }} icon={<PlaylistAddCheckCircleOutlined />}
                             className={styles.btn}
                         >
                             <span>Assing attendace</span>

@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { ButtonStrip, IconUserGroup16, IconAddCircle24 } from "@dhis2/ui";
-import Tooltip from '@material-ui/core/Tooltip';
 import styles from './enrollmentActionsButtons.module.css'
 import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays } from 'dhis2-semis-functions';
 import { Form } from "react-final-form";
 import { DataExporter, DataImporter, CustomDropdown as DropdownButton, DropDownCalendar } from 'dhis2-semis-components';
-import { Event } from '@material-ui/icons';
 import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeaders';
 import { EnrollmentButtonsProps } from '../../types/enrollmentButons/enrollmentButtonsTypes';
 import { format } from "date-fns";
 import { generateattendanceHeaders } from '../../utils/header/generateAttendanceDays';
 import { Button } from "@dhis2/ui";
-import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import { useConfig } from '@dhis2/app-runtime';
+import { Tooltip } from '@mui/material';
+import { Event, PlaylistAddCheckCircleOutlined } from '@mui/icons-material';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { selectable, programData, setIsTableReady, selectedDataStoreKey, config, setattendanceHeaders, setSelectedDates, setSelectable } = props
@@ -93,7 +92,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     return (
         <div className={styles.container}>
             <ButtonStrip className={styles.work_buttons}>
-                {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckIcon />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>}
+                {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckCircleOutlined />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>}
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
                     <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue((prev: any) => ({ ...e }))} value={editModeValue} />
                 </Tooltip>

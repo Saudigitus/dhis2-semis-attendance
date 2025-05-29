@@ -12,7 +12,7 @@ const WithHeaderBarLayout = () => {
             header={
                 <SemisHeader
                     program={program}
-                    dataSoreValues={dataStoreData}
+                    dataStoreValues={dataStoreData}
                     baseUrl={baseUrl}
                 />
             }

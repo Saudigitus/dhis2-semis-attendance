@@ -1,7 +1,7 @@
 import React from "react";
-import { AccessTime, HighlightOff, CheckCircleOutline, ExitToApp, RemoveCircleOutline, NotInterestedOutlined } from "@material-ui/icons";
 import { Chip, Tooltip } from "@mui/material";
 import style from "./icon.module.css";
+import { AccessTime, CheckCircleOutline, ExitToApp, HighlightOff, NotInterestedOutlined, RemoveCircleOutline } from "@mui/icons-material";
 
 export const getComponent = (option: any, attendanceConst: any, disabled = false) => {
     const styles = { color: 'rgba(0, 0, 0, 0.3)' }
@@ -21,7 +21,7 @@ export const getComponent = (option: any, attendanceConst: any, disabled = false
     return <>
         {
             <Tooltip title={option?.key}
-                componentsProps={{
+                slotProps={{
                     tooltip: {
                         sx: { textTransform: 'capitalize' }
                     }
