@@ -1,6 +1,6 @@
 {
   "name": "dhis2-semis-attendance",
-  "version": "1.0.0-alpha.9",
+  "version": "1.0.0-alpha.10",
   "description": "",
   "license": "BSD-3-Clause",
   "private": false,
@@ -40,20 +40,23 @@
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
+    "@dhis2/app-adapter": "12.6.0",
+    "@dhis2/app-runtime": "3.14.1",
+    "@dhis2/ui": "10.7.2",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "7.1.0",
+    "@mui/material": "7.1.0",
     "dhis2-semis-components": "*",
     "dhis2-semis-functions": "*",
-    "dhis2-semis-types": "*"
+    "dhis2-semis-types": "*",
+    "recoil": "^0.7.7"
   },
   "dependencies": {
-    "@dhis2/app-runtime": "^3.13.0",
-    "@dhis2/ui": "^9.15.0",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@material-ui/core": "^4.12.4",
-    "@mui/material": "^5.16.14",
     "acorn": "^8.14.0",
     "bootstrap": "^5.3.3",
     "classnames": "^2.5.1",
+    "dhis2-semis-attendance": "file:",
     "react-bootstrap": "^2.10.5",
     "react-router-dom": "^6.14.1",
     "recoil": "^0.7.7"
