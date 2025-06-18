@@ -106,12 +106,18 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                     <DropDownCalendar config={config} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={(e) => setViewModeValue((prev: any) => ({ ...e }))} value={viewModeValue} />
                 </Tooltip>
 
-                {attendanceMode != 'edit' && <DropdownButton
-                    name={<span className={styles.work_buttons_text}>Bulk Attendance</span> as unknown as string}
-                    disabled={!!(orgUnit == undefined || section == undefined || grade == undefined || academicYear == undefined)}
-                    icon={<IconUserGroup16 />}
-                    options={enrollmentOptions}
-                />}
+                {attendanceMode != 'edit' &&
+                    <Tooltip title={(grade === null || section === null) ? "Please select class and grade" : ""}>
+                        <span>
+                            <DropdownButton
+                                name={<span className={styles.work_buttons_text}>Bulk Attendance</span> as unknown as string}
+                                disabled={!!(orgUnit == undefined || section == undefined || grade == undefined || academicYear == undefined)}
+                                icon={<IconUserGroup16 />}
+                                options={enrollmentOptions}
+                            />
+                        </span>
+                    </Tooltip>
+                }
             </ButtonStrip>
         </div>
     )
