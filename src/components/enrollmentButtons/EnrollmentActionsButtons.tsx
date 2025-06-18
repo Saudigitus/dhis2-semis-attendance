@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ButtonStrip, IconUserGroup16, IconAddCircle24 } from "@dhis2/ui";
 import styles from './enrollmentActionsButtons.module.css'
-import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays } from 'dhis2-semis-functions';
+import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays, useShowAlerts } from 'dhis2-semis-functions';
 import { Form } from "react-final-form";
 import { DataExporter, DataImporter, CustomDropdown as DropdownButton, DropDownCalendar } from 'dhis2-semis-components';
 import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeaders';
@@ -24,14 +24,20 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
     const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
+    const { hide, show } = useShowAlerts()
+
+    const showAlert = (error: any) => {
+        show({ message: `Unknown error: ${error}`, type: { critical: true } })
+        setTimeout(hide, 5000);
+    }
 
     const enrollmentOptions: any = [
         {
             label: <DataImporter
                 baseURL={baseUrl}
-                label={'Import students atendances'}
+                label={`Import ${sectionName}'s atendances`}
                 module='attendance'
-                onError={(e: any) => { console.log(e) }}
+                onError={(e: any) => { showAlert(e) }}
                 programConfig={programData}
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
@@ -50,10 +56,9 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                     ...(section ? [`${selectedDataStoreKey.registration.section}:in:${section}`] : []),
                 ]}
                 baseURL={baseUrl}
-                fileName='teste'
-                label='Export students atendances'
+                label={`Export ${sectionName}'s atendances`}
                 module='attendance'
-                onError={(e: any) => console.log(e)}
+                onError={(e: any) => { showAlert(e) }}
                 programConfig={programData}
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
