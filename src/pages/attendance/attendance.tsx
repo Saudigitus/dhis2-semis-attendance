@@ -26,7 +26,7 @@ export default function Attendance() {
     const [attendanceHeaders, setattendanceHeaders] = useState<any>([])
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
-    const [pagination, setPagination] = useState({ page: 1, pageSize: 10, totalPages: 0, totalElements: 0 })
+    const [pagination, setPagination] = useState({ page: 1, pageSize: 50, totalPages: 0, totalElements: 0 })
     const { academicYear, grade, class: section, schoolName, school, selectedDate, attendanceMode } = urlParameters();
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
