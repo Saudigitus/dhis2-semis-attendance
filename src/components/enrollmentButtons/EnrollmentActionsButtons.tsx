@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { ButtonStrip, IconUserGroup16, IconAddCircle24 } from "@dhis2/ui";
 import styles from './enrollmentActionsButtons.module.css'
-import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays, useShowAlerts } from 'dhis2-semis-functions';
+import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays, useShowAlerts, useCheckFilters } from 'dhis2-semis-functions';
 import { Form } from "react-final-form";
 import { DataExporter, DataImporter, CustomDropdown as DropdownButton, DropDownCalendar } from 'dhis2-semis-components';
 import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeaders';
 import { EnrollmentButtonsProps } from '../../types/enrollmentButons/enrollmentButtonsTypes';
 import { format } from "date-fns";
 import { generateattendanceHeaders } from '../../utils/header/generateAttendanceDays';
-import { Button } from "@dhis2/ui";
 import { useConfig } from '@dhis2/app-runtime';
 import { Tooltip } from '@mui/material';
-import { Event, PlaylistAddCheckCircleOutlined } from '@mui/icons-material';
+import { Event } from '@mui/icons-material';
+import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { selectable, programData, setIsTableReady, selectedDataStoreKey, config, setattendanceHeaders, setSelectedDates, setSelectable } = props
+    const { selectable, setIsTableReady, selectedDataStoreKey, config, setattendanceHeaders, setSelectedDates, setSelectable } = props
     const { baseUrl } = useConfig()
+    const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
     const { sectionName } = useGetSectionTypeLabel();
     const { unavailableDays } = unavailableSchoolDays()
@@ -24,6 +25,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
     const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
+    const { areAllSelected } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { hide, show } = useShowAlerts()
 
     const showAlert = (error: any) => {
@@ -38,7 +40,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 label={`Import ${sectionName}'s atendances`}
                 module='attendance'
                 onError={(e: any) => { showAlert(e) }}
-                programConfig={programData}
+                programConfig={programData!}
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 updating={false}
@@ -59,7 +61,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 label={`Export ${sectionName}'s atendances`}
                 module='attendance'
                 onError={(e: any) => { showAlert(e) }}
-                programConfig={programData}
+                programConfig={programData!}
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 empty={false}
@@ -111,7 +113,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                         <span>
                             <DropdownButton
                                 name={<span className={styles.work_buttons_text}>Bulk Attendance</span> as unknown as string}
-                                disabled={!!(orgUnit == undefined || section == undefined || grade == undefined || academicYear == undefined)}
+                                disabled={!!(orgUnit == undefined || !areAllSelected() || academicYear == undefined)}
                                 icon={<IconUserGroup16 />}
                                 options={enrollmentOptions}
                             />

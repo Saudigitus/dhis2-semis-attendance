@@ -74,6 +74,7 @@ export default function Attendance() {
         )
     }, [tableData, reorganizeData, attendanceMode])
 
+    console.log((columns ?? []).filter(x => x.visible && x.type !== VariablesTypes.DataElement))
     return (
         <div style={{ height: "85vh" }}>
             {
@@ -105,7 +106,6 @@ export default function Attendance() {
                                     config={data?.config}
                                     loading={!!(loading || loadingSchoolDays)}
                                     selectedDataStoreKey={dataStoreData}
-                                    programData={program as unknown as ProgramConfig}
                                     setSelectedDates={setSelectedDates}
                                     setSelectable={setSelectable}
                                 />
