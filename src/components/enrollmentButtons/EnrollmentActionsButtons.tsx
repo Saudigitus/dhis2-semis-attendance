@@ -65,6 +65,8 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 empty={false}
+                schoolCalendar={config}
+                isSchoolDay={unavailableDays}
                 stagesToExport={[selectedDataStoreKey?.attendance?.programStage as unknown as string]}
             />,
             divider: false,

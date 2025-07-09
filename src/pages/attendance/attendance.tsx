@@ -31,7 +31,7 @@ export default function Attendance() {
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
-
+    
     useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
             void getData({
@@ -74,7 +74,6 @@ export default function Attendance() {
         )
     }, [tableData, reorganizeData, attendanceMode])
 
-    console.log((columns ?? []).filter(x => x.visible && x.type !== VariablesTypes.DataElement))
     return (
         <div style={{ height: "85vh" }}>
             {
