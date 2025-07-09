@@ -37,7 +37,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         {
             label: <DataImporter
                 baseURL={baseUrl}
-                label={`Import ${sectionName}'s atendances`}
+                label={`Import ${sectionName}s atendances`}
                 module='attendance'
                 onError={(e: any) => { showAlert(e) }}
                 programConfig={programData!}
@@ -58,7 +58,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                     ...(section ? [`${selectedDataStoreKey.registration.section}:in:${section}`] : []),
                 ]}
                 baseURL={baseUrl}
-                label={`Export ${sectionName}'s atendances`}
+                label={`Export ${sectionName}s atendances`}
                 module='attendance'
                 onError={(e: any) => { showAlert(e) }}
                 programConfig={programData!}
@@ -111,7 +111,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 </Tooltip>
 
                 {attendanceMode != 'edit' &&
-                    <Tooltip title={(grade === null || section === null) ? "Please select class and grade" : ""}>
+                    <Tooltip title={!areAllSelected() ? "Please select all filters" : ""}>
                         <span>
                             <DropdownButton
                                 name={<span className={styles.work_buttons_text}>Bulk Attendance</span> as unknown as string}
