@@ -5,7 +5,6 @@ import { TableDataRefetch, Modules } from "dhis2-semis-types"
 import { Table } from "dhis2-semis-components";
 import EnrollmentActionsButtons from "../../components/enrollmentButtons/EnrollmentActionsButtons";
 import { useHeader, useTableData, useUrlParams, useViewPortWidth } from "dhis2-semis-functions";
-import { useGetSchoolDays } from '../../hooks/schoolDays/useGetSchoolDays';
 import { tableDataFormatter } from '../../utils/table/tableDataFormatter';
 import InfoPageHolder from '../info/infoPage';
 import { TableDataState } from '../../schema/table/tableDataSchema';
@@ -18,7 +17,6 @@ export default function Attendance() {
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
     const [selected, setSelected] = useState<any>([])
-    const { data, loadingSchoolDays } = useGetSchoolDays()
     const [refetch, setRefetch] = useState<boolean>(false)
     const reorganizeData = useRecoilValue(TableDataRefetch);
     const [isTableReady, setIsTableReady] = useState(false);
@@ -31,7 +29,7 @@ export default function Attendance() {
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
-    
+
     useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
             void getData({
@@ -68,7 +66,7 @@ export default function Attendance() {
         setTableValues(formatData(
             [...(copy?.length > 0 ? copy : tableData?.data)],
             attendanceHeaders,
-            dataStoreData.attendance.statusOptions,
+            dataStoreData?.attendance?.statusOptions,
             dataStoreData?.['attendance'],
             selectedDay?.occurredAfter ?? selectedDate)
         )
@@ -96,14 +94,13 @@ export default function Attendance() {
                             defaultFilterNumber={5}
                             enableInactiveRowSelection={false}
                             filterState={filterState}
-                            loading={!isTableReady || loading || loadingSchoolDays}
+                            loading={!isTableReady || loading}
                             rightElements={
                                 <EnrollmentActionsButtons
                                     selectable={selectable}
                                     setIsTableReady={setIsTableReady}
                                     setattendanceHeaders={setattendanceHeaders}
-                                    config={data?.config}
-                                    loading={!!(loading || loadingSchoolDays)}
+                                    loading={loading}
                                     selectedDataStoreKey={dataStoreData}
                                     setSelectedDates={setSelectedDates}
                                     setSelectable={setSelectable}
@@ -120,7 +117,7 @@ export default function Attendance() {
                                     selected={selected}
                                     selectable={selectable}
                                 />
-                                :<></>
+                                    : <></>
                             }
                             setFilterState={setFilterState}
                             pagination={pagination}

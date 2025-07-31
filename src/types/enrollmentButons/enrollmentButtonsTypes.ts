@@ -6,7 +6,6 @@ export interface EnrollmentButtonsProps {
     setSelectable: (args: any) => void
     setIsTableReady: (args: any) => void
     setattendanceHeaders: (args: any[]) => void
-    config: any
     loading: boolean
     selectedDataStoreKey: selectedDataStoreKey
 }

@@ -6,15 +6,16 @@ import { Form } from "react-final-form";
 import { DataExporter, DataImporter, CustomDropdown as DropdownButton, DropDownCalendar } from 'dhis2-semis-components';
 import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeaders';
 import { EnrollmentButtonsProps } from '../../types/enrollmentButons/enrollmentButtonsTypes';
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import { generateattendanceHeaders } from '../../utils/header/generateAttendanceDays';
 import { useConfig } from '@dhis2/app-runtime';
 import { Tooltip } from '@mui/material';
 import { Event } from '@mui/icons-material';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
+import { useSchoolCalendar } from 'dhis2-semis-components';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { selectable, setIsTableReady, selectedDataStoreKey, config, setattendanceHeaders, setSelectedDates, setSelectable } = props
+    const { selectable, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, setSelectable } = props
     const { baseUrl } = useConfig()
     const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
@@ -27,6 +28,8 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
     const { areAllSelected } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { hide, show } = useShowAlerts()
+    const { schoolCalendar, defaults } = useSchoolCalendar()
+    const defaultAcademicYear = schoolCalendar?.find(x => x?.academicYear?.code == defaults?.academicYear)
 
     const showAlert = (error: any) => {
         show({ message: `Unknown error: ${error}`, type: { critical: true } })
@@ -65,7 +68,6 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 empty={false}
-                schoolCalendar={config}
                 isSchoolDay={unavailableDays}
                 stagesToExport={[selectedDataStoreKey?.attendance?.programStage as unknown as string]}
             />,
@@ -75,25 +77,28 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     ];
 
     useEffect(() => {
-        if (config || editModeValue) {
+        if (defaultAcademicYear || editModeValue) {
             setIsTableReady(false)
             const start = new Date(viewModeValue?.selectedDate ?? selectedDate)
             const formated = format(new Date(start), "yyyy-MM-dd")
+            const fiveDaysBefore = format(subDays(new Date(start), 4), 'yyyy-MM-dd');
             add('attendanceMode', 'view')
             add('selectedDate', formated)
-            getValidDays(start, config)
-            setSelectedDates((prev: any) => ({ occurredAfter: formated, occurredBefore: formated }))
+            getValidDays(start, defaultAcademicYear)
+
+            setSelectedDates((prev: any) => ({ occurredAfter: fiveDaysBefore, occurredBefore: formated }))
         }
-    }, [viewModeValue, config])
+    }, [viewModeValue])
 
     useEffect(() => {
         if (editModeValue || attendanceMode == 'edit') {
             setIsTableReady(false)
             let currentDate = format(new Date(editModeValue?.selectedDate ?? selectedDate), "yyyy-MM-dd")
+            const fiveDaysBefore = format(subDays(new Date(currentDate), 4), 'yyyy-MM-dd');
             add('selectedDate', currentDate)
             add('attendanceMode', 'edit')
 
-            setSelectedDates((prev: any) => ({ occurredAfter: currentDate, occurredBefore: currentDate }))
+            setSelectedDates((prev: any) => ({ occurredAfter: fiveDaysBefore, occurredBefore: currentDate }))
             getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage)
         }
     }, [editModeValue])
@@ -103,11 +108,11 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
             <ButtonStrip className={styles.work_buttons}>
                 {/* {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckCircleOutlined />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>} */}
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue((prev: any) => ({ ...e }))} value={editModeValue} />
+                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue((prev: any) => ({ ...e }))} value={editModeValue} />
                 </Tooltip>
 
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={config} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={(e) => setViewModeValue((prev: any) => ({ ...e }))} value={viewModeValue} />
+                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={(e) => setViewModeValue((prev: any) => ({ ...e }))} value={viewModeValue} />
                 </Tooltip>
 
                 {attendanceMode != 'edit' &&
