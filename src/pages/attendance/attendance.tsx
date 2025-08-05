@@ -2,7 +2,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { ProgramConfig, VariablesTypes } from 'dhis2-semis-types'
 import React, { useEffect, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
-import { Table } from "dhis2-semis-components";
+import { Table, useSchoolCalendar } from "dhis2-semis-components";
 import EnrollmentActionsButtons from "../../components/enrollmentButtons/EnrollmentActionsButtons";
 import { useHeader, useTableData, useUrlParams, useViewPortWidth } from "dhis2-semis-functions";
 import { tableDataFormatter } from '../../utils/table/tableDataFormatter';
@@ -29,6 +29,7 @@ export default function Attendance() {
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
+    const { academicYear: academicYearId } = useSchoolCalendar()
 
     useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
@@ -40,7 +41,7 @@ export default function Attendance() {
                 baseProgramStage: dataStoreData?.registration?.programStage,
                 attributeFilters: filterState.attributes,
                 dataElementFilters: [
-                    ...(academicYear ? [`${dataStoreData.registration.academicYear}:in:${academicYear}`] : []),
+                    ...(academicYear ? [`${academicYearId}:in:${academicYear}`] : []),
                     ...(grade ? [`${dataStoreData.registration.grade}:in:${grade}`] : []),
                     ...(section ? [`${dataStoreData.registration.section}:in:${section}`] : []),
                 ],
