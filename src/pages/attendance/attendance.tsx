@@ -36,7 +36,7 @@ export default function Attendance() {
             void getData({
                 page: pagination.page,
                 pageSize: pagination.pageSize,
-                program: program!.id as string,
+                program: program!?.id as string,
                 orgUnit: school!,
                 baseProgramStage: dataStoreData?.registration?.programStage,
                 attributeFilters: filterState.attributes,
@@ -110,7 +110,6 @@ export default function Attendance() {
                                     setSelected={setSelected}
                                     setRefetch={setRefetch}
                                     programData={program}
-                                    date={selectedDay.occurredAfter}
                                     school={schoolName!}
                                     selected={selected}
                                     selectable={selectable}

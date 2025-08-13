@@ -18,8 +18,9 @@ export default function ConfirmModal({ open, setOpen, onSave }: { onSave: () => 
             open={open}
             showActions
             size='medium'
+            position='top'
             actions={[
-                { name: "Cancel", onClick: () => {setOpen(false)} },
+                { name: "Cancel", onClick: () => setOpen(false) },
                 { name: "Yes, I'm sure", destructive: true, onClick: async () => onSave() }
             ] as unknown as any}
         />

@@ -1,10 +1,12 @@
 import { eventBody } from "../../utils/attendance/eventBody"
-import { useUploadEvents } from "dhis2-semis-functions"
+import { useUploadEvents, useUrlParams } from "dhis2-semis-functions"
 import { useSetRecoilState } from "recoil"
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns"
 import { useDaveValuesProps } from "../../types/attendance/attendanceTypes"
 
-export function useSaveValues({ setLoading, date, dataStoreData, setRefetch, setSelected, setOpen }: useDaveValuesProps) {
+export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelected, setOpen }: useDaveValuesProps) {
+    const { useQuery } = useUrlParams()
+    const date = useQuery.get('selectedDate')!
     const { uploadValues } = useUploadEvents()
     const disable = useSetRecoilState(DisaleButtonsState)
 

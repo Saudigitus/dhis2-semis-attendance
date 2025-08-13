@@ -21,5 +21,6 @@ export function eventBody(rest: any, value: any) {
         enrollment: rest.enrollment,
         eventDate: format(new Date(rest.date), "yyyy-MM-dd"),
         occurredAt: format(new Date(rest.date), "yyyy-MM-dd")
+        
     }
 }

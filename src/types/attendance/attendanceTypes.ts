@@ -6,7 +6,6 @@ export interface useDaveValuesProps {
     setRefetch: (args: any) => void
     dataStoreData: DataStoreProps[0]
     setLoading: (args: boolean) => void
-    date: any
 }
 
 export interface attendanceFormProps {
@@ -16,5 +15,4 @@ export interface attendanceFormProps {
     programData: any
     selected: any[]
     school: string
-    date: string
 }

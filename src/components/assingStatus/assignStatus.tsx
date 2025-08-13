@@ -14,8 +14,9 @@ import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns";
 import { CheckCircleOutline, PlaylistAddCheckCircleOutlined } from "@mui/icons-material";
 import useGetSelectedKeys from "../../hooks/config/useGetSelectedKeys";
 import ConfirmModal from "../modal/modalConfirm";
+import { useUrlParams } from "dhis2-semis-functions";
 
-export default function AsssignStatus({ setSelected, selected, school, date, programData, setRefetch, selectable }: attendanceFormProps) {
+export default function AsssignStatus({ setSelected, selected, school, programData, setRefetch, selectable }: attendanceFormProps) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [openMarkAll, setOpenMarkAll] = useState(false)
@@ -24,12 +25,14 @@ export default function AsssignStatus({ setSelected, selected, school, date, pro
     const { attendance } = dataStoreData
     const { statusOptions } = attendance
     const programStatusOptions = programData?.programStages?.
-        find((x: any) => x.id == attendance?.programStage)?.programStageDataElements?.
+        find((x: any) => x?.id == attendance?.programStage)?.programStageDataElements?.
         find((x: any) => x.dataElement?.id == attendance?.status)?.dataElement?.optionSet
     const statusCodes = statusOptions.map((item: any) => item.code)
     const attendaceStatus = programStatusOptions?.options?.filter((student: any) => statusCodes.includes(student.value))
-    const { formSubmit } = useSaveValues({ setLoading, date, dataStoreData, setSelected, setRefetch, setOpen, })
+    const { formSubmit } = useSaveValues({ setLoading, dataStoreData, setSelected, setRefetch, setOpen, })
     const disable = useSetRecoilState(DisaleButtonsState)
+    const { useQuery } = useUrlParams()
+    const date = useQuery.get('selectedDate')!
 
     return (
         <>

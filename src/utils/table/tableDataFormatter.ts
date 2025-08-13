@@ -12,34 +12,35 @@ export function tableDataFormatter() {
 
     function formatData(
         data: any[],
-        headers: any[],
+        headers: any[] = [],
         selectedDay: string
     ): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/
-        const empty = { key: 'Empty', code: 'Empty' }
+        const empty = { ConfigKey: 'Empty', code: 'Empty' }
         let copyData = data.map(item => ({ ...item }))
 
-        if (headers.some(item => regex.test(item.id))) {
-            for (const head of headers.filter((x) => x.schoolDay)) {
-                for (let index = 0; index < copyData.length; index++) {
-                    if (!copyData[index][head.id] || copyData[index][head.id] === undefined) {
+        if (headers?.some(item => regex.test(item?.id))) {
+            for (const head of headers?.filter((x) => x.schoolDay)) {
+                for (let index = 0; index < data.length; index++) {
+                    console.log(data[index], head?.id)
+                    if (!data[index][head?.id] || data[index][head?.id] === undefined) {
                         const icon = getComponent(empty, attendanceConst)
-                        copyData[index][head.id] = icon
+                        copyData[index][head?.id] = icon
                     } else {
-                        const attendance = statusOptions?.find(x => x.code === copyData[index][head.id]['status'])
-                        const icon = getComponent(attendance, attendanceConst, copyData?.[index]?.status == 'CANCELLED')
-                        copyData[index][head.id] = icon
+                        const configKey = (statusOptions as unknown as any)?.find((x: any) => x.code === data?.[index]?.[selectedDay]?.['status'])
+                        const icon = getComponent(configKey, attendanceConst, data?.[index]?.status == 'CANCELLED')
+                        copyData[index][head?.id] = icon
                     }
                 }
             }
 
-            for (const head of headers.filter((x) => !x.schoolDay)) {
+            for (const head of headers?.filter((x) => !x.schoolDay)) {
                 for (let index = 0; index < copyData.length; index++) {
                     const icon = getComponent({
-                        key: 'NonSchoolDay',
+                        ConfigKey: 'NonSchoolDay',
                         code: 'NonSchoolDay'
                     }, attendanceConst)
-                    copyData[index][head.id] = icon
+                    copyData[index][head?.id] = icon
                 }
             }
         } else {
@@ -54,7 +55,7 @@ export function tableDataFormatter() {
                         tei: copyData[index]?.trackedEntity,
                         program: copyData[index]?.programId,
                         stage: attendance.programStage,
-                        de: head.id,
+                        de: head?.id,
                         date: selectedDay,
                         enrollmentStatus: copyData[index]?.status,
                         enrollment: copyData[index]?.enrollmentId,
@@ -62,21 +63,21 @@ export function tableDataFormatter() {
                         statusDataElement: attendance.status,
                     }
 
-                    if (head.id === attendance.status) options = attendance.statusOptions
+                    if (head?.id === attendance.status) options = attendance.statusOptions
                     else options = head?.options?.optionSet?.options?.map((option: any) => { return { ...option, code: option.value } }) ?? []
 
                     if (copyData[index]?.[selectedDay]) {
-                        if (head.id === attendance.absenceReason) status = options.find((x: any) => x.code === copyData[index][selectedDay]['absenceOption'])?.code
+                        if (head?.id === attendance.absenceReason) status = options.find((x: any) => x.code === copyData[index][selectedDay]['absenceOption'])?.code
                         else status = options.find((x: any) => x.code === copyData?.[index]?.[selectedDay]?.['status'])?.code
                     }
 
-                    if (head.id === attendance.absenceReason && configKey === attendanceConst('absentCode')) {
+                    if (head?.id === attendance.absenceReason && configKey === attendanceConst('absentCode')) {
                         icon = getAttendanceIcon(options, attendanceConst, 'absence', status, props)
-                    } else if (head.id === attendance.status) {
+                    } else if (head?.id === attendance.status) {
                         icon = getAttendanceIcon(options, attendanceConst, 'attendance', status, props)
                     }
 
-                    copyData[index][head.id] = icon
+                    copyData[index][head?.id] = icon
                 }
             }
         }
