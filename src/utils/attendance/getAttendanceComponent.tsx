@@ -4,41 +4,22 @@ import AttendaceComponent from "./attendanceComponent";
 
 export const getAttendanceComponent = () => {
 
-    function getAttendanceIcon(attendanceOptions: any, attendanceConst: any, component: string, status: string, props: any) {
+    function getAttendanceIcon(attendanceOptions: any, attendanceConst: any, type: string, status: string, props: any) {
 
-        const codeComponent: any = {
-            "Reason of absence": <AttendaceComponent
-                id={"no_id_too"}
-                items={attendanceOptions?.map((option: any) => {
-                    return {
-                        code: option.code,
-                        type: "absence",
-                        Component: option.label,
-                    }
-                })}
-                status={status}
-                disabled={props?.enrollmentStatus == 'CANCELLED'}
-                {...props}
-            />,
-            Attendance: <AttendaceComponent
+        return (
+            <AttendaceComponent
                 id={"no_id"}
                 items={attendanceOptions?.map((option: any) => {
                     return {
                         code: option.code,
-                        type: "attendance",
-                        Component: getComponent(option, attendanceConst),
+                        type: type,
+                        Component: type == 'attendance' ? getComponent(option, attendanceConst) : option.label,
                     }
                 })}
                 status={status}
                 disabled={props?.enrollmentStatus == 'CANCELLED'}
                 {...props}
             />
-        }
-
-        return (
-            <>
-                {codeComponent?.[component]}
-            </>
         )
     }
 

@@ -42,7 +42,6 @@ export function generateattendanceHeaders({ setattendanceHeaders, setSelectedDat
             }
         }))
 
-        console.log(validDays,'the valids')
         setSelectedDates({ occurredAfter: validDays[0].date, occurredBefore: validDays[4].date })
     }
 

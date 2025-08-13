@@ -3,8 +3,8 @@ import useGetSelectedKeys from "../config/useGetSelectedKeys";
 export const useAttendanceConst = () => {
     const { dataStoreData } = useGetSelectedKeys()
 
-    function attendanceConst(key: "present" | "late" | "absent") {
-        return dataStoreData.attendance.statusOptions.find((option: any) => option.key === key)?.code
+    function attendanceConst(key: "presentCode" | "lateCode" | "absentCode" | "leaveCode") {
+        return (dataStoreData as unknown as any).attendance.statusOptions.find((option: any) => option.ConfigKey === key)?.ConfigKey
     }
 
     return {

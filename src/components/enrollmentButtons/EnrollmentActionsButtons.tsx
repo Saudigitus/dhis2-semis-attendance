@@ -28,7 +28,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
     const { areAllSelected } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { hide, show } = useShowAlerts()
-    const { schoolCalendar, defaults } = useSchoolCalendar()
+    const { schoolCalendar, defaults, academicYear: academicYearId } = useSchoolCalendar()
     const defaultAcademicYear = schoolCalendar?.find(x => x?.academicYear?.code == defaults?.academicYear)
 
     const showAlert = (error: any) => {
@@ -56,7 +56,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
             label: <DataExporter
                 Form={Form}
                 eventFilters={[
-                    ...(academicYear ? [`${selectedDataStoreKey.registration.academicYear}:in:${academicYear}`] : []),
+                    ...(academicYear ? [`${academicYearId}:in:${academicYear}`] : []),
                     ...(grade ? [`${selectedDataStoreKey.registration.grade}:in:${grade}`] : []),
                     ...(section ? [`${selectedDataStoreKey.registration.section}:in:${section}`] : []),
                 ]}
@@ -68,7 +68,6 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 empty={false}
-                isSchoolDay={unavailableDays}
                 stagesToExport={[selectedDataStoreKey?.attendance?.programStage as unknown as string]}
             />,
             divider: false,
@@ -108,11 +107,11 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
             <ButtonStrip className={styles.work_buttons}>
                 {/* {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckCircleOutlined />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>} */}
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays} label='Take attendance' icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue((prev: any) => ({ ...e }))} value={editModeValue} />
+                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label='Take attendance' icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue((prev: any) => ({ ...e }))} value={editModeValue} />
                 </Tooltip>
 
                 <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays} label='View attendance records' icon={<Event />} setValue={(e) => setViewModeValue((prev: any) => ({ ...e }))} value={viewModeValue} />
+                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label='View attendance records' icon={<Event />} setValue={(e) => setViewModeValue((prev: any) => ({ ...e }))} value={viewModeValue} />
                 </Tooltip>
 
                 {attendanceMode != 'edit' &&

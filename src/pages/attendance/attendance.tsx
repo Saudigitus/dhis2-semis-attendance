@@ -67,8 +67,6 @@ export default function Attendance() {
         setTableValues(formatData(
             [...(copy?.length > 0 ? copy : tableData?.data)],
             attendanceHeaders,
-            dataStoreData?.attendance?.statusOptions,
-            dataStoreData?.['attendance'],
             selectedDay?.occurredAfter ?? selectedDate)
         )
     }, [tableData, reorganizeData, attendanceMode])
