@@ -110,7 +110,6 @@ export default function Attendance() {
                                     setSelected={setSelected}
                                     setRefetch={setRefetch}
                                     programData={program}
-                                    dataStoreData={dataStoreData}
                                     date={selectedDay.occurredAfter}
                                     school={schoolName!}
                                     selected={selected}

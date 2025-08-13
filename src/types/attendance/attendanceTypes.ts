@@ -14,7 +14,6 @@ export interface attendanceFormProps {
     setSelected: (args: any) => void
     setRefetch: (args: any) => void
     programData: any
-    dataStoreData: any
     selected: any[]
     school: string
     date: string

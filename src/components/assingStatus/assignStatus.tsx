@@ -9,24 +9,28 @@ import { Tooltip } from "@mui/material";
 import { useSaveValues } from "../../hooks/attendance/saveValues";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { TableDataState } from "../../schema/table/tableDataSchema";
-import { useAttendanceConst } from "../../hooks/attendance/attendanceConst";
 import { attendanceFormProps } from "../../types/attendance/attendanceTypes";
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns";
 import { CheckCircleOutline, PlaylistAddCheckCircleOutlined } from "@mui/icons-material";
+import useGetSelectedKeys from "../../hooks/config/useGetSelectedKeys";
+import ConfirmModal from "../modal/modalConfirm";
 
-export default function AsssignStatus({ setSelected, selected, school, date, programData, dataStoreData, setRefetch, selectable }: attendanceFormProps) {
+export default function AsssignStatus({ setSelected, selected, school, date, programData, setRefetch, selectable }: attendanceFormProps) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    const { attendanceConst } = useAttendanceConst()
+    const [openMarkAll, setOpenMarkAll] = useState(false)
     const tableValues = useRecoilValue(TableDataState)
+    const { dataStoreData } = useGetSelectedKeys()
+    const { attendance } = dataStoreData
+    const { statusOptions } = attendance
     const programStatusOptions = programData?.programStages?.
-        find((x: any) => x.id == dataStoreData?.attendance?.programStage)?.programStageDataElements?.
-        find((x: any) => x.dataElement?.id == dataStoreData?.attendance?.status)?.dataElement?.optionSet
-    const statusCodes = dataStoreData?.attendance?.statusOptions.map((item: any) => item.code)
+        find((x: any) => x.id == attendance?.programStage)?.programStageDataElements?.
+        find((x: any) => x.dataElement?.id == attendance?.status)?.dataElement?.optionSet
+    const statusCodes = statusOptions.map((item: any) => item.code)
     const attendaceStatus = programStatusOptions?.options?.filter((student: any) => statusCodes.includes(student.value))
     const { formSubmit } = useSaveValues({ setLoading, date, dataStoreData, setSelected, setRefetch, setOpen, })
     const disable = useSetRecoilState(DisaleButtonsState)
-    
+
     return (
         <>
             {selectable &&
@@ -57,10 +61,7 @@ export default function AsssignStatus({ setSelected, selected, school, date, pro
                     <Button
                         loading={loading && !selectable}
                         disabled={selectable}
-                        onClick={() => {
-                            disable(true)
-                            formSubmit({ status: attendanceConst("present") }, tableValues.filter(x => x?.status !== "CANCELLED"))
-                        }}
+                        onClick={() => setOpenMarkAll(true)}
                         icon={<CheckCircleOutline style={selectable ? { color: 'rgba(0, 0, 0, 0.3)' } : { color: "#21B26D" }} />}
                         className={classNames(styles.btn, selectable && styles.markAll)}
                     >
@@ -69,6 +70,18 @@ export default function AsssignStatus({ setSelected, selected, school, date, pro
                 </span>
             </Tooltip>
 
+            {
+                openMarkAll && <ConfirmModal
+                    onSave={async () => {
+                        setOpenMarkAll(false)
+                        disable(true)
+                        const status = statusOptions.find((x: any) => x.ConfigKey === 'presentCode')?.code
+                        await formSubmit({ status }, tableValues.filter(x => x?.status !== "CANCELLED"))
+                    }}
+                    open={openMarkAll}
+                    setOpen={setOpenMarkAll}
+                />
+            }
             {
                 open && <ModalComponent
                     children={<WithPadding>
