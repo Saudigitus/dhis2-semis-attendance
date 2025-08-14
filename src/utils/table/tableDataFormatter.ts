@@ -27,7 +27,7 @@ export function tableDataFormatter() {
                         const icon = getComponent(empty, attendanceConst)
                         copyData[index][head?.id] = icon
                     } else {
-                        const configKey = (statusOptions as unknown as any)?.find((x: any) => x.code === data?.[index]?.[selectedDay]?.['status'])
+                        const configKey = (statusOptions as unknown as any)?.find((x: any) => x.code === data?.[index]?.[head?.id]?.['status'])
                         const icon = getComponent(configKey, attendanceConst, data?.[index]?.status == 'CANCELLED')
                         copyData[index][head?.id] = icon
                     }

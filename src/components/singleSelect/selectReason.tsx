@@ -2,7 +2,7 @@ import { SingleSelectField, SingleSelectOption } from '@dhis2/ui'
 import React, { useEffect, useState } from 'react'
 import { SingleSelectProps } from '../../types/singleSelect/singleSelectTypes';
 import { eventBody } from '../../utils/attendance/eventBody';
-import { useShowAlerts, useUploadEvents } from 'dhis2-semis-functions';
+import { useShowAlerts, useUploadEvents, useUrlParams } from 'dhis2-semis-functions';
 import { useRecoilState } from 'recoil';
 import { TableDataState } from '../../schema/table/tableDataSchema';
 import { TableDataRefetch } from 'dhis2-semis-types';
@@ -14,13 +14,15 @@ function SingleSelect(props: SingleSelectProps) {
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const [refetch, setRefetch] = useRecoilState(TableDataRefetch);
     const { uploadValues } = useUploadEvents()
+    const { urlParameters } = useUrlParams()
+    const { selectedDate } = urlParameters()
 
     useEffect(() => {
         setSelected(status)
     }, [status])
 
     const onchangeValue = async (value: string) => {
-        await uploadValues({ events: [eventBody(rest, value)] }, 'COMMIT', 'CREATE_AND_UPDATE').then((resp: any) => {
+        await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value)] }, 'COMMIT', 'CREATE_AND_UPDATE').then((resp: any) => {
 
             if (resp?.validationReport?.errorReports?.length > 0) {
                 show({

@@ -10,6 +10,8 @@ import InfoPageHolder from '../info/infoPage';
 import { TableDataState } from '../../schema/table/tableDataSchema';
 import AsssignStatus from '../../components/assingStatus/assignStatus';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
+import { Chip } from '@dhis2/ui';
+import { format } from 'date-fns'
 
 export default function Attendance() {
     const { program, dataStoreData } = useGetSelectedKeys()
@@ -67,7 +69,7 @@ export default function Attendance() {
         setTableValues(formatData(
             [...(copy?.length > 0 ? copy : tableData?.data)],
             attendanceHeaders,
-            selectedDay?.occurredAfter ?? selectedDate)
+            selectedDay?.occurredAfter!)
         )
     }, [tableData, reorganizeData, attendanceMode])
 
@@ -106,14 +108,20 @@ export default function Attendance() {
                                 />
                             }
                             beforeSettings={
-                                attendanceMode == 'edit' ? <AsssignStatus
-                                    setSelected={setSelected}
-                                    setRefetch={setRefetch}
-                                    programData={program}
-                                    school={schoolName!}
-                                    selected={selected}
-                                    selectable={selectable}
-                                />
+                                attendanceMode == 'edit' ?
+                                    <>
+                                        <AsssignStatus
+                                            setSelected={setSelected}
+                                            setRefetch={setRefetch}
+                                            programData={program}
+                                            school={schoolName!}
+                                            selected={selected}
+                                            selectable={selectable}
+                                        />
+                                        <Chip selected>
+                                            Selected date: {selectedDate && format(new Date(selectedDate), 'dd/MM/yyyy')}
+                                        </Chip>
+                                    </>
                                     : <></>
                             }
                             setFilterState={setFilterState}

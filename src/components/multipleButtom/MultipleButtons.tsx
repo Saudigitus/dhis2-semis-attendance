@@ -18,7 +18,7 @@ export default function MultipleButtons(props: ButtonProps) {
     const [refetch, setRefetch] = useRecoilState(TableDataRefetch);
     const { uploadValues } = useUploadEvents()
     const { urlParameters, add, remove } = useUrlParams();
-    const { position } = urlParameters()
+    const { position, selectedDate } = urlParameters()
 
     useEffect(() => {
         setSelected(status)
@@ -27,7 +27,7 @@ export default function MultipleButtons(props: ButtonProps) {
     const onchangeValue = async (value: string) => {
         if (value !== status) {
             add('position', `${value}${rest.tei}`)
-            await uploadValues({ events: [eventBody(rest, value)] }, 'COMMIT', 'CREATE_AND_UPDATE').then((resp: any) => {
+            await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value)] }, 'COMMIT', 'CREATE_AND_UPDATE').then((resp: any) => {
                 if (resp?.validationReport?.errorReports?.length > 0) {
                     show({
                         message: `${("Occurred unknown error!")}`,
