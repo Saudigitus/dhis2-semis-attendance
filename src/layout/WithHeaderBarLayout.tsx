@@ -15,7 +15,7 @@ const WithHeaderBarLayout = () => {
                     baseUrl={baseUrl}
                     program={program}
                     schoolCalendar={schoolCalendar}
-                    dataStoreValues={dataStoreData}
+                    dataStoreValues={dataStoreData as unknown as []}
                 />
             }
         >
