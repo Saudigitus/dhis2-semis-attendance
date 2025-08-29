@@ -6,11 +6,11 @@ import { AppWrapper } from 'dhis2-semis-components'
 const App = () => {
 
     return (
-        // <AppWrapper baseUrl='http://localhost:8080' dataStoreKey='dataStore/semis/values' schoolCalendarKey='dataStore/semis/schoolCalendar' >
-        //     <HashRouter>
+        <AppWrapper baseUrl='http://localhost:8080' dataStoreKey='dataStore/semis/values' schoolCalendarKey='dataStore/semis/schoolCalendar' >
+            <HashRouter>
                 <Router />
-        //     </HashRouter>
-        // </AppWrapper>
+            </HashRouter>
+        </AppWrapper>
     )
 }
 
