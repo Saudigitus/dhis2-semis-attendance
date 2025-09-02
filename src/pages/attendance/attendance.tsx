@@ -103,6 +103,7 @@ export default function Attendance() {
                                     selectedDataStoreKey={dataStoreData}
                                     setSelectedDates={setSelectedDates}
                                     setSelectable={setSelectable}
+                                    setRefetch={setRefetch}
                                 />
                             }
                             beforeSettings={
