@@ -12,7 +12,7 @@ import { useConfig } from '@dhis2/app-runtime';
 import { Tooltip } from '@mui/material';
 import { Event } from '@mui/icons-material';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
-import { useSchoolCalendar } from 'dhis2-semis-components';
+import { useSchoolCalendarKey } from 'dhis2-semis-components';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { selectable, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, setSelectable } = props
@@ -28,7 +28,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
     const { areAllSelected } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { hide, show } = useShowAlerts()
-    const { schoolCalendar, defaults, academicYear: academicYearId } = useSchoolCalendar()
+    const { schoolCalendar, defaults, academicYear: academicYearId } = useSchoolCalendarKey()
     const defaultAcademicYear = schoolCalendar?.find(x => x?.academicYear?.code == defaults?.academicYear)
 
     const showAlert = (error: any) => {

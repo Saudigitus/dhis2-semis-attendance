@@ -4,7 +4,6 @@ import { Routes, Route } from 'react-router-dom';
 import WithHeaderBarLayout from '../../layout/WithHeaderBarLayout';
 
 export default function Router() {
-
     return (
         <Routes>
             <Route path='/'
