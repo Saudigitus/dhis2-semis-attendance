@@ -14,7 +14,7 @@ export function tableDataFormatter() {
     const { attendance } = dataStoreData
     const { statusOptions } = attendance
     const { urlParameters } = useUrlParams()
-    const { selectedDate } = urlParameters()
+    const { selectedDate } = urlParameters
 
     function formatData(data: any[], headers: any[] = []): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/

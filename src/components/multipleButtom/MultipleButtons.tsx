@@ -18,7 +18,7 @@ export default function MultipleButtons(props: ButtonProps) {
     const [refetch, setRefetch] = useRecoilState(TableDataRefetch);
     const { uploadValues } = useUploadEvents()
     const { urlParameters, add, remove } = useUrlParams();
-    const { position, selectedDate } = urlParameters()
+    const { position, selectedDate } = urlParameters
 
     useEffect(() => {
         setSelected(status)

@@ -22,11 +22,11 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { sectionName } = useGetSectionTypeLabel();
     const { unavailableDays } = unavailableSchoolDays()
     const [editModeValue, setEditModeValue] = useState<any>("")
-    const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters();
+    const { school: orgUnit, academicYear, attendanceMode, selectedDate } = urlParameters
     const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
     const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
-    const { areAllSelected } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
+    const { areAllSelected, getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { hide, show } = useShowAlerts()
     const { schoolCalendar, defaults, academicYear: academicYearId } = useSchoolCalendarKey()
     const defaultAcademicYear = schoolCalendar?.find(x => x?.academicYear?.code == defaults?.academicYear)
@@ -58,8 +58,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 Form={Form}
                 eventFilters={[
                     ...(academicYear ? [`${academicYearId}:in:${academicYear}`] : []),
-                    ...(grade ? [`${selectedDataStoreKey.registration.grade}:in:${grade}`] : []),
-                    ...(section ? [`${selectedDataStoreKey.registration.section}:in:${section}`] : []),
+                    ...getFilters() as unknown as any
                 ]}
                 baseURL={baseUrl}
                 label={`Export ${sectionName}s atendances`}
