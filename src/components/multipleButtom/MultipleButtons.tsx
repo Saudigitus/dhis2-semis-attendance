@@ -47,6 +47,7 @@ export default function MultipleButtons(props: ButtonProps) {
                     remove('position')
                     setTableValues(copy)
                     setSelected(value)
+                    setRefetch(prev => !prev)
                 }
             })
         }

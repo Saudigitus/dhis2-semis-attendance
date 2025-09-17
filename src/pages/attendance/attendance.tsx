@@ -55,7 +55,7 @@ export default function Attendance() {
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
             }).then(() => setIsTableReady(true))
         }
-    }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, urlParameters])
+    }, [filterState.attributes, pagination.page, pagination.pageSize, refetch, selectedDay, urlParameters])
 
     useEffect(() => {
         let copy: any = []
@@ -69,7 +69,7 @@ export default function Attendance() {
 
         setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages, totalElements: tableData.pagination.totalElements }))
         setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)], attendanceHeaders))
-    }, [tableData, reorganizeData, attendanceMode, seeReason])
+    }, [tableData, reorganizeData, attendanceMode, seeReason,])
 
     return (
         <div style={{ height: "85vh" }}>
