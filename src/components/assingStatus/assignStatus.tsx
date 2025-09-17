@@ -22,7 +22,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
     const [openMarkAll, setOpenMarkAll] = useState(false)
     const tableValues = useRecoilValue(TableDataState)
     const { dataStoreData } = useGetSelectedKeys()
-    const { attendance } = dataStoreData
+    const { attendance = {} as unknown as any } = dataStoreData
     const { statusOptions } = attendance
     const programStatusOptions = programData?.programStages?.
         find((x: any) => x?.id == attendance?.programStage)?.programStageDataElements?.

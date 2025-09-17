@@ -16,7 +16,7 @@ import { format } from 'date-fns'
 
 export default function Attendance() {
     const { program, dataStoreData } = useGetSelectedKeys()
-    const { urlParameters } = useUrlParams();
+    const { urlParameters } = useUrlParams(['position']);
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
     const [selected, setSelected] = useState<any>([])
@@ -37,7 +37,7 @@ export default function Attendance() {
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
 
     useEffect(() => {
-        if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
+        if (selectedDay?.occurredAfter && selectedDay?.occurredBefore) {
             void getData({
                 page: pagination.page,
                 pageSize: pagination.pageSize,
@@ -55,7 +55,7 @@ export default function Attendance() {
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
             }).then(() => setIsTableReady(true))
         }
-    }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, refetch, urlParameters])
+    }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, urlParameters])
 
     useEffect(() => {
         let copy: any = []
@@ -93,7 +93,7 @@ export default function Attendance() {
                             defaultFilterNumber={5}
                             enableInactiveRowSelection={false}
                             filterState={filterState}
-                            loading={!isTableReady || loading} 
+                            loading={!isTableReady || loading}
                             rightElements={
                                 <EnrollmentActionsButtons
                                     selectable={selectable}

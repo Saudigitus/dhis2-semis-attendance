@@ -5,7 +5,7 @@ import { ButtonProps } from "../../types/MultipleBtns/MultipleButtonsTypes";
 import { useShowAlerts, useUploadEvents, useUrlParams } from "dhis2-semis-functions";
 import { eventBody } from "../../utils/attendance/eventBody";
 import { TableDataState } from "../../schema/table/tableDataSchema";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { TableDataRefetch } from "dhis2-semis-types";
 import { CircularLoader } from "@dhis2/ui";
 import { Button, ButtonGroup } from "@mui/material";
@@ -15,10 +15,10 @@ export default function MultipleButtons(props: ButtonProps) {
     const [selected, setSelected] = useState<any>("")
     const { hide, show } = useShowAlerts()
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
-    const [refetch, setRefetch] = useRecoilState(TableDataRefetch);
+    const setRefetch = useSetRecoilState(TableDataRefetch);
     const { uploadValues } = useUploadEvents()
-    const { urlParameters, add, remove } = useUrlParams();
-    const { position, selectedDate } = urlParameters
+    const { urlParameters, add, remove, useQuery } = useUrlParams();
+    const { selectedDate } = urlParameters
 
     useEffect(() => {
         setSelected(status)
@@ -47,7 +47,6 @@ export default function MultipleButtons(props: ButtonProps) {
                     remove('position')
                     setTableValues(copy)
                     setSelected(value)
-                    setRefetch(!refetch)
                 }
             })
         }
@@ -57,13 +56,13 @@ export default function MultipleButtons(props: ButtonProps) {
         <ButtonGroup color="primary">
             {items?.map((item) => {
                 return (
-                    <Button disabled={!!(disabled || (position != undefined && position != `${item?.code}${rest.tei}`))} key={item?.code}
+                    <Button disabled={!!(disabled || (useQuery.get('position') != undefined && useQuery.get('position') != `${item?.code}${rest.tei}`))} key={item?.code}
                         className={classNames(
                             selected === item?.code && styles["active-button"],
                             styles.label,
                         )}
-                        onClick={() => { onchangeValue(item.code) }} >
-                        <span className={styles.simpleButtonLabel}> {(position != undefined && position == `${item?.code}${rest.tei}`) ? <CircularLoader small /> : item.Component}</span>
+                        onClick={async () => { await onchangeValue(item.code) }} >
+                        <span className={styles.simpleButtonLabel}> {(useQuery.get('position') != undefined && useQuery.get('position') == `${item?.code}${rest.tei}`) ? <CircularLoader small /> : item.Component}</span>
                     </Button>
                 )
             })}

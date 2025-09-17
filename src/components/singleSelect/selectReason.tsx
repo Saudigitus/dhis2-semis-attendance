@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { SingleSelectProps } from '../../types/singleSelect/singleSelectTypes';
 import { eventBody } from '../../utils/attendance/eventBody';
 import { useShowAlerts, useUploadEvents, useUrlParams } from 'dhis2-semis-functions';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { TableDataState } from '../../schema/table/tableDataSchema';
 import { TableDataRefetch } from 'dhis2-semis-types';
 
@@ -12,7 +12,7 @@ function SingleSelect(props: SingleSelectProps) {
     const [selected, setSelected] = useState<any>("")
     const { hide, show } = useShowAlerts()
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
-    const [refetch, setRefetch] = useRecoilState(TableDataRefetch);
+    const setRefetch = useSetRecoilState(TableDataRefetch);
     const { uploadValues } = useUploadEvents()
     const { urlParameters } = useUrlParams()
     const { selectedDate } = urlParameters
@@ -23,7 +23,6 @@ function SingleSelect(props: SingleSelectProps) {
 
     const onchangeValue = async (value: string) => {
         await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value)] }, 'COMMIT', 'CREATE_AND_UPDATE').then((resp: any) => {
-
             if (resp?.validationReport?.errorReports?.length > 0) {
                 show({
                     message: `${("Occurred unknown error!")}`,
@@ -42,7 +41,7 @@ function SingleSelect(props: SingleSelectProps) {
 
                 setTableValues(copy)
                 setSelected(value)
-                setRefetch(!refetch)
+                setRefetch(prev => !prev)
             }
         })
     }
