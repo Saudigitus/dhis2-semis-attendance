@@ -28,7 +28,7 @@ export default function Attendance() {
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
     const [pagination, setPagination] = useState({ page: 1, pageSize: 50, totalPages: 0, totalElements: 0 })
-    const { academicYear, grade, class: section, schoolName, school, selectedDate, attendanceMode } = urlParameters();
+    const { academicYear, grade, class: section, schoolName, school, selectedDate, attendanceMode } = urlParameters;
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
@@ -93,7 +93,7 @@ export default function Attendance() {
                             defaultFilterNumber={5}
                             enableInactiveRowSelection={false}
                             filterState={filterState}
-                            loading={!isTableReady || loading}
+                            loading={!isTableReady || loading} 
                             rightElements={
                                 <EnrollmentActionsButtons
                                     selectable={selectable}

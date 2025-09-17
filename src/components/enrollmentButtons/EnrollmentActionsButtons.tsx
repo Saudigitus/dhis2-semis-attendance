@@ -22,7 +22,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { sectionName } = useGetSectionTypeLabel();
     const { unavailableDays } = unavailableSchoolDays()
     const [editModeValue, setEditModeValue] = useState<any>("")
-    const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters();
+    const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters;
     const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
     const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })

@@ -15,7 +15,7 @@ function SingleSelect(props: SingleSelectProps) {
     const [refetch, setRefetch] = useRecoilState(TableDataRefetch);
     const { uploadValues } = useUploadEvents()
     const { urlParameters } = useUrlParams()
-    const { selectedDate } = urlParameters()
+    const { selectedDate } = urlParameters
 
     useEffect(() => {
         setSelected(status)
