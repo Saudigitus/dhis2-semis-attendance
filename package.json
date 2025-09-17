@@ -1,6 +1,6 @@
 {
   "name": "dhis2-semis-attendance",
-  "version": "1.0.0-alpha.25",
+  "version": "1.0.0-alpha.29",
   "description": "",
   "license": "BSD-3-Clause",
   "private": false,
@@ -15,10 +15,10 @@
   },
   "scripts": {
     "build": "d2-app-scripts build",
-    "start": "d2-app-scripts start --proxy https://emis.dhis2.org/startracker",
+    "start": "d2-app-scripts start --proxy https://dhis2.mineduc.gov.rw/training",
     "test": "d2-app-scripts test",
     "deploy": "d2-app-scripts deploy",
-    "copy-files": "copyfiles -u 1 src/**/*.png src/**/*.svg src/**/*.css dist/",
+    "copy-files": "copyfiles -u 1 \"src/**/*.png\" \"src/**/*.svg\" \"src/**/*.css\" dist/",
     "lib": "rimraf ./dist && npx tsc -b && yarn copy-files"
   },
   "devDependencies": {

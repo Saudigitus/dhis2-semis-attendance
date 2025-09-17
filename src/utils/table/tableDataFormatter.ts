@@ -12,6 +12,8 @@ export function tableDataFormatter() {
     const { getAttendanceIcon } = getAttendanceComponent()
     const { dataStoreData } = useGetSelectedKeys()
     const { attendance } = dataStoreData
+    const { statusOptions } = attendance
+    const { urlParameters } = useUrlParams()
     const { selectedDate } = urlParameters
 
     function formatData(data: any[], headers: any[] = []): any[] {

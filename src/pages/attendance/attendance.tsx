@@ -1,11 +1,11 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { ProgramConfig, VariablesTypes } from 'dhis2-semis-types'
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
 import { Table, useSchoolCalendarKey } from "dhis2-semis-components";
 import { ReasonOfAbsenseState } from '../../schema/attendance/disableAllBtns';
 import EnrollmentActionsButtons from "../../components/enrollmentButtons/EnrollmentActionsButtons";
-import { useHeader, useTableData, useUrlParams, useViewPortWidth } from "dhis2-semis-functions";
+import { useCheckFilters, useHeader, useTableData, useUrlParams, useViewPortWidth } from "dhis2-semis-functions";
 import { tableDataFormatter } from '../../utils/table/tableDataFormatter';
 import InfoPageHolder from '../info/infoPage';
 import { TableDataState } from '../../schema/table/tableDataSchema';
@@ -24,16 +24,17 @@ export default function Attendance() {
     const reorganizeData = useRecoilValue(TableDataRefetch);
     const [isTableReady, setIsTableReady] = useState(false);
     const [selectable, setSelectable] = useState<boolean>(false)
+    const { academicYear: academicYearId } = useSchoolCalendarKey()
     const [attendanceHeaders, setattendanceHeaders] = useState<any>([])
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
+    const [seeReason, setSeeReason] = useRecoilState(ReasonOfAbsenseState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
     const [pagination, setPagination] = useState({ page: 1, pageSize: 50, totalPages: 0, totalElements: 0 })
-    const { academicYear, grade, class: section, schoolName, school, selectedDate, attendanceMode } = urlParameters;
+    const { schoolName, school, selectedDate, attendanceMode } = urlParameters;
+    const { getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
-    const { academicYear: academicYearId } = useSchoolCalendarKey()
-    const [seeReason, setSeeReason] = useRecoilState(ReasonOfAbsenseState)
 
     useEffect(() => {
         if (selectedDay.occurredAfter && selectedDay.occurredBefore) {
@@ -41,13 +42,12 @@ export default function Attendance() {
                 page: pagination.page,
                 pageSize: pagination.pageSize,
                 program: program!?.id as string,
-                orgUnit: school!,
+                orgUnit: urlParameters?.school!,
                 baseProgramStage: dataStoreData?.registration?.programStage,
                 attributeFilters: filterState.attributes,
                 dataElementFilters: [
-                    ...(academicYear ? [`${academicYearId}:in:${academicYear}`] : []),
-                    ...(grade ? [`${dataStoreData.registration.grade}:in:${grade}`] : []),
-                    ...(section ? [`${dataStoreData.registration.section}:in:${section}`] : []),
+                    ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
+                    ...getFilters() as unknown as any
                 ],
                 attendanceConfig: dataStoreData?.attendance as unknown as any,
                 ...selectedDay,
@@ -55,7 +55,7 @@ export default function Attendance() {
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
             }).then(() => setIsTableReady(true))
         }
-    }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, refetch, academicYear, grade, section, school, selectedDate, attendanceMode])
+    }, [filterState.attributes, pagination.page, pagination.pageSize, selectedDay, refetch, urlParameters])
 
     useEffect(() => {
         let copy: any = []
@@ -103,6 +103,7 @@ export default function Attendance() {
                                     selectedDataStoreKey={dataStoreData}
                                     setSelectedDates={setSelectedDates}
                                     setSelectable={setSelectable}
+                                    setRefetch={setRefetch}
                                 />
                             }
                             beforeSettings={

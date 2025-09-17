@@ -15,7 +15,7 @@ import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { useSchoolCalendarKey } from 'dhis2-semis-components';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { selectable, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, setSelectable } = props
+    const { selectable, setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, setSelectable } = props
     const { baseUrl } = useConfig()
     const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
@@ -26,7 +26,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
     const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
-    const { areAllSelected } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
+    const { areAllSelected, getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { hide, show } = useShowAlerts()
     const { schoolCalendar, defaults, academicYear: academicYearId } = useSchoolCalendarKey()
     const defaultAcademicYear = schoolCalendar?.find((x: any) => x?.academicYear?.code == defaults?.academicYear)
@@ -47,6 +47,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 sectionType={sectionName}
                 selectedSectionDataStore={selectedDataStoreKey}
                 updating={false}
+                onClose={() => setRefetch((prev: any) => !prev)}
                 title={"Bulk Attendance"}
             />,
             divider: true,
@@ -57,8 +58,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 Form={Form}
                 eventFilters={[
                     ...(academicYear ? [`${academicYearId}:in:${academicYear}`] : []),
-                    ...(grade ? [`${selectedDataStoreKey.registration.grade}:in:${grade}`] : []),
-                    ...(section ? [`${selectedDataStoreKey.registration.section}:in:${section}`] : []),
+                    ...getFilters() as unknown as any
                 ]}
                 baseURL={baseUrl}
                 label={`Export ${sectionName}s atendances`}
