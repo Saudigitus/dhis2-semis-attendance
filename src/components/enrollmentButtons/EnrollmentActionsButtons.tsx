@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ButtonStrip, IconUserGroup16, IconAddCircle24 } from "@dhis2/ui";
 import styles from './enrollmentActionsButtons.module.css'
-import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays, useShowAlerts, useCheckFilters } from 'dhis2-semis-functions';
+import { useGetSectionTypeLabel, useUrlParams, unavailableSchoolDays, useShowAlerts, useCheckFilters, useIncrementDays } from 'dhis2-semis-functions';
 import { Form } from "react-final-form";
 import { DataExporter, DataImporter, CustomDropdown as DropdownButton, DropDownCalendar } from 'dhis2-semis-components';
 import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeaders';
@@ -15,14 +15,14 @@ import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { useSchoolCalendarKey } from 'dhis2-semis-components';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { selectable, setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, setSelectable } = props
+    const { setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, setSelectable } = props
     const { baseUrl } = useConfig()
     const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
     const { sectionName } = useGetSectionTypeLabel();
     const { unavailableDays } = unavailableSchoolDays()
     const [editModeValue, setEditModeValue] = useState<any>("")
-    const { school: orgUnit, class: section, grade, academicYear, attendanceMode, selectedDate } = urlParameters;
+    const { school: orgUnit, academicYear, attendanceMode, selectedDate } = urlParameters;
     const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
     const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
@@ -30,7 +30,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { hide, show } = useShowAlerts()
     const { schoolCalendar, defaults, academicYear: academicYearId } = useSchoolCalendarKey()
     const defaultAcademicYear = schoolCalendar?.find((x: any) => x?.academicYear?.code == defaults?.academicYear)
-
+    const { getDate } = useIncrementDays()
     const showAlert = (error: any) => {
         show({ message: `Unknown error: ${error}`, type: { critical: true } })
         setTimeout(hide, 5000);
@@ -84,8 +84,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
             add('attendanceMode', 'view')
             add('selectedDate', formated)
             getValidDays(start, defaultAcademicYear)
-
-            setSelectedDates((prev: any) => ({ occurredAfter: fiveDaysBefore, occurredBefore: formated }))
+            setSelectedDates((prev: any) => ({ occurredAfter: fiveDaysBefore, occurredBefore: getDate({ selectedDate: start }) }))
         }
     }, [viewModeValue])
 
@@ -97,7 +96,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
             add('selectedDate', currentDate)
             add('attendanceMode', 'edit')
 
-            setSelectedDates((prev: any) => ({ occurredAfter: fiveDaysBefore, occurredBefore: currentDate }))
+            setSelectedDates((prev: any) => ({ occurredAfter: fiveDaysBefore, occurredBefore: getDate({ selectedDate: new Date(currentDate) }) }))
             getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage)
         }
     }, [editModeValue])

@@ -74,6 +74,7 @@ export function tableDataFormatter() {
                     if (head?.id === attendance.status) options = attendance.statusOptions
                     else options = head?.options?.optionSet?.options?.map((option: any) => { return { ...option, code: option.value } }) ?? []
 
+                    // console.log(copyData[index],selectedDate)
                     if (copyData[index]?.[selectedDate!]) {
                         if (head?.id === attendance.absenceReason) status = options.find((x: any) => x.code === copyData[index][selectedDate!]['absenceOption'])?.code
                         else status = options.find((x: any) => x.code === copyData?.[index]?.[selectedDate!]?.['status'])?.code

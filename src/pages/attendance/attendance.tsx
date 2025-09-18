@@ -69,7 +69,7 @@ export default function Attendance() {
 
         setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages, totalElements: tableData.pagination.totalElements }))
         setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)], attendanceHeaders))
-    }, [tableData, reorganizeData, attendanceMode, seeReason,])
+    }, [tableData, reorganizeData, attendanceMode, seeReason])
 
     return (
         <div style={{ height: "85vh" }}>
