@@ -84,6 +84,7 @@ export default function Attendance() {
                             viewPortWidth={viewPortWidth}
                             columns={[
                                 ...(columns ?? []).filter(x => x.visible && x.type !== VariablesTypes.DataElement),
+                                ...(columns ?? []).filter(x => dataStoreData?.filters?.dataElements?.some(y => y.dataElement == x.id)),
                                 ...(Array.isArray(attendanceHeaders) ? attendanceHeaders : []),
                             ]}
                             selected={selected}
