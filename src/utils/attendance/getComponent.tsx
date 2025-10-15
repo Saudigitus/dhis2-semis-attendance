@@ -28,9 +28,9 @@ export const getComponent = (option: any, attendanceConst: any, disabled = false
                             sx: { textTransform: 'capitalize' }
                         }
                     }}
-                    disableHoverListener={option?.ConfigKey === 'Absense'}
+                    disableHoverListener={option?.configKey === 'Absense'}
                 >
-                    {codeComponent?.[option?.ConfigKey] ?? <ExitToApp style={disabled ? styles : { color: "#28AFEA" }} />}
+                    {codeComponent?.[option?.configKey] ?? <ExitToApp style={disabled ? styles : { color: "#28AFEA" }} />}
                 </Tooltip>
             }
         </>

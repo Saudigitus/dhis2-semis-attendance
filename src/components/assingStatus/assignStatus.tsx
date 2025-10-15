@@ -78,7 +78,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                     onSave={async () => {
                         setOpenMarkAll(false)
                         disable(true)
-                        const status = statusOptions.find((x: any) => x.ConfigKey === 'presentCode')?.code
+                        const status = statusOptions.find((x: any) => x.configKey === 'presentCode')?.code
                         await formSubmit({ status }, tableValues.filter(x => x?.status !== "CANCELLED"))
                     }}
                     open={openMarkAll}

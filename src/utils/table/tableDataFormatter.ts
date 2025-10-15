@@ -10,15 +10,14 @@ export function tableDataFormatter() {
     const seeReason = useRecoilValue(ReasonOfAbsenseState)
     const { attendanceConst } = useAttendanceConst()
     const { getAttendanceIcon } = getAttendanceComponent()
-    const { dataStoreData } = useGetSelectedKeys()
+    const { dataStoreData = {} as unknown as any } = useGetSelectedKeys()
     const { attendance } = dataStoreData
-    const { statusOptions } = attendance
     const { urlParameters } = useUrlParams()
     const { selectedDate } = urlParameters
 
     function formatData(data: any[], headers: any[] = []): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/
-        const empty = { ConfigKey: 'Empty', code: 'Empty' }
+        const empty = { configKey: 'Empty', code: 'Empty' }
         let copyData = data.map(item => ({ ...item })), configKey: any = {}
 
         if (headers?.some(item => regex.test(item?.id))) {
@@ -29,11 +28,11 @@ export function tableDataFormatter() {
                         const icon = getComponent(empty, attendanceConst)
                         copyData[index][head?.id] = icon
                     } else {
-                        configKey = (statusOptions as unknown as any)?.find((x: any) => x.code === data?.[index]?.[head?.id]?.['status'])
+                        configKey = (attendance?.statusOptions as unknown as any)?.find((x: any) => x.code === data?.[index]?.[head?.id]?.['status'])
 
-                        if (seeReason && configKey?.ConfigKey == attendanceConst('absentCode')) {
+                        if (seeReason && configKey?.configKey == attendanceConst('absentCode')) {
                             const status = data?.[index]?.[head?.id]?.absenceOption
-                            configKey = { ConfigKey: 'Absense', code: status ?? '--' }
+                            configKey = { configKey: 'Absense', code: status ?? '--' }
                         }
 
                         const icon = getComponent(configKey, attendanceConst, data?.[index]?.status == 'CANCELLED', seeReason)
@@ -45,7 +44,7 @@ export function tableDataFormatter() {
             for (const head of headers?.filter((x) => !x.schoolDay)) {
                 for (let index = 0; index < copyData.length; index++) {
                     const icon = getComponent({
-                        ConfigKey: 'NonSchoolDay',
+                        configKey: 'NonSchoolDay',
                         code: 'NonSchoolDay'
                     }, attendanceConst)
                     copyData[index][head?.id] = icon
@@ -55,7 +54,7 @@ export function tableDataFormatter() {
             for (const head of headers) {
                 for (let index = 0; index < copyData.length; index++) {
                     let options: any = [], status = "", icon: any = '--'
-                    const configKey = (statusOptions as unknown as any)?.find((x: any) => x.code === copyData?.[index]?.[selectedDate!]?.['status'])?.ConfigKey
+                    const configKey = (attendance?.statusOptions as unknown as any)?.find((x: any) => x.code === copyData?.[index]?.[selectedDate!]?.['status'])?.configKey
 
                     const props = {
                         event: copyData[index]?.[selectedDate!]?.eventId,
@@ -71,7 +70,7 @@ export function tableDataFormatter() {
                         statusDataElement: attendance.status,
                     }
 
-                    if (head?.id === attendance.status) options = attendance.statusOptions
+                    if (head?.id === attendance.status) options = attendance?.statusOptions
                     else options = head?.options?.optionSet?.options?.map((option: any) => { return { ...option, code: option.value } }) ?? []
 
                     // console.log(copyData[index],selectedDate)

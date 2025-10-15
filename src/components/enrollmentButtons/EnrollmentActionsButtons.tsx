@@ -61,6 +61,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                     ...getFilters() as unknown as any
                 ]}
                 baseURL={baseUrl}
+                isSchoolDay={unavailableDays}
                 label={`Export ${sectionName}s atendances`}
                 module='attendance'
                 onError={(e: any) => { showAlert(e) }}
