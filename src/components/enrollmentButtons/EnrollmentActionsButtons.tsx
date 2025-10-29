@@ -33,7 +33,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const defaultAcademicYear = schoolCalendar?.find((x: any) => x?.academicYear?.code == defaults?.academicYear)
     const { getDate } = useIncrementDays()
     const showAlert = (error: any) => {
-        show({ message: `${i18n.t('unknown_error')}: ${error}`, type: { critical: true } })
+        show({ message: `${i18n.t('Unknown error')}: ${error}`, type: { critical: true } })
         setTimeout(hide, 5000);
     }
 
@@ -49,7 +49,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 selectedSectionDataStore={selectedDataStoreKey}
                 updating={false}
                 onClose={() => setRefetch((prev: any) => !prev)}
-                title={i18n.t('bulk_attendance')!}
+                title={i18n.t('Bulk attendance')!}
             />,
             divider: true,
             disabled: false,
@@ -107,19 +107,19 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         <div className={styles.container}>
             <ButtonStrip className={styles.work_buttons}>
                 {/* {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckCircleOutlined />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>} */}
-                <Tooltip title={orgUnit === null ? i18n.t('please_select_an_organisation_unit_before') : ""}>
-                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('take_attendance')!} icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue(() => ({ ...e }))} value={editModeValue} />
+                <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
+                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('Take attendance')!} icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue(() => ({ ...e }))} value={editModeValue} />
                 </Tooltip>
 
-                <Tooltip title={orgUnit === null ? i18n.t('please_select_an_organisation_unit_before') : ""}>
-                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('view_attendance_records')!} icon={<Event />} setValue={(e) => setViewModeValue(() => ({ ...e }))} value={viewModeValue} />
+                <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
+                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('View attendance records')!} icon={<Event />} setValue={(e) => setViewModeValue(() => ({ ...e }))} value={viewModeValue} />
                 </Tooltip>
 
                 {attendanceMode != 'edit' &&
-                    <Tooltip title={!areAllSelected() ? i18n.t("please_select_all_filters") : ""}>
+                    <Tooltip title={!areAllSelected() ? i18n.t("Please select all filters") : ""}>
                         <span>
                             <DropdownButton
-                                name={<span className={styles.work_buttons_text}>{i18n.t('bulk_attendance')}</span> as unknown as string}
+                                name={<span className={styles.work_buttons_text}>{i18n.t('Bulk attendance')}</span> as unknown as string}
                                 disabled={!!(orgUnit == undefined || !areAllSelected() || academicYear == undefined)}
                                 icon={<IconUserGroup16 />}
                                 options={enrollmentOptions}

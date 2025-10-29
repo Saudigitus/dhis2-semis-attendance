@@ -41,7 +41,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                     disableHoverListener={selected?.length !== 0}
                     disableFocusListener={selected?.length !== 0}
                     disableTouchListener={selected?.length !== 0}
-                    title={i18n.t("you_need_to_select_students_first")}
+                    title={i18n.t("You need to select students first")}
                 >
                     <span>
                         <Button
@@ -51,14 +51,14 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                             }} icon={<PlaylistAddCheckCircleOutlined />}
                             className={styles.btn}
                         >
-                            <span>{i18n.t('assing_attendace')}</span>
+                            <span>{i18n.t('Assing attendace')}</span>
                         </Button >
                     </span>
                 </Tooltip>
             }
 
             <Tooltip
-                title={selectable ? i18n.t("disable_multi_attendance_mode") : i18n.t("it_will_assign_the_same_attendance_status_to_all_visible_students_in_the_table")}
+                title={selectable ? i18n.t("Disable multi attendance mode") : i18n.t("It will assign the same attendance status to all visible students in the table")}
             >
                 <span>
                     <Button
@@ -68,7 +68,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                         icon={<CheckCircleOutline style={selectable ? { color: 'rgba(0, 0, 0, 0.3)' } : { color: "#21B26D" }} />}
                         className={classNames(styles.btn, selectable && styles.markAll)}
                     >
-                        <span>{i18n.t("mark_all_as_present")}</span>
+                        <span>{i18n.t("Mark all as present")}</span>
                     </Button >
                 </span>
             </Tooltip>
@@ -89,8 +89,8 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
             {
                 open && <ModalComponent
                     children={<WithPadding>
-                        <NoticeBox title={`${i18n.t('warning')}! ${selected.length} ${i18n.t("students_will_be_affected")}`} warning>
-                            {i18n.t("the_chosen_attendance_status_will_be_assigned_to_the_selected_students")}
+                        <NoticeBox title={`${i18n.t('Warning')}! ${selected.length} ${i18n.t("Students will be affected")}`} warning>
+                            {i18n.t("The chosen attendance status will be assigned to the selected students")}
                         </NoticeBox>
                         <WithPadding />
                         <WithBorder type="all" >
@@ -102,7 +102,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                                     formFields={[
                                         {
                                             storyBook: false,
-                                            name: `${i18n.t('attendance')!}`,
+                                            name: `${i18n.t('Attendance')!}`,
                                             description: "",
                                             fields: [...staticForm(attendaceStatus) as unknown as any]
                                         }
@@ -117,7 +117,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                     </WithPadding>}
                     open={open}
                     handleClose={() => setOpen(false)}
-                    title={i18n.t('bulk_attendance')}
+                    title={i18n.t('Bulk attendance')}
                 />
             }
         </>

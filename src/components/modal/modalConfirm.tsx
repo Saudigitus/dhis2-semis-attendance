@@ -8,11 +8,11 @@ export default function ConfirmModal({ open, setOpen, onSave, i18n }: { i18n: D2
         <ModalComponent
             children={
                 <div>
-                    <NoticeBox title={`${i18n.t('warning')}! ${i18n.t("all_listed_students_will_be_affected")}`} warning>
-                        {i18n.t("the_present_attendance_status_will_be_assigned_to_all_students")}!
+                    <NoticeBox title={`${i18n.t('Warning')}! ${i18n.t("All listed students will be affected")}`} warning>
+                        {i18n.t("The present attendance status will be assigned to all students")}!
                     </NoticeBox>
 
-                    <p style={{ margin: "25px 0" }}>{i18n.t("are_you_sure_you_want_to_mark_all_as_present?")}</p>
+                    <p style={{ margin: "25px 0" }}>{i18n.t("Are you sure you want to mark all as present?")}</p>
                 </div>
             }
             handleClose={() => setOpen(false)}
@@ -21,8 +21,8 @@ export default function ConfirmModal({ open, setOpen, onSave, i18n }: { i18n: D2
             size='medium'
             position='top'
             actions={[
-                { name: i18n.t("cancel"), onClick: () => setOpen(false) },
-                { name: i18n.t("yes_im_sure"), destructive: true, onClick: async () => onSave() }
+                { name: i18n.t("Cancel"), onClick: () => setOpen(false) },
+                { name: i18n.t("Yes im sure"), destructive: true, onClick: async () => onSave() }
             ] as unknown as any}
         />
     )

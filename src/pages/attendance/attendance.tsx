@@ -80,7 +80,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                     <>
                         <Table
                             programConfig={program as unknown as any}
-                            title={i18n.t('attendance_title')}
+                            title={i18n.t('Attendance title')}
                             viewPortWidth={viewPortWidth}
                             columns={[
                                 ...(columns ?? []).filter(x => x.visible && x.type !== VariablesTypes.DataElement),
@@ -121,11 +121,11 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                                             i18n={i18n}
                                         />
                                         <Chip selected>
-                                            {`${i18n.t('selected_date')}: ${selectedDate && format(new Date(selectedDate), 'dd/MM/yyyy')}`}
+                                            {`${i18n.t('Selected date')}: ${selectedDate && format(new Date(selectedDate), 'dd/MM/yyyy')}`}
                                         </Chip>
                                     </>
                                     : <Button onClick={() => setSeeReason(!seeReason)} icon={seeReason ? <IconViewOff24 /> : <IconView24 />}>
-                                        {seeReason ? i18n.t('hide_reason_of_absense') : i18n.t('view_teason_of_absense')}
+                                        {seeReason ? i18n.t('Hide reason of absense') : i18n.t('View teason of absense')}
                                     </Button>
                             }
                             setFilterState={setFilterState}
