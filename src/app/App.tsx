@@ -3,20 +3,23 @@ import { Router } from '../components/routes'
 import { HashRouter } from 'react-router-dom'
 import { AppWrapper } from 'dhis2-semis-components'
 import { useConfig } from '@dhis2/app-runtime'
+import { D2I18n } from 'dhis2-semis-types'
+import i18next from '../locales/index'
 
-const App = () => {
+const App = ({ i18n }: { i18n?: D2I18n }) => {
     const { baseUrl } = useConfig()
+    const language = i18n == undefined ? i18next : i18n
 
     return (
-        // <AppWrapper
-        //     baseUrl={baseUrl}
-        //     dataStoreKey="dataStore/semis/values"
-        //     schoolCalendarKey='dataStore/semis/schoolCalendar'
-        // >
-        //     <HashRouter>
-                <Router />
-        //     </HashRouter >
-        // </AppWrapper> 
+        <AppWrapper
+            baseUrl={baseUrl}
+            dataStoreKey="dataStore/semis/values"
+            schoolCalendarKey='dataStore/semis/schoolCalendar'
+        >
+            <HashRouter>
+                <Router i18n={language} />
+            </HashRouter >
+        </AppWrapper>
     )
 }
 

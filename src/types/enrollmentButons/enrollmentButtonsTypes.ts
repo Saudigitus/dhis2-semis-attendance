@@ -1,4 +1,4 @@
-import { ProgramConfig, selectedDataStoreKey } from "dhis2-semis-types"
+import { D2I18n, selectedDataStoreKey } from "dhis2-semis-types"
 
 export interface EnrollmentButtonsProps {
     setSelectedDates: (args: any) => void
@@ -9,4 +9,5 @@ export interface EnrollmentButtonsProps {
     setRefetch: (args: any) => void
     loading: boolean
     selectedDataStoreKey: selectedDataStoreKey
+    i18n: D2I18n
 }

@@ -1,17 +1,18 @@
 import { NoticeBox } from '@dhis2/ui'
 import { ModalComponent } from 'dhis2-semis-components'
+import { D2I18n } from 'dhis2-semis-types'
 
-export default function ConfirmModal({ open, setOpen, onSave }: { onSave: () => void, open: boolean, setOpen: (open: boolean) => void }) {
+export default function ConfirmModal({ open, setOpen, onSave, i18n }: { i18n: D2I18n, onSave: () => void, open: boolean, setOpen: (open: boolean) => void }) {
 
     return (
         <ModalComponent
             children={
                 <div>
-                    <NoticeBox title={`WARNING! All listed students will be affected`} warning>
-                        The present attendance status will be assigned to all students!
+                    <NoticeBox title={`${i18n.t('warning')}! ${i18n.t("all_listed_students_will_be_affected")}`} warning>
+                        {i18n.t("the_present_attendance_status_will_be_assigned_to_all_students")}!
                     </NoticeBox>
 
-                    <p style={{ margin: "25px 0" }}>Are you sure you want to mark all as present?</p>
+                    <p style={{ margin: "25px 0" }}>{i18n.t("are_you_sure_you_want_to_mark_all_as_present?")}</p>
                 </div>
             }
             handleClose={() => setOpen(false)}
@@ -20,8 +21,8 @@ export default function ConfirmModal({ open, setOpen, onSave }: { onSave: () => 
             size='medium'
             position='top'
             actions={[
-                { name: "Cancel", onClick: () => setOpen(false) },
-                { name: "Yes, I'm sure", destructive: true, onClick: async () => onSave() }
+                { name: i18n.t("cancel"), onClick: () => setOpen(false) },
+                { name: i18n.t("yes_im_sure"), destructive: true, onClick: async () => onSave() }
             ] as unknown as any}
         />
     )
