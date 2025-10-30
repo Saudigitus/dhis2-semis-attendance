@@ -4,11 +4,11 @@ import { HashRouter } from 'react-router-dom'
 import { AppWrapper } from 'dhis2-semis-components'
 import { useConfig } from '@dhis2/app-runtime'
 import { D2I18n } from 'dhis2-semis-types'
-import i18next from '../locales/index'
+import translation from '../locales/index'
 
 const App = ({ i18n }: { i18n?: D2I18n }) => {
     const { baseUrl } = useConfig()
-    const language = i18n == undefined ? i18next : i18n
+    const language = i18n == undefined ? translation : i18n
 
     return (
         <AppWrapper
