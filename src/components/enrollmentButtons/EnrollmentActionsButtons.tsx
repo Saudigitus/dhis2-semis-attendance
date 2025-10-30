@@ -16,7 +16,6 @@ import { useSchoolCalendarKey } from 'dhis2-semis-components';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n } = props
-    console.log(i18n,'laaaaaaaaaaaaaa')
     const { baseUrl } = useConfig()
     const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
@@ -41,7 +40,9 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         {
             label: <DataImporter
                 baseURL={baseUrl}
-                label={`Import ${sectionName}s atendances`}
+                label={i18n.t('Import {{section}} atendances', {
+                    section: `${i18n.t(sectionName)}s`,
+                })}
                 module='attendance'
                 onError={(e: any) => { showAlert(e) }}
                 programConfig={programData!}
@@ -63,7 +64,9 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 ]}
                 baseURL={baseUrl}
                 isSchoolDay={unavailableDays}
-                label={`Export ${sectionName}s atendances`}
+                label={i18n.t('Export {{section}} atendances', {
+                    section: `${i18n.t(sectionName)}s`,
+                })}
                 module='attendance'
                 onError={(e: any) => { showAlert(e) }}
                 programConfig={programData!}

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-10-29T14:20:18.452Z\n"
-"PO-Revision-Date: 2025-10-29T14:20:18.453Z\n"
+"POT-Creation-Date: 2025-10-30T14:14:30.752Z\n"
+"PO-Revision-Date: 2025-10-30T14:14:30.752Z\n"
 
 msgid "You need to select students first"
 msgstr "You need to select students first"
@@ -44,6 +44,12 @@ msgstr "Bulk attendance"
 
 msgid "Unknown error"
 msgstr "Unknown error"
+
+msgid "Import {{section}} atendances"
+msgstr "Import {{section}} atendances"
+
+msgid "Export {{section}} atendances"
+msgstr "Export {{section}} atendances"
 
 msgid "Please select an organisation unit before"
 msgstr "Please select an organisation unit before"
@@ -83,3 +89,15 @@ msgstr "Hide reason of absense"
 
 msgid "View teason of absense"
 msgstr "View teason of absense"
+
+msgid "SEMIS-Attendance"
+msgstr "SEMIS-Attendance"
+
+msgid "Follow the instructions to proceed"
+msgstr "Follow the instructions to proceed"
+
+msgid "Select the Organization unit you want to view data"
+msgstr "Select the Organization unit you want to view data"
+
+msgid "Use global filters(Class, Grade and Academic Year)"
+msgstr "Use global filters(Class, Grade and Academic Year)"
