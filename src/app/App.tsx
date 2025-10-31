@@ -11,15 +11,15 @@ const App = ({ i18n }: { i18n?: D2I18n }) => {
     const language = i18n == undefined ? translation : i18n
 
     return (
-        <AppWrapper
-            baseUrl={baseUrl}
-            dataStoreKey="dataStore/semis/values"
-            schoolCalendarKey='dataStore/semis/schoolCalendar'
-        >
-            <HashRouter>
+        // <AppWrapper
+        //     baseUrl={baseUrl}
+        //     dataStoreKey="dataStore/semis/values"
+        //     schoolCalendarKey='dataStore/semis/schoolCalendar'
+        // >
+        //     <HashRouter>
                 <Router i18n={language} />
-            </HashRouter >
-        </AppWrapper>
+        //     </HashRouter >
+        // </AppWrapper>
     )
 }
 
