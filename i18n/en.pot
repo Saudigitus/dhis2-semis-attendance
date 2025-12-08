@@ -5,13 +5,99 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-04-21T13:25:50.964Z\n"
-"PO-Revision-Date: 2025-04-21T13:25:50.965Z\n"
+"POT-Creation-Date: 2025-10-30T14:14:30.752Z\n"
+"PO-Revision-Date: 2025-10-30T14:14:30.752Z\n"
 
-msgctxt "Application title"
-msgid "__MANIFEST_APP_TITLE"
+msgid "You need to select students first"
+msgstr "You need to select students first"
+
+msgid "Assing attendace"
+msgstr "Assing attendace"
+
+msgid "Disable multi attendance mode"
+msgstr "Disable multi attendance mode"
+
+msgid ""
+"It will assign the same attendance status to all visible students in the "
+"table"
+msgstr ""
+"It will assign the same attendance status to all visible students in the "
+"table"
+
+msgid "Mark all as present"
+msgstr "Mark all as present"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "Students will be affected"
+msgstr "Students will be affected"
+
+msgid "The chosen attendance status will be assigned to the selected students"
+msgstr "The chosen attendance status will be assigned to the selected students"
+
+msgid "Attendance"
+msgstr "Attendance"
+
+msgid "Bulk attendance"
+msgstr "Bulk attendance"
+
+msgid "Unknown error"
+msgstr "Unknown error"
+
+msgid "Import {{section}} atendances"
+msgstr "Import {{section}} atendances"
+
+msgid "Export {{section}} atendances"
+msgstr "Export {{section}} atendances"
+
+msgid "Please select an organisation unit before"
+msgstr "Please select an organisation unit before"
+
+msgid "Take attendance"
+msgstr "Take attendance"
+
+msgid "View attendance records"
+msgstr "View attendance records"
+
+msgid "Please select all filters"
+msgstr "Please select all filters"
+
+msgid "All listed students will be affected"
+msgstr "All listed students will be affected"
+
+msgid "The present attendance status will be assigned to all students"
+msgstr "The present attendance status will be assigned to all students"
+
+msgid "Are you sure you want to mark all as present?"
+msgstr "Are you sure you want to mark all as present?"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Yes im sure"
+msgstr "Yes im sure"
+
+msgid "Attendance title"
+msgstr "Attendance title"
+
+msgid "Selected date"
+msgstr "Selected date"
+
+msgid "Hide reason of absense"
+msgstr "Hide reason of absense"
+
+msgid "View teason of absense"
+msgstr "View teason of absense"
+
+msgid "SEMIS-Attendance"
 msgstr "SEMIS-Attendance"
 
-msgctxt "Application description"
-msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr "SEMIS-Attendance"
+msgid "Follow the instructions to proceed"
+msgstr "Follow the instructions to proceed"
+
+msgid "Select the Organization unit you want to view data"
+msgstr "Select the Organization unit you want to view data"
+
+msgid "Use global filters(Class, Grade and Academic Year)"
+msgstr "Use global filters(Class, Grade and Academic Year)"

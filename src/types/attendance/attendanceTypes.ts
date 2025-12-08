@@ -1,4 +1,4 @@
-import { DataStoreProps } from "dhis2-semis-types"
+import { D2I18n, DataStoreProps } from "dhis2-semis-types"
 
 export interface useDaveValuesProps {
     setOpen: (args: boolean) => void
@@ -15,4 +15,5 @@ export interface attendanceFormProps {
     programData: any
     selected: any[]
     school: string
+    i18n: D2I18n
 }

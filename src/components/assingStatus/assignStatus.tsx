@@ -16,7 +16,7 @@ import useGetSelectedKeys from "../../hooks/config/useGetSelectedKeys";
 import ConfirmModal from "../modal/modalConfirm";
 import { useUrlParams } from "dhis2-semis-functions";
 
-export default function AsssignStatus({ setSelected, selected, school, programData, setRefetch, selectable }: attendanceFormProps) {
+export default function AsssignStatus({ setSelected, selected, school, programData, setRefetch, selectable, i18n }: attendanceFormProps) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [openMarkAll, setOpenMarkAll] = useState(false)
@@ -41,7 +41,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                     disableHoverListener={selected?.length !== 0}
                     disableFocusListener={selected?.length !== 0}
                     disableTouchListener={selected?.length !== 0}
-                    title="You need to select students first"
+                    title={i18n.t("You need to select students first")}
                 >
                     <span>
                         <Button
@@ -51,14 +51,14 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                             }} icon={<PlaylistAddCheckCircleOutlined />}
                             className={styles.btn}
                         >
-                            <span>Assing attendace</span>
+                            <span>{i18n.t('Assing attendace')}</span>
                         </Button >
                     </span>
                 </Tooltip>
             }
 
             <Tooltip
-                title={selectable ? "Disable multi-attendance mode" : "It will assign the same attendance status to all visible students in the table"}
+                title={selectable ? i18n.t("Disable multi attendance mode") : i18n.t("It will assign the same attendance status to all visible students in the table")}
             >
                 <span>
                     <Button
@@ -68,13 +68,14 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                         icon={<CheckCircleOutline style={selectable ? { color: 'rgba(0, 0, 0, 0.3)' } : { color: "#21B26D" }} />}
                         className={classNames(styles.btn, selectable && styles.markAll)}
                     >
-                        <span>Mark all as present</span>
+                        <span>{i18n.t("Mark all as present")}</span>
                     </Button >
                 </span>
             </Tooltip>
 
             {
                 openMarkAll && <ConfirmModal
+                    i18n={i18n}
                     onSave={async () => {
                         setOpenMarkAll(false)
                         disable(true)
@@ -88,8 +89,8 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
             {
                 open && <ModalComponent
                     children={<WithPadding>
-                        <NoticeBox title={`WARNING! ${selected.length} students will be affected`} warning>
-                            The chosen attendance status will be assigned to the selected students
+                        <NoticeBox title={`${i18n.t('Warning')}! ${selected.length} ${i18n.t("Students will be affected")}`} warning>
+                            {i18n.t("The chosen attendance status will be assigned to the selected students")}
                         </NoticeBox>
                         <WithPadding />
                         <WithBorder type="all" >
@@ -101,7 +102,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                                     formFields={[
                                         {
                                             storyBook: false,
-                                            name: "Attendance",
+                                            name: `${i18n.t('Attendance')!}`,
                                             description: "",
                                             fields: [...staticForm(attendaceStatus) as unknown as any]
                                         }
@@ -116,7 +117,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                     </WithPadding>}
                     open={open}
                     handleClose={() => setOpen(false)}
-                    title="Bulk Attendance"
+                    title={i18n.t('Bulk attendance')}
                 />
             }
         </>

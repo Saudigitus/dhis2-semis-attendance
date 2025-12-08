@@ -15,7 +15,7 @@ import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { useSchoolCalendarKey } from 'dhis2-semis-components';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, setSelectable } = props
+    const { setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n } = props
     const { baseUrl } = useConfig()
     const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
@@ -32,7 +32,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const defaultAcademicYear = schoolCalendar?.find((x: any) => x?.academicYear?.code == defaults?.academicYear)
     const { getDate } = useIncrementDays()
     const showAlert = (error: any) => {
-        show({ message: `Unknown error: ${error}`, type: { critical: true } })
+        show({ message: `${i18n.t('Unknown error')}: ${error}`, type: { critical: true } })
         setTimeout(hide, 5000);
     }
 
@@ -40,7 +40,9 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         {
             label: <DataImporter
                 baseURL={baseUrl}
-                label={`Import ${sectionName}s atendances`}
+                label={i18n.t('Import {{section}} atendances', {
+                    section: `${i18n.t(sectionName)}s`,
+                })}
                 module='attendance'
                 onError={(e: any) => { showAlert(e) }}
                 programConfig={programData!}
@@ -48,7 +50,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 selectedSectionDataStore={selectedDataStoreKey}
                 updating={false}
                 onClose={() => setRefetch((prev: any) => !prev)}
-                title={"Bulk Attendance"}
+                title={i18n.t('Bulk attendance')!}
             />,
             divider: true,
             disabled: false,
@@ -62,7 +64,9 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 ]}
                 baseURL={baseUrl}
                 isSchoolDay={unavailableDays}
-                label={`Export ${sectionName}s atendances`}
+                label={i18n.t('Export {{section}} atendances', {
+                    section: `${i18n.t(sectionName)}s`,
+                })}
                 module='attendance'
                 onError={(e: any) => { showAlert(e) }}
                 programConfig={programData!}
@@ -106,19 +110,19 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         <div className={styles.container}>
             <ButtonStrip className={styles.work_buttons}>
                 {/* {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckCircleOutlined />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>} */}
-                <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label='Take attendance' icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue((prev: any) => ({ ...e }))} value={editModeValue} />
+                <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
+                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('Take attendance')!} icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue(() => ({ ...e }))} value={editModeValue} />
                 </Tooltip>
 
-                <Tooltip title={orgUnit === null ? "Please select an organisation unit before" : ""}>
-                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label='View attendance records' icon={<Event />} setValue={(e) => setViewModeValue((prev: any) => ({ ...e }))} value={viewModeValue} />
+                <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
+                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('View attendance records')!} icon={<Event />} setValue={(e) => setViewModeValue(() => ({ ...e }))} value={viewModeValue} />
                 </Tooltip>
 
                 {attendanceMode != 'edit' &&
-                    <Tooltip title={!areAllSelected() ? "Please select all filters" : ""}>
+                    <Tooltip title={!areAllSelected() ? i18n.t("Please select all filters") : ""}>
                         <span>
                             <DropdownButton
-                                name={<span className={styles.work_buttons_text}>Bulk Attendance</span> as unknown as string}
+                                name={<span className={styles.work_buttons_text}>{i18n.t('Bulk attendance')}</span> as unknown as string}
                                 disabled={!!(orgUnit == undefined || !areAllSelected() || academicYear == undefined)}
                                 icon={<IconUserGroup16 />}
                                 options={enrollmentOptions}

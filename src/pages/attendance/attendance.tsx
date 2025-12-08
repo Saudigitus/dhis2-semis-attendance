@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { ProgramConfig, VariablesTypes } from 'dhis2-semis-types'
+import { ProgramConfig, VariablesTypes, D2I18n } from 'dhis2-semis-types'
 import React, { useEffect, useMemo, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
 import { Table, useSchoolCalendarKey } from "dhis2-semis-components";
@@ -14,7 +14,7 @@ import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { Button, IconView24, IconViewOff24, Chip } from "@dhis2/ui";
 import { format } from 'date-fns'
 
-export default function Attendance() {
+export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { program, dataStoreData } = useGetSelectedKeys()
     const { urlParameters } = useUrlParams(['position']);
     const { formatData } = tableDataFormatter()
@@ -75,12 +75,12 @@ export default function Attendance() {
         <div style={{ height: "85vh" }}>
             {
                 !(Boolean(schoolName) && Boolean(school)) ?
-                    <InfoPageHolder />
+                    <InfoPageHolder i18n={i18n} />
                     :
                     <>
                         <Table
                             programConfig={program as unknown as any}
-                            title="Attendance"
+                            title={i18n.t('Attendance title')}
                             viewPortWidth={viewPortWidth}
                             columns={[
                                 ...(columns ?? []).filter(x => x.visible && x.type !== VariablesTypes.DataElement),
@@ -104,6 +104,7 @@ export default function Attendance() {
                                     selectedDataStoreKey={dataStoreData}
                                     setSelectedDates={setSelectedDates}
                                     setSelectable={setSelectable}
+                                    i18n={i18n}
                                     setRefetch={setRefetch}
                                 />
                             }
@@ -117,13 +118,14 @@ export default function Attendance() {
                                             school={schoolName!}
                                             selected={selected}
                                             selectable={selectable}
+                                            i18n={i18n}
                                         />
                                         <Chip selected>
-                                            Selected date: {selectedDate && format(new Date(selectedDate), 'dd/MM/yyyy')}
+                                            {`${i18n.t('Selected date')}: ${selectedDate && format(new Date(selectedDate), 'dd/MM/yyyy')}`}
                                         </Chip>
                                     </>
                                     : <Button onClick={() => setSeeReason(!seeReason)} icon={seeReason ? <IconViewOff24 /> : <IconView24 />}>
-                                        {seeReason ? 'Hide Reason of Absense' : 'View Reason of Absense'}
+                                        {seeReason ? i18n.t('Hide reason of absense') : i18n.t('View teason of absense')}
                                     </Button>
                             }
                             setFilterState={setFilterState}
