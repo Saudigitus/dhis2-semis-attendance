@@ -31,13 +31,13 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
     const [pagination, setPagination] = useState({ page: 1, pageSize: 50, totalPages: 0, totalElements: 0 })
     const { schoolName, school, selectedDate, attendanceMode } = urlParameters;
-    const { getFilters } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
+    const { getFilters, areAllSelected } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
 
     useEffect(() => {
-        if (selectedDay?.occurredAfter && selectedDay?.occurredBefore) {
+        if (selectedDay?.occurredAfter && selectedDay?.occurredBefore && areAllSelected()) {
             void getData({
                 page: pagination.page,
                 pageSize: pagination.pageSize,
@@ -74,7 +74,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     return (
         <div style={{ height: "85vh" }}>
             {
-                !(Boolean(schoolName) && Boolean(school)) ?
+                !(Boolean(schoolName) && Boolean(school) && areAllSelected()) ?
                     <InfoPageHolder i18n={i18n} />
                     :
                     <>
@@ -112,6 +112,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                                 attendanceMode == 'edit' ?
                                     <>
                                         <AsssignStatus
+                                            disabled={loading}
                                             setSelected={setSelected}
                                             setRefetch={setRefetch}
                                             programData={program}

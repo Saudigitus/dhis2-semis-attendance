@@ -15,5 +15,6 @@ export interface attendanceFormProps {
     programData: any
     selected: any[]
     school: string
+    disabled: boolean
     i18n: D2I18n
 }

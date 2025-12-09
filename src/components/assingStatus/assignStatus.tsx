@@ -4,21 +4,23 @@ import { WithBorder, ModalComponent, CustomForm, WithPadding } from "dhis2-semis
 import { Form } from "react-final-form";
 import { staticForm } from "../../constants/attendaceForm";
 import styles from './assignStatus.module.css'
-import classNames from "classnames";
-import { Tooltip } from "@mui/material";
+import { CircularProgress, Tooltip } from "@mui/material";
 import { useSaveValues } from "../../hooks/attendance/saveValues";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { TableDataState } from "../../schema/table/tableDataSchema";
 import { attendanceFormProps } from "../../types/attendance/attendanceTypes";
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns";
-import { CheckCircleOutline, PlaylistAddCheckCircleOutlined } from "@mui/icons-material";
+import { PlaylistAddCheckCircleOutlined } from "@mui/icons-material";
 import useGetSelectedKeys from "../../hooks/config/useGetSelectedKeys";
 import ConfirmModal from "../modal/modalConfirm";
 import { useUrlParams } from "dhis2-semis-functions";
+import { IconUserGroup16 } from "@dhis2/ui";
+import { CustomDropdown as DropdownButton } from 'dhis2-semis-components';
 
-export default function AsssignStatus({ setSelected, selected, school, programData, setRefetch, selectable, i18n }: attendanceFormProps) {
+export default function AsssignStatus({ setSelected, selected, school, programData, setRefetch, selectable, i18n, disabled }: attendanceFormProps) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [selectedOption, setSelectedOption] = useState({ value: '', label: '' })
     const [openMarkAll, setOpenMarkAll] = useState(false)
     const tableValues = useRecoilValue(TableDataState)
     const { dataStoreData } = useGetSelectedKeys()
@@ -33,6 +35,16 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
     const disable = useSetRecoilState(DisaleButtonsState)
     const { useQuery } = useUrlParams()
     const date = useQuery.get('selectedDate')!
+
+    const options = attendaceStatus?.filter((x: any) => statusCodes.includes(x.value)).map((item: any) => ({
+        label: item.label,
+        onClick: () => {
+            setSelectedOption({ value: item.value, label: item.label })
+            setOpenMarkAll(true)
+        },
+        value: item.value,
+        divider: true,
+    }))
 
     return (
         <>
@@ -57,21 +69,14 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                 </Tooltip>
             }
 
-            <Tooltip
-                title={selectable ? i18n.t("Disable multi attendance mode") : i18n.t("It will assign the same attendance status to all visible students in the table")}
-            >
-                <span>
-                    <Button
-                        loading={loading && !selectable}
-                        disabled={selectable}
-                        onClick={() => setOpenMarkAll(true)}
-                        icon={<CheckCircleOutline style={selectable ? { color: 'rgba(0, 0, 0, 0.3)' } : { color: "#21B26D" }} />}
-                        className={classNames(styles.btn, selectable && styles.markAll)}
-                    >
-                        <span>{i18n.t("Mark all as present")}</span>
-                    </Button >
-                </span>
-            </Tooltip>
+            <span>
+                <DropdownButton
+                    name={<span className={styles.work_buttons_text}>{i18n.t('Mark all as')}</span> as unknown as string}
+                    icon={loading ? <CircularProgress size={14} /> : <IconUserGroup16 />}
+                    options={options}
+                    disabled={disabled || loading}
+                />
+            </span>
 
             {
                 openMarkAll && <ConfirmModal
@@ -79,10 +84,10 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                     onSave={async () => {
                         setOpenMarkAll(false)
                         disable(true)
-                        const status = statusOptions.find((x: any) => x.configKey === 'presentCode')?.code
-                        await formSubmit({ status }, tableValues.filter(x => x?.status !== "CANCELLED"))
+                        await formSubmit({ status: selectedOption.value }, tableValues.filter(x => x?.status !== "CANCELLED"))
                     }}
                     open={openMarkAll}
+                    selectedOption={selectedOption}
                     setOpen={setOpenMarkAll}
                 />
             }
