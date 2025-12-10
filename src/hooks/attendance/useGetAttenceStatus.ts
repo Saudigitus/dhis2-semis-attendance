@@ -1,0 +1,54 @@
+import { useCheckFilters, useGetEvents, useUrlParams } from "dhis2-semis-functions"
+import useGetSelectedKeys from "../config/useGetSelectedKeys"
+import { format, subDays } from "date-fns";
+import { useSchoolCalendarKey } from "dhis2-semis-components";
+
+//create a function to get occurredAt and format it to yyyy-MM-dd
+const getOccurredAt = (date: string) => {
+    return format(new Date(date), "yyyy-MM-dd")
+}
+
+// create a function to verify if the getOccurredAt is included in the setattendanceHeaders, 
+// if exist change the color to green and update in the setattendanceHeaders. 
+
+const verifyOccurredAt = (date: string, setattendanceHeaders: any) => {
+    const occurredAt = getOccurredAt(date)
+    setattendanceHeaders((prev: any[]) => {
+        const index = prev.findIndex((header: any) => header.id === occurredAt);
+
+        if (index !== -1) {
+            const newHeaders = [...prev];
+            newHeaders[index].color = "green";
+            return newHeaders;
+        }
+        return prev;
+    });
+}
+
+export const useGetAttenceStatus = ({ setattendanceHeaders }: { setattendanceHeaders: (args: any) => void }) => {
+    const { getEvents } = useGetEvents()
+    const { urlParameters } = useUrlParams();
+    const { dataStoreData } = useGetSelectedKeys()
+    const { school: orgUnit, academicYear } = urlParameters;
+    const { academicYear: academicYearId } = useSchoolCalendarKey()
+    const { getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
+
+    async function getEnrollmentStatus(start: any) {
+        const data = await getEvents({
+            program: dataStoreData.attendance.attendanceStatus?.program,
+            fields: "occurredAt",
+            programStage: dataStoreData.attendance.attendanceStatus?.programStage,
+            filter: [...getFilters() as any, [`${academicYearId}:in:${academicYear}`]],
+            occurredAfter: format(subDays(new Date(start), 4), 'yyyy-MM-dd'),
+            occurredBefore: format(new Date(start), "yyyy-MM-dd"),
+            orgUnit: orgUnit as unknown as any,
+            skipPaging: true
+        })
+
+        for (const cdata of data) {
+            verifyOccurredAt(cdata.occurredAt, setattendanceHeaders)
+        }
+    }
+
+    return { getEnrollmentStatus }
+}

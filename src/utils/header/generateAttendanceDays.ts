@@ -35,6 +35,7 @@ export function generateattendanceHeaders({ setattendanceHeaders, setSelectedDat
                 searchable: false,
                 error: false,
                 content: '',
+                color: (!dateString.schoolDay || new Date(dateString.date) > new Date() )? "grey" : "red",
                 key: "",
                 type: 'custom',
                 class: "center",
