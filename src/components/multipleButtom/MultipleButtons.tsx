@@ -27,29 +27,32 @@ export default function MultipleButtons(props: ButtonProps) {
     const onchangeValue = async (value: string) => {
         if (value !== status) {
             add('position', `${value}${rest.tei}`)
-            await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value)] }, 'COMMIT', 'CREATE_AND_UPDATE').then((resp: any) => {
-                if (resp?.validationReport?.errorReports?.length > 0) {
-                    show({
-                        message: `${("Occurred unknown error!")}`,
-                        type: { critical: true }
-                    });
-                    setTimeout(hide, 5000);
-                } else {
-                    const event = resp?.bundleReport?.typeReportMap?.EVENT?.objectReports?.[0]?.uid
-                    let copy = [...tableValues], index = tableValues?.findIndex((x: any) => x.trackedEntity === rest.tei)
 
-                    if (rest?.absenceReason === rest?.de) {
-                        copy[index] = { ...copy[index], [rest.date]: { ...copy[index][rest.date], absenceReason: value }, replace: true }
+            await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value)] }, 'COMMIT', 'CREATE_AND_UPDATE')
+                .then((resp: any) => {
+                    if (resp?.validationReport?.errorReports?.length > 0) {
+                        show({
+                            message: `${("Occurred unknown error!")}`,
+                            type: { critical: true }
+                        });
+                        setTimeout(hide, 5000);
+                        remove('position')
                     } else {
-                        copy[index] = { ...copy[index], [rest.date]: { ...copy[index][rest.date], eventId: event, status: value, absenceOption: undefined }, replace: true }
-                    }
+                        const event = resp?.bundleReport?.typeReportMap?.EVENT?.objectReports?.[0]?.uid
+                        let copy = [...tableValues], index = tableValues?.findIndex((x: any) => x.trackedEntity === rest.tei)
 
-                    remove('position')
-                    setTableValues(copy)
-                    setSelected(value)
-                    setRefetch(prev => !prev)
-                }
-            })
+                        if (rest?.absenceReason === rest?.de) {
+                            copy[index] = { ...copy[index], [rest.date]: { ...copy[index][rest.date], absenceReason: value }, replace: true }
+                        } else {
+                            copy[index] = { ...copy[index], [rest.date]: { ...copy[index][rest.date], eventId: event, status: value, absenceOption: undefined }, replace: true }
+                        }
+
+                        remove('position')
+                        setTableValues(copy)
+                        setSelected(value)
+                        setRefetch(prev => !prev)
+                    }
+                })
         }
     }
 
@@ -62,8 +65,15 @@ export default function MultipleButtons(props: ButtonProps) {
                             selected === item?.code && styles["active-button"],
                             styles.label,
                         )}
-                        onClick={async () => { await onchangeValue(item.code) }} >
-                        <span className={styles.simpleButtonLabel}> {(useQuery.get('position') != undefined && useQuery.get('position') == `${item?.code}${rest.tei}`) ? <CircularLoader small /> : item.Component}</span>
+                        onClick={async () => { await onchangeValue(item.code) }}
+                    >
+                        <span className={styles.simpleButtonLabel}>
+                            {
+                                (useQuery.get('position') != undefined && useQuery.get('position') == `${item?.code}${rest.tei}`)
+                                    ? <CircularLoader small /> :
+                                    item.Component
+                            }
+                        </span>
                     </Button>
                 )
             })}

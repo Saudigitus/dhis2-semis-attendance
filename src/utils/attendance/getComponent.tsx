@@ -3,7 +3,7 @@ import { Chip, Tooltip } from "@mui/material";
 import style from "./icon.module.css";
 import { AccessTime, CheckCircleOutline, ExitToApp, HighlightOff, NotInterestedOutlined, RemoveCircleOutline } from "@mui/icons-material";
 
-export const getComponent = (option: any, attendanceConst: any, disabled = false, seeReason = false) => {
+export const getComponent = (option: any, attendanceConst: any, disabled = false, moreThan3?: boolean) => {
 
     const styles = { color: 'rgba(0, 0, 0, 0.3)' }
 
@@ -28,9 +28,9 @@ export const getComponent = (option: any, attendanceConst: any, disabled = false
                             sx: { textTransform: 'capitalize' }
                         }
                     }}
-                    disableHoverListener={option?.configKey === 'Absense'}
+                    disableHoverListener={option?.configKey === 'Absense' || moreThan3}
                 >
-                    {codeComponent?.[option?.configKey] ?? <ExitToApp style={disabled ? styles : { color: "#28AFEA" }} />}
+                    <span style={{ textTransform: 'capitalize' }} >{moreThan3 ? option?.key : codeComponent?.[option?.configKey] ?? <ExitToApp style={disabled ? styles : { color: "#28AFEA" }} />}</span>
                 </Tooltip>
             }
         </>
