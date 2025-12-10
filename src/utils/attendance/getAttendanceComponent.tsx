@@ -4,7 +4,7 @@ import AttendaceComponent from "./attendanceComponent";
 
 export const getAttendanceComponent = () => {
 
-    function getAttendanceIcon(attendanceOptions: any, attendanceConst: any, type: string, status: string, props: any) {
+    function getAttendanceIcon(attendanceOptions: any, attendanceConst: any, type: string, status: string, props: any, moreThan3?: boolean) {
 
         return (
             <AttendaceComponent
@@ -13,7 +13,7 @@ export const getAttendanceComponent = () => {
                     return {
                         code: option.code,
                         type: type,
-                        Component: type == 'attendance' ? getComponent(option, attendanceConst) : option.label,
+                        Component: type == 'attendance' ? getComponent(option, attendanceConst, false, moreThan3) : option.label,
                     }
                 })}
                 status={status}

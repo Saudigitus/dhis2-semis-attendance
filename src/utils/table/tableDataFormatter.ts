@@ -82,7 +82,7 @@ export function tableDataFormatter() {
                     if (head?.id === attendance.absenceReason && configKey === attendanceConst('absentCode')) {
                         icon = getAttendanceIcon(options, attendanceConst, 'absence', status, props)
                     } else if (head?.id === attendance.status) {
-                        icon = getAttendanceIcon(options, attendanceConst, 'attendance', status, props)
+                        icon = getAttendanceIcon(options, attendanceConst, 'attendance', status, props, options?.length > 3)
                     }
 
                     copyData[index][head?.id] = icon
