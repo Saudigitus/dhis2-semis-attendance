@@ -63,7 +63,13 @@ export default function MultipleButtons(props: ButtonProps) {
                             styles.label,
                         )}
                         onClick={async () => { await onchangeValue(item.code) }} >
-                        <span className={styles.simpleButtonLabel}> {(useQuery.get('position') != undefined && useQuery.get('position') == `${item?.code}${rest.tei}`) ? <CircularLoader small /> : item.Component}</span>
+                        <span className={styles.simpleButtonLabel}>
+                            {
+                                (useQuery.get('position') != undefined && useQuery.get('position') == `${item?.code}${rest.tei}`)
+                                    ? <CircularLoader small /> :
+                                    item.Component
+                            }
+                        </span>
                     </Button>
                 )
             })}

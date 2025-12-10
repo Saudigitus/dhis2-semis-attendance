@@ -10,12 +10,13 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { TableDataState } from "../../schema/table/tableDataSchema";
 import { attendanceFormProps } from "../../types/attendance/attendanceTypes";
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns";
-import { PlaylistAddCheckCircleOutlined } from "@mui/icons-material";
+import { CheckCircleOutline, PlaylistAddCheckCircleOutlined } from "@mui/icons-material";
 import useGetSelectedKeys from "../../hooks/config/useGetSelectedKeys";
 import ConfirmModal from "../modal/modalConfirm";
 import { useUrlParams } from "dhis2-semis-functions";
 import { IconUserGroup16 } from "@dhis2/ui";
 import { CustomDropdown as DropdownButton } from 'dhis2-semis-components';
+import classNames from "classnames";
 
 export default function AsssignStatus({ setSelected, selected, school, programData, setRefetch, selectable, i18n, disabled }: attendanceFormProps) {
     const [open, setOpen] = useState(false)
@@ -69,6 +70,15 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                 </Tooltip>
             }
 
+            {/* <Button
+                loading={loading && !selectable}
+                disabled={selectable}
+                onClick={() => setOpenMarkAll(true)}
+                icon={<CheckCircleOutline style={selectable ? { color: 'rgba(0, 0, 0, 0.3)' } : { color: "#21B26D" }} />}
+                className={classNames(styles.btn, selectable && styles.markAll)}
+            >
+                <span>{i18n.t("Mark all as present")}</span>
+            </Button > */}
             <span>
                 <DropdownButton
                     name={<span className={styles.work_buttons_text}>{i18n.t('Mark all as')}</span> as unknown as string}
