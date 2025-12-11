@@ -12,6 +12,7 @@ const App = ({ i18n }: { i18n: D2I18n }) => {
 
     return (
         <AppWrapper
+            i18n={language}
             baseUrl={baseUrl}
             dataStoreKey="dataStore/semis/values"
             schoolCalendarKey='dataStore/semis/schoolCalendar'
@@ -19,7 +20,7 @@ const App = ({ i18n }: { i18n: D2I18n }) => {
             <HashRouter>
                 <Router i18n={language} />
             </HashRouter >
-        </AppWrapper> 
+        </AppWrapper>
     )
 }
 

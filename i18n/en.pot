@@ -5,27 +5,17 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-10-30T14:14:30.752Z\n"
-"PO-Revision-Date: 2025-10-30T14:14:30.752Z\n"
+"POT-Creation-Date: 2025-12-11T11:06:48.970Z\n"
+"PO-Revision-Date: 2025-12-11T11:06:48.970Z\n"
 
-msgid "You need to select students first"
-msgstr "You need to select students first"
+msgid "Uncomplete attendance"
+msgstr "Uncomplete attendance"
 
-msgid "Assing attendace"
-msgstr "Assing attendace"
+msgid "Complete attendance"
+msgstr "Complete attendance"
 
-msgid "Disable multi attendance mode"
-msgstr "Disable multi attendance mode"
-
-msgid ""
-"It will assign the same attendance status to all visible students in the "
-"table"
-msgstr ""
-"It will assign the same attendance status to all visible students in the "
-"table"
-
-msgid "Mark all as present"
-msgstr "Mark all as present"
+msgid "Mark all as"
+msgstr "Mark all as"
 
 msgid "Warning"
 msgstr "Warning"
@@ -65,12 +55,6 @@ msgstr "Please select all filters"
 
 msgid "All listed students will be affected"
 msgstr "All listed students will be affected"
-
-msgid "The present attendance status will be assigned to all students"
-msgstr "The present attendance status will be assigned to all students"
-
-msgid "Are you sure you want to mark all as present?"
-msgstr "Are you sure you want to mark all as present?"
 
 msgid "Cancel"
 msgstr "Cancel"

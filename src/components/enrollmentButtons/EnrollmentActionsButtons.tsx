@@ -13,7 +13,6 @@ import { Tooltip } from '@mui/material';
 import { Event } from '@mui/icons-material';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { useSchoolCalendarKey } from 'dhis2-semis-components';
-import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n } = props
@@ -37,7 +36,6 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         setTimeout(hide, 5000);
     }
     const start = new Date(viewModeValue?.selectedDate ?? selectedDate)
-    const { getEnrollmentStatus } = useGetAttenceStatus({ setattendanceHeaders })
 
     const enrollmentOptions: any = [
         {
@@ -83,14 +81,6 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         },
     ];
 
-    // get events for selected class, grade and academic Year in the AttendanceStatus program
-    useEffect(() => {
-        if (orgUnit && academicYear) {
-            getEnrollmentStatus(start)
-        }
-    }, [])
-
-
     useEffect(() => {
         if (defaultAcademicYear || editModeValue) {
             setIsTableReady(false)
@@ -107,7 +97,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         if (editModeValue || attendanceMode == 'edit') {
             setIsTableReady(false)
             let currentDate = format(new Date(editModeValue?.selectedDate ?? selectedDate), "yyyy-MM-dd")
-            const fiveDaysBefore = format(subDays(new Date(currentDate), 4), 'yyyy-MM-dd');
+            const fiveDaysBefore = format(subDays(new Date(currentDate), 1), 'yyyy-MM-dd');
             add('selectedDate', currentDate)
             add('attendanceMode', 'edit')
 
