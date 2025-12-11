@@ -1,6 +1,6 @@
 import { useCheckFilters, useGetEvents, useUrlParams } from "dhis2-semis-functions"
 import useGetSelectedKeys from "../config/useGetSelectedKeys"
-import { format, subDays } from "date-fns";
+import { format } from "date-fns";
 import { useSchoolCalendarKey } from "dhis2-semis-components";
 
 //create a function to get occurredAt and format it to yyyy-MM-dd
@@ -25,7 +25,7 @@ const verifyOccurredAt = (date: string, setattendanceHeaders: any) => {
     });
 }
 
-export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAttendanceEvent }: { setAttendanceEvent: (args: any) => void, setattendanceHeaders: (args: any) => void, selectedDates: { occurredAfter: string, occurredBefore: string } }) => {
+export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAttendanceEvent, setCompletenessLoading }: { setAttendanceEvent: (args: any) => void, setattendanceHeaders: (args: any) => void, selectedDates: { occurredAfter: string, occurredBefore: string }, setCompletenessLoading: (args: any) => void }) => {
     const { getEvents } = useGetEvents()
     const { urlParameters } = useUrlParams();
     const { dataStoreData } = useGetSelectedKeys()
@@ -34,6 +34,7 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
     const { getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
 
     async function getEnrollmentStatus() {
+        setCompletenessLoading({ loading: true })
         const data = await getEvents({
             program: dataStoreData.attendance.attendanceStatus?.program,
             fields: "occurredAt,event",
@@ -45,13 +46,13 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
         })
 
         if (attendanceMode === 'edit') {
-            console.log(data)
             const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
             setAttendanceEvent(event)
 
         } else for (const cdata of data) {
             verifyOccurredAt(cdata.occurredAt, setattendanceHeaders)
         }
+        setCompletenessLoading({ loading: false })
     }
 
     return { getEnrollmentStatus }

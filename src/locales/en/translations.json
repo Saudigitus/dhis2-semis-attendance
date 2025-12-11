@@ -1,7 +1,6 @@
 {
-    "You need to select students first": "You need to select students first",
-    "Assing attendace": "Assing attendace",
-    "Mark all as present": "Mark all as present",
+    "Uncomplete attendance": "Uncomplete attendance",
+    "Complete attendance": "Complete attendance",
     "Mark all as": "Mark all as",
     "Warning": "Warning",
     "Students will be affected": "Students will be affected",

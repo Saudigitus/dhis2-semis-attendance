@@ -18,4 +18,6 @@ export interface attendanceFormProps {
     disabled: boolean
     i18n: D2I18n
     attendanceEvent: { event: string } | null
+    completenessLoading: { refetch: boolean, loading: boolean }
+    setCompletenessLoading: (args: { refetch: boolean, loading: boolean }) => void
 }

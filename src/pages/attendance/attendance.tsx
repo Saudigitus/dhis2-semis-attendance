@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { ProgramConfig, VariablesTypes, D2I18n } from 'dhis2-semis-types'
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
 import { Table, useSchoolCalendarKey } from "dhis2-semis-components";
 import { ReasonOfAbsenseState } from '../../schema/attendance/disableAllBtns';
@@ -21,6 +21,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
     const [selected, setSelected] = useState<any>([])
+    const [completenessLoading, setCompletenessLoading] = useState<any>({ refetch: false, loading: false })
     const [attendanceEvent, setAttendanceEvent] = useState<any | null>(null)
     const [refetch, setRefetch] = useState<boolean>(false)
     const reorganizeData = useRecoilValue(TableDataRefetch);
@@ -37,7 +38,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
-    const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates })
+    const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading })
 
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
@@ -62,9 +63,10 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
 
     useEffect(() => {
         if (academicYear && school && areAllSelected() && selectedDates?.occurredAfter && selectedDates?.occurredBefore) {
+            setAttendanceEvent(null)
             getEnrollmentStatus()
         }
-    }, [selectedDates])
+    }, [selectedDates, completenessLoading.refetch])
 
     useEffect(() => {
         let copy: any = []
@@ -93,7 +95,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                             viewPortWidth={viewPortWidth}
                             columns={[
                                 ...(columns ?? []).filter(x => x.visible && x.type !== VariablesTypes.DataElement),
-                                ...(columns ?? []).filter(x => dataStoreData?.filters?.dataElements?.some(y => y.dataElement == x.id)),
+                                ...(columns ?? []).filter(x => dataStoreData?.filters?.dataElements?.some((y: any) => y.dataElement == x.id)),
                                 ...(Array.isArray(attendanceHeaders) ? attendanceHeaders : []),
                             ]}
                             selected={selected}
@@ -130,6 +132,8 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                                             selectable={selectable}
                                             i18n={i18n}
                                             attendanceEvent={attendanceEvent}
+                                            completenessLoading={completenessLoading}
+                                            setCompletenessLoading={setCompletenessLoading}
                                         />
                                         <Chip selected>
                                             {`${i18n.t('Selected date')}: ${selectedDate && format(new Date(selectedDate), 'dd/MM/yyyy')}`}
