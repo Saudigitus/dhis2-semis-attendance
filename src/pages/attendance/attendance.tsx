@@ -13,6 +13,7 @@ import AsssignStatus from '../../components/assingStatus/assignStatus';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { Button, IconView24, IconViewOff24, Chip } from "@dhis2/ui";
 import { format } from 'date-fns'
+import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus';
 
 export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { program, dataStoreData } = useGetSelectedKeys()
@@ -20,6 +21,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
     const [selected, setSelected] = useState<any>([])
+    const [attendanceEvent, setAttendanceEvent] = useState<any | null>(null)
     const [refetch, setRefetch] = useState<boolean>(false)
     const reorganizeData = useRecoilValue(TableDataRefetch);
     const [isTableReady, setIsTableReady] = useState(false);
@@ -30,14 +32,15 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const [seeReason, setSeeReason] = useRecoilState(ReasonOfAbsenseState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
     const [pagination, setPagination] = useState({ page: 1, pageSize: 50, totalPages: 0, totalElements: 0 })
-    const { schoolName, school, selectedDate, attendanceMode } = urlParameters;
+    const { schoolName, school, selectedDate, attendanceMode, academicYear } = urlParameters;
     const { getFilters, areAllSelected } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
-    const [selectedDay, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
+    const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
+    const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates })
 
     useEffect(() => {
-        if (selectedDay?.occurredAfter && selectedDay?.occurredBefore && areAllSelected()) {
+        if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
             void getData({
                 page: pagination.page,
                 pageSize: pagination.pageSize,
@@ -50,12 +53,18 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                     ...getFilters() as unknown as any
                 ],
                 attendanceConfig: dataStoreData?.attendance as unknown as any,
-                ...selectedDay,
+                ...selectedDates,
                 otherProgramStage: dataStoreData?.attendance.programStage,
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
             }).then(() => setIsTableReady(true))
         }
-    }, [filterState.attributes, pagination.page, pagination.pageSize, refetch, selectedDay, urlParameters])
+    }, [filterState.attributes, pagination.page, pagination.pageSize, refetch, selectedDates, urlParameters])
+
+    useEffect(() => {
+        if (academicYear && school && areAllSelected() && selectedDates?.occurredAfter && selectedDates?.occurredBefore) {
+            getEnrollmentStatus()
+        }
+    }, [selectedDates])
 
     useEffect(() => {
         let copy: any = []
@@ -120,6 +129,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                                             selected={selected}
                                             selectable={selectable}
                                             i18n={i18n}
+                                            attendanceEvent={attendanceEvent}
                                         />
                                         <Chip selected>
                                             {`${i18n.t('Selected date')}: ${selectedDate && format(new Date(selectedDate), 'dd/MM/yyyy')}`}

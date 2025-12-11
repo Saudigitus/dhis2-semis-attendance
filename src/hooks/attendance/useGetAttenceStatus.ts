@@ -25,27 +25,31 @@ const verifyOccurredAt = (date: string, setattendanceHeaders: any) => {
     });
 }
 
-export const useGetAttenceStatus = ({ setattendanceHeaders }: { setattendanceHeaders: (args: any) => void }) => {
+export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAttendanceEvent }: { setAttendanceEvent: (args: any) => void, setattendanceHeaders: (args: any) => void, selectedDates: { occurredAfter: string, occurredBefore: string } }) => {
     const { getEvents } = useGetEvents()
     const { urlParameters } = useUrlParams();
     const { dataStoreData } = useGetSelectedKeys()
-    const { school: orgUnit, academicYear } = urlParameters;
+    const { school: orgUnit, academicYear, attendanceMode, selectedDate } = urlParameters;
     const { academicYear: academicYearId } = useSchoolCalendarKey()
     const { getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
 
-    async function getEnrollmentStatus(start: any) {
+    async function getEnrollmentStatus() {
         const data = await getEvents({
             program: dataStoreData.attendance.attendanceStatus?.program,
-            fields: "occurredAt",
+            fields: "occurredAt,event",
             programStage: dataStoreData.attendance.attendanceStatus?.programStage,
             filter: [...getFilters() as any, [`${academicYearId}:in:${academicYear}`]],
-            occurredAfter: format(subDays(new Date(start), 4), 'yyyy-MM-dd'),
-            occurredBefore: format(new Date(start), "yyyy-MM-dd"),
+            ...selectedDates,
             orgUnit: orgUnit as unknown as any,
             skipPaging: true
         })
 
-        for (const cdata of data) {
+        if (attendanceMode === 'edit') {
+            console.log(data)
+            const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
+            setAttendanceEvent(event)
+
+        } else for (const cdata of data) {
             verifyOccurredAt(cdata.occurredAt, setattendanceHeaders)
         }
     }

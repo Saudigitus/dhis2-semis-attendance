@@ -10,7 +10,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { TableDataState } from "../../schema/table/tableDataSchema";
 import { attendanceFormProps } from "../../types/attendance/attendanceTypes";
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns";
-import { CheckCircleOutline, PlaylistAddCheckCircleOutlined } from "@mui/icons-material";
+import { CheckCircleOutline, PlaylistAddCheckCircleOutlined, HighlightOff } from "@mui/icons-material";
 import useGetSelectedKeys from "../../hooks/config/useGetSelectedKeys";
 import ConfirmModal from "../modal/modalConfirm";
 import { useUrlParams } from "dhis2-semis-functions";
@@ -18,7 +18,7 @@ import { IconUserGroup16 } from "@dhis2/ui";
 import { CustomDropdown as DropdownButton } from 'dhis2-semis-components';
 import classNames from "classnames";
 
-export default function AsssignStatus({ setSelected, selected, school, programData, setRefetch, selectable, i18n, disabled }: attendanceFormProps) {
+export default function AssignStatus({ setSelected, selected, school, programData, setRefetch, selectable, i18n, disabled, attendanceEvent }: attendanceFormProps) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [selectedOption, setSelectedOption] = useState({ value: '', label: '' })
@@ -47,6 +47,7 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
         divider: true,
     }))
 
+    console.log(attendanceEvent,'kaka')
     return (
         <>
             {selectable &&
@@ -70,15 +71,16 @@ export default function AsssignStatus({ setSelected, selected, school, programDa
                 </Tooltip>
             }
 
-            {/* <Button
+            <Button
                 loading={loading && !selectable}
                 disabled={selectable}
                 onClick={() => setOpenMarkAll(true)}
-                icon={<CheckCircleOutline style={selectable ? { color: 'rgba(0, 0, 0, 0.3)' } : { color: "#21B26D" }} />}
-                className={classNames(styles.btn, selectable && styles.markAll)}
+                icon={!attendanceEvent ? <CheckCircleOutline style={{ color: "#21B26D" }} /> : <HighlightOff />}
+                className={classNames(styles.btn)}
+                destructive={attendanceEvent}
             >
-                <span>{i18n.t("Mark all as present")}</span>
-            </Button > */}
+                <span>{attendanceEvent ? i18n.t("Uncomplete attendance") : i18n.t("Complete attendance")}</span>
+            </Button >
             <span>
                 <DropdownButton
                     name={<span className={styles.work_buttons_text}>{i18n.t('Mark all as')}</span> as unknown as string}

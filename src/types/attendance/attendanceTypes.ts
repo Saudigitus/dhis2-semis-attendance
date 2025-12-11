@@ -17,4 +17,5 @@ export interface attendanceFormProps {
     school: string
     disabled: boolean
     i18n: D2I18n
+    attendanceEvent: { event: string } | null
 }
