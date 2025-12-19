@@ -53,7 +53,7 @@ export default function AssignStatus({
 
     return (
         <>
-            <Button
+            { attendance?.attendanceStatus?.allowAttendanceStatus && <Button
                 loading={completenessLoading?.loading}
                 disabled={completenessLoading?.refetch || disabled}
                 onClick={() => completeOrDelete(attendanceEvent)}
@@ -62,7 +62,7 @@ export default function AssignStatus({
                 destructive={attendanceEvent}
             >
                 <span>{completenessLoading?.loading && !attendanceEvent ? "" : attendanceEvent ? i18n.t("Uncomplete attendance") : i18n.t("Complete attendance")}</span>
-            </Button >
+            </Button >}
 
             <span>
                 <DropdownButton
