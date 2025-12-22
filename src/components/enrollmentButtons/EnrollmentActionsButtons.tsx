@@ -24,7 +24,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const [editModeValue, setEditModeValue] = useState<any>("")
     const { school: orgUnit, academicYear, attendanceMode, selectedDate } = urlParameters;
     const [viewModeValue, setViewModeValue] = useState<any>({ selectedDate: selectedDate ? new Date(selectedDate) : new Date() })
-    const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates })
+    const { getValidDays } = generateattendanceHeaders({ setattendanceHeaders, setSelectedDates, isEnable: dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus })
     const { getDataElementsHeaders } = getAttendanceDEHeaders({ setattendanceHeaders })
     const { areAllSelected, getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { hide, show } = useShowAlerts()

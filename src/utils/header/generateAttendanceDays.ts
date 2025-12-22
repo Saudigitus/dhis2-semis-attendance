@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { unavailableSchoolDays } from "dhis2-semis-functions";
 import { Attribute, CustomAttributeProps, VariablesTypes } from "dhis2-semis-types";
 
-export function generateattendanceHeaders({ setattendanceHeaders, setSelectedDates }: { setSelectedDates: (args: any) => void, setattendanceHeaders: (args: any[]) => void }) {
+export function generateattendanceHeaders({ setattendanceHeaders, setSelectedDates, isEnable }: { setSelectedDates: (args: any) => void, setattendanceHeaders: (args: any[]) => void, isEnable: boolean }) {
     const { unavailableDays } = unavailableSchoolDays()
 
     const getValidDays = (date: Date, config: any) => {
@@ -35,7 +35,7 @@ export function generateattendanceHeaders({ setattendanceHeaders, setSelectedDat
                 searchable: false,
                 error: false,
                 content: '',
-                color: (!dateString.schoolDay || new Date(dateString.date) > new Date() )? "grey" : "red",
+                color: isEnable && ((!dateString.schoolDay || new Date(dateString.date) > new Date()) ? "grey" : "red"),
                 key: "",
                 type: 'custom',
                 class: "center",
