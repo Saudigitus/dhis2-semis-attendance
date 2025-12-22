@@ -49,7 +49,7 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
             const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
             setAttendanceEvent(event)
 
-        } else for (const cdata of data) {
+        } else if(dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus) for (const cdata of data) {
             verifyOccurredAt(cdata.occurredAt, setattendanceHeaders)
         }
         setCompletenessLoading({ loading: false })
