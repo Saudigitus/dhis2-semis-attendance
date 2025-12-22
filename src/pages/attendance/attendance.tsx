@@ -17,6 +17,7 @@ import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus'
 
 export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { program, dataStoreData } = useGetSelectedKeys()
+    const { attendance = {} as unknown as any } = dataStoreData
     const { urlParameters } = useUrlParams(['position']);
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
@@ -37,7 +38,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { getFilters, areAllSelected } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
-    const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: dataStoreData?.attendance?.programStage });
+    const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: attendance?.programStage });
     const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading })
 
     useEffect(() => {
@@ -53,16 +54,16 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                     ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
                     ...getFilters() as unknown as any
                 ],
-                attendanceConfig: dataStoreData?.attendance as unknown as any,
+                attendanceConfig: attendance,
                 ...selectedDates,
-                otherProgramStage: dataStoreData?.attendance.programStage,
+                otherProgramStage: attendance?.programStage,
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
             }).then(() => setIsTableReady(true))
         }
     }, [filterState.attributes, pagination.page, pagination.pageSize, refetch, selectedDates, urlParameters])
 
     useEffect(() => {
-        if (academicYear && school && areAllSelected() && selectedDates?.occurredAfter && selectedDates?.occurredBefore) {
+        if (attendance?.attendanceStatus?.allowAttendanceStatus && academicYear && school && areAllSelected() && selectedDates?.occurredAfter && selectedDates?.occurredBefore) {
             setAttendanceEvent(null)
             getEnrollmentStatus()
         }
@@ -94,8 +95,8 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                             title={i18n.t('Attendance title')}
                             viewPortWidth={viewPortWidth}
                             columns={[
-                                ...(columns ?? []).filter(x => x.visible && x.type !== VariablesTypes.DataElement),
-                                ...(columns ?? []).filter(x => dataStoreData?.filters?.dataElements?.some((y: any) => y.dataElement == x.id)),
+                                ...(columns ?? []).filter((x: any) => x.visible && x.type !== VariablesTypes.DataElement),
+                                ...(columns ?? []).filter((x: any) => dataStoreData?.filters?.dataElements?.some((y: any) => y.dataElement == x.id)),
                                 ...(Array.isArray(attendanceHeaders) ? attendanceHeaders : []),
                             ]}
                             selected={selected}
