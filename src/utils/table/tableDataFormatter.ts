@@ -5,6 +5,7 @@ import useGetSelectedKeys from "../../hooks/config/useGetSelectedKeys";
 import { useUrlParams } from "dhis2-semis-functions";
 import { useRecoilValue } from "recoil";
 import { ReasonOfAbsenseState } from "../../schema/attendance/disableAllBtns";
+import { useAttendanceOptions } from "../../hooks/attendance/useGetAttendanceOptions";
 
 export function tableDataFormatter() {
     const seeReason = useRecoilValue(ReasonOfAbsenseState)
@@ -14,6 +15,7 @@ export function tableDataFormatter() {
     const { attendance } = dataStoreData
     const { urlParameters } = useUrlParams()
     const { selectedDate } = urlParameters
+    const { validAttendanceStatus } = useAttendanceOptions()
 
     function formatData(data: any[], headers: any[] = []): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/
@@ -28,7 +30,7 @@ export function tableDataFormatter() {
                         const icon = getComponent(empty, attendanceConst)
                         copyData[index][head?.id] = icon
                     } else {
-                        configKey = (attendance?.statusOptions as unknown as any)?.find((x: any) => x.code === data?.[index]?.[head?.id]?.['status'])
+                        configKey = (validAttendanceStatus as unknown as any)?.find((x: any) => x.code === data?.[index]?.[head?.id]?.['status'])
 
                         if (seeReason && configKey?.configKey == attendanceConst('absentCode')) {
                             const status = data?.[index]?.[head?.id]?.absenceOption
@@ -54,7 +56,7 @@ export function tableDataFormatter() {
             for (const head of headers) {
                 for (let index = 0; index < copyData.length; index++) {
                     let options: any = [], status = "", icon: any = '--'
-                    const configKey = (attendance?.statusOptions as unknown as any)?.find((x: any) => x.code === copyData?.[index]?.[selectedDate!]?.['status'])?.configKey
+                    const configKey = (validAttendanceStatus as unknown as any)?.find((x: any) => x.code === copyData?.[index]?.[selectedDate!]?.['status'])?.configKey
 
                     const props = {
                         event: copyData[index]?.[selectedDate!]?.eventId,
@@ -70,7 +72,7 @@ export function tableDataFormatter() {
                         statusDataElement: attendance.status,
                     }
 
-                    if (head?.id === attendance.status) options = attendance?.statusOptions
+                    if (head?.id === attendance.status) options = validAttendanceStatus
                     else options = head?.options?.optionSet?.options?.map((option: any) => { return { ...option, code: option.value } }) ?? []
 
                     // console.log(copyData[index],selectedDate)
@@ -82,7 +84,7 @@ export function tableDataFormatter() {
                     if (head?.id === attendance.absenceReason && configKey === attendanceConst('absentCode')) {
                         icon = getAttendanceIcon(options, attendanceConst, 'absence', status, props)
                     } else if (head?.id === attendance.status) {
-                        icon = getAttendanceIcon(options, attendanceConst, 'attendance', status, props, options?.length > 3)
+                        icon = getAttendanceIcon(options, attendanceConst, 'attendance', status, props, options?.length > 5)
                     }
 
                     copyData[index][head?.id] = icon

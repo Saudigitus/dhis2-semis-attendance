@@ -81,7 +81,7 @@ msgstr "Date sélectionnée"
 msgid "Hide reason of absense"
 msgstr "Masquer la raison de l'absence"
 
-msgid "View teason of absense"
+msgid "View reason of absense"
 msgstr "Voir la raison de l'absence"
 
 msgid "Export {{section}} attendances"
