@@ -51,7 +51,7 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
             const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
 
             setAttendanceEvent(event)
-        } else for (const cdata of data) {
+        } else if(dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus)  for (const cdata of data) {
             const attendanceStatusCompleted = cdata?.dataValues?.find((x: any) => x.dataElement == dataStoreData.attendance.attendanceStatus?.status)?.value
             verifyOccurredAt(cdata.occurredAt, setattendanceHeaders, attendanceStatusCompleted)
         }
