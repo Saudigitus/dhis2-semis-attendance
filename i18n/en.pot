@@ -71,8 +71,8 @@ msgstr "Selected date"
 msgid "Hide reason of absense"
 msgstr "Hide reason of absense"
 
-msgid "View teason of absense"
-msgstr "View teason of absense"
+msgid "View reason of absense"
+msgstr "View reason of absense"
 
 msgid "SEMIS-Attendance"
 msgstr "SEMIS-Attendance"

@@ -10,7 +10,7 @@ export default function AttendaceComponent(props: ButtonProps) {
    
     return <>
         {
-            items?.length > 3 ?
+            items?.length > 5 ?
                 <SingleSelect
                     disabled={disable || disabled || false}
                     options={items}

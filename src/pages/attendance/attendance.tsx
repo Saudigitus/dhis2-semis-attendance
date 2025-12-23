@@ -141,7 +141,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                                         </Chip>
                                     </>
                                     : <Button onClick={() => setSeeReason(!seeReason)} icon={seeReason ? <IconViewOff24 /> : <IconView24 />}>
-                                        {seeReason ? i18n.t('Hide reason of absense') : i18n.t('View teason of absense')}
+                                        {seeReason ? i18n.t('Hide reason of absense') : i18n.t('View reason of absense')}
                                     </Button>
                             }
                             setFilterState={setFilterState}

@@ -41,7 +41,7 @@ export default function AssignStatus({
     const date = useQuery.get('selectedDate')!
     const { completeOrDelete } = useAttendanceCompleteness({ setCompletenessLoading })
 
-    const options = attendaceStatus?.filter((x: any) => statusCodes.includes(x.value)).map((item: any) => ({
+    const options = attendaceStatus?.map((item: any) => ({
         label: item.label,
         onClick: () => {
             setSelectedOption({ value: item.value, label: item.label })
