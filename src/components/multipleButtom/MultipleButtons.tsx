@@ -5,10 +5,12 @@ import { ButtonProps } from "../../types/MultipleBtns/MultipleButtonsTypes";
 import { useShowAlerts, useUploadEvents, useUrlParams } from "dhis2-semis-functions";
 import { eventBody } from "../../utils/attendance/eventBody";
 import { TableDataState } from "../../schema/table/tableDataSchema";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { TableDataRefetch } from "dhis2-semis-types";
 import { CircularLoader } from "@dhis2/ui";
 import { Button, ButtonGroup } from "@mui/material";
+import { classAttendanceEvent } from "../../schema/attendance/classAttendanceEvent";
+import { useAttendanceCompleteness } from "../../hooks/attendance/attendanceCompleteness";
 
 export default function MultipleButtons(props: ButtonProps) {
     const { items, status, disabled, ...rest } = props;
@@ -19,17 +21,17 @@ export default function MultipleButtons(props: ButtonProps) {
     const { uploadValues } = useUploadEvents()
     const { urlParameters, add, remove, useQuery } = useUrlParams();
     const { selectedDate } = urlParameters
+    const attendanceEvent = useRecoilValue(classAttendanceEvent)
+    const { completeOrDelete } = useAttendanceCompleteness()
 
-    useEffect(() => {
-        setSelected(status)
-    }, [status])
+    useEffect(() => setSelected(status), [status])
 
     const onchangeValue = async (value: string) => {
         if (value !== status) {
             add('position', `${value}${rest.tei}`)
 
             await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value)] }, 'COMMIT', 'CREATE_AND_UPDATE')
-                .then((resp: any) => {
+                .then(async (resp: any) => {
                     if (resp?.validationReport?.errorReports?.length > 0) {
                         show({
                             message: `${("Occurred unknown error!")}`,
@@ -38,6 +40,7 @@ export default function MultipleButtons(props: ButtonProps) {
                         setTimeout(hide, 5000);
                         remove('position')
                     } else {
+
                         const event = resp?.bundleReport?.typeReportMap?.EVENT?.objectReports?.[0]?.uid
                         let copy = [...tableValues], index = tableValues?.findIndex((x: any) => x.trackedEntity === rest.tei)
 
@@ -50,7 +53,8 @@ export default function MultipleButtons(props: ButtonProps) {
                         remove('position')
                         setTableValues(copy)
                         setSelected(value)
-                        setRefetch(prev => !prev)
+                        setRefetch((prev: any) => !prev)
+                        if (!attendanceEvent) await completeOrDelete("create", false)
                     }
                 })
         }

@@ -19,10 +19,12 @@ import { CustomDropdown as DropdownButton } from 'dhis2-semis-components';
 import classNames from "classnames";
 import { useAttendanceCompleteness } from "../../hooks/attendance/attendanceCompleteness";
 import { useAttendanceOptions } from "../../hooks/attendance/useGetAttendanceOptions";
+import { completenessLoading } from "../../schema/attendance/completenessLoading";
 
 export default function AssignStatus({
-    setSelected, selected, school, setRefetch, i18n, disabled, attendanceEvent, completenessLoading, setCompletenessLoading
+    setSelected, selected, school, setRefetch, i18n, disabled, attendanceEvent
 }: attendanceFormProps) {
+    const completeness = useRecoilValue(completenessLoading)
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [selectedOption, setSelectedOption] = useState({ value: '', label: '' })
@@ -34,8 +36,9 @@ export default function AssignStatus({
     const disable = useSetRecoilState(DisaleButtonsState)
     const { useQuery } = useUrlParams()
     const date = useQuery.get('selectedDate')!
-    const { completeOrDelete } = useAttendanceCompleteness({ setCompletenessLoading })
+    const { completeOrDelete } = useAttendanceCompleteness()
     const { validAttendanceStatus } = useAttendanceOptions()
+    const attendanceStatus = (attendanceEvent as any)?.dataValues?.find((x: any) => x.dataElement == dataStoreData.attendance.attendanceStatus?.status)?.value
 
     const options = validAttendanceStatus?.map((item: any) => ({
         label: item.label,
@@ -49,15 +52,16 @@ export default function AssignStatus({
 
     return (
         <>
-            { attendance?.attendanceStatus?.allowAttendanceStatus && <Button
-                loading={completenessLoading?.loading}
-                disabled={completenessLoading?.refetch || disabled}
-                onClick={() => completeOrDelete(attendanceEvent)}
-                icon={!attendanceEvent ? <CheckCircleOutline style={{ color: "#21B26D" }} /> : <HighlightOff />}
+            {attendance?.attendanceStatus?.allowAttendanceStatus && <Button
+                loading={completeness?.loading}
+                disabled={completeness?.refetch || disabled}
+                onClick={() => completeOrDelete(attendanceStatus == 'true' ? 'delete' : 'create', true)}
+                icon={(!attendanceEvent || attendanceStatus == 'false')
+                    ? <CheckCircleOutline style={{ color: "#21B26D" }} /> : <HighlightOff />}
                 className={classNames(styles.btn)}
-                destructive={attendanceEvent}
+                destructive={(attendanceEvent && attendanceStatus != 'false')}
             >
-                <span>{completenessLoading?.loading && !attendanceEvent ? "" : attendanceEvent ? i18n.t("Uncomplete attendance") : i18n.t("Complete attendance")}</span>
+                <span>{completeness?.loading && !attendanceEvent ? "" : (attendanceEvent && attendanceStatus != 'false') ? i18n.t("Uncomplete attendance") : i18n.t("Complete attendance")}</span>
             </Button >}
 
             <span>
@@ -106,7 +110,7 @@ export default function AssignStatus({
                                     ]}
                                     storyBook={false}
                                     withButtons={true}
-                                    onFormSubtmit={(e) => formSubmit(e, selected)}
+                                    onFormSubtmit={(e: any) => formSubmit(e, selected)}
                                     onCancel={() => setOpen(false)}
                                 />
                             </WithPadding>

@@ -1,8 +1,12 @@
 import { useCheckFilters, useShowAlerts, useUploadEvents, useUrlParams } from "dhis2-semis-functions";
 import useGetSelectedKeys from "../config/useGetSelectedKeys"
 import { useSchoolCalendarKey } from "dhis2-semis-components";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { completenessLoading } from "../../schema/attendance/completenessLoading";
+import { classAttendanceEvent } from "../../schema/attendance/classAttendanceEvent";
 
-export function useAttendanceCompleteness({ setCompletenessLoading }: { setCompletenessLoading: (args: any) => void }) {
+export function useAttendanceCompleteness() {
+    const setCompletenessLoading = useSetRecoilState(completenessLoading)
     const { dataStoreData } = useGetSelectedKeys()
     const { urlParameters } = useUrlParams();
     const { academicYear: academicYearId } = useSchoolCalendarKey()
@@ -10,11 +14,14 @@ export function useAttendanceCompleteness({ setCompletenessLoading }: { setCompl
     const { getUrlParamsAsObject } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
     const { uploadValues } = useUploadEvents()
     const { hide, show } = useShowAlerts()
+    const savedAttendanceEvent = useRecoilValue(classAttendanceEvent)
 
-    const completeOrDelete = async (attendanceEvent: any) => {
-        setCompletenessLoading({ loading: true })
-        const importStrategy = attendanceEvent?.event ? 'DELETE' : 'CREATE_AND_UPDATE'
-        const eventData = attendanceEvent?.event ? { event: attendanceEvent?.event } : {
+    const completeOrDelete = async (operation: 'delete' | 'create', completed?: boolean) => {
+        setCompletenessLoading((prev) => ({ ...prev, loading: true }))
+        const importStrategy = operation == 'delete' ? 'DELETE' : 'CREATE_AND_UPDATE'
+
+        const eventData = operation == 'delete' ? { event: savedAttendanceEvent?.event } : {
+            ...(savedAttendanceEvent?.event ? { event: savedAttendanceEvent?.event } : {}),
             program: dataStoreData.attendance.attendanceStatus?.program,
             programStage: dataStoreData.attendance.attendanceStatus?.programStage,
             orgUnit: school,
@@ -25,7 +32,7 @@ export function useAttendanceCompleteness({ setCompletenessLoading }: { setCompl
                 },
                 {
                     dataElement: dataStoreData.attendance.attendanceStatus?.status,
-                    value: true
+                    value: savedAttendanceEvent?.event ? true : completed
                 },
                 ...(dataStoreData?.filters?.dataElements?.map((filter: any) => ({
                     dataElement: filter.dataElement,
@@ -47,7 +54,6 @@ export function useAttendanceCompleteness({ setCompletenessLoading }: { setCompl
                 }
             }).finally(() => setCompletenessLoading((prev: any) => ({ ...prev, refetch: !prev?.refetch })))
 
-        return attendanceEvent?.attendanceStatus === "COMPLETE"
     }
 
     return { completeOrDelete }
