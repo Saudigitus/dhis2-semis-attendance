@@ -5,36 +5,18 @@ import useGetSelectedKeys from "../../hooks/config/useGetSelectedKeys";
 import { useUrlParams } from "dhis2-semis-functions";
 import { useRecoilValue } from "recoil";
 import { ReasonOfAbsenseState } from "../../schema/attendance/disableAllBtns";
+import { useAttendanceOptions } from "../../hooks/attendance/useGetAttendanceOptions";
 
 export function tableDataFormatter() {
     const seeReason = useRecoilValue(ReasonOfAbsenseState)
     const { attendanceConst } = useAttendanceConst()
     const { getAttendanceIcon } = getAttendanceComponent()
-    const { dataStoreData = {} as unknown as any, program } = useGetSelectedKeys()
+    const { dataStoreData = {} as unknown as any } = useGetSelectedKeys()
     const { attendance } = dataStoreData
     const { urlParameters } = useUrlParams()
     const { selectedDate } = urlParameters
-    const { statusOptions } = attendance
-    const programStatusOptionsValues = program?.programStages?.
-        find((x: any) => x?.id == attendance?.programStage)?.programStageDataElements?.
-        find((x: any) => x.dataElement?.id == attendance?.status)?.dataElement?.optionSet?.options?.
-        map((x: any) => ({ value: x?.value, label: x.label }))
-    const validAttendanceStatus = statusOptions?.reduce(
-        (acc: any[], student: any) => {
-            const opt = programStatusOptionsValues?.find((x: any) => x.value === student.code)
+    const { validAttendanceStatus } = useAttendanceOptions()
 
-            if (opt) {
-                acc.push({
-                    ...student,
-                    label: opt.label
-                })
-            }
-
-            return acc
-        }, [])
-
-
-    console.log(validAttendanceStatus, 'blaaaaaaaa')
     function formatData(data: any[], headers: any[] = []): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/
         const empty = { configKey: 'Empty', code: 'Empty' }

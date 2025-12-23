@@ -127,7 +127,6 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                                             disabled={loading}
                                             setSelected={setSelected}
                                             setRefetch={setRefetch}
-                                            programData={program}
                                             school={schoolName!}
                                             selected={selected}
                                             selectable={selectable}

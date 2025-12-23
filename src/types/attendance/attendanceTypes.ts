@@ -11,9 +11,7 @@ export interface useDaveValuesProps {
 export interface attendanceFormProps {
     selectable: boolean
     setSelected: (args: any) => void
-    setRefetch: (args: any) => void
-    programData: any
-    selected: any[]
+    setRefetch: (args: any) => void    selected: any[]
     school: string
     disabled: boolean
     i18n: D2I18n

@@ -18,9 +18,10 @@ import { IconUserGroup16 } from "@dhis2/ui";
 import { CustomDropdown as DropdownButton } from 'dhis2-semis-components';
 import classNames from "classnames";
 import { useAttendanceCompleteness } from "../../hooks/attendance/attendanceCompleteness";
+import { useAttendanceOptions } from "../../hooks/attendance/useGetAttendanceOptions";
 
 export default function AssignStatus({
-    setSelected, selected, school, programData, setRefetch, i18n, disabled, attendanceEvent, completenessLoading, setCompletenessLoading
+    setSelected, selected, school, setRefetch, i18n, disabled, attendanceEvent, completenessLoading, setCompletenessLoading
 }: attendanceFormProps) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -29,19 +30,14 @@ export default function AssignStatus({
     const tableValues = useRecoilValue(TableDataState)
     const { dataStoreData } = useGetSelectedKeys()
     const { attendance = {} as unknown as any } = dataStoreData
-    const { statusOptions } = attendance
-    const programStatusOptions = programData?.programStages?.
-        find((x: any) => x?.id == attendance?.programStage)?.programStageDataElements?.
-        find((x: any) => x.dataElement?.id == attendance?.status)?.dataElement?.optionSet
-    const statusCodes = statusOptions.map((item: any) => item.code)
-    const attendaceStatus = programStatusOptions?.options?.filter((student: any) => statusCodes.includes(student.value))
     const { formSubmit } = useSaveValues({ setLoading, dataStoreData, setSelected, setRefetch, setOpen, })
     const disable = useSetRecoilState(DisaleButtonsState)
     const { useQuery } = useUrlParams()
     const date = useQuery.get('selectedDate')!
     const { completeOrDelete } = useAttendanceCompleteness({ setCompletenessLoading })
+    const { validAttendanceStatus } = useAttendanceOptions()
 
-    const options = attendaceStatus?.map((item: any) => ({
+    const options = validAttendanceStatus?.map((item: any) => ({
         label: item.label,
         onClick: () => {
             setSelectedOption({ value: item.value, label: item.label })
@@ -105,7 +101,7 @@ export default function AssignStatus({
                                             storyBook: false,
                                             name: `${i18n.t('Attendance')!}`,
                                             description: "",
-                                            fields: [...staticForm(attendaceStatus) as unknown as any]
+                                            fields: [...staticForm(validAttendanceStatus) as unknown as any]
                                         }
                                     ]}
                                     storyBook={false}

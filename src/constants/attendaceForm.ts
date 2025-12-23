@@ -68,7 +68,7 @@ export const staticForm = (attendaceStatus: any[]) => {
       name: "status",
       labelName: "Attendance option:",
       valueType: "LIST",
-      options: { optionSet: { options: attendaceStatus } },
+      options: { optionSet: { options: attendaceStatus?.map((x) => ({ ...x, value: x.code })) } },
       disabled: false,
       pattern: "",
       visible: true,
