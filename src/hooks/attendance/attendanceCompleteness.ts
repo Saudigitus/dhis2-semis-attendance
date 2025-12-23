@@ -54,7 +54,6 @@ export function useAttendanceCompleteness() {
                 }
             }).finally(() => setCompletenessLoading((prev: any) => ({ ...prev, refetch: !prev?.refetch })))
 
-        return attendanceEvent?.attendanceStatus === "COMPLETE"
     }
 
     return { completeOrDelete }

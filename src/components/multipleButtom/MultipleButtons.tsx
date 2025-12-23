@@ -40,7 +40,6 @@ export default function MultipleButtons(props: ButtonProps) {
                         setTimeout(hide, 5000);
                         remove('position')
                     } else {
-                        if (!attendanceEvent) await completeOrDelete("create", false)
 
                         const event = resp?.bundleReport?.typeReportMap?.EVENT?.objectReports?.[0]?.uid
                         let copy = [...tableValues], index = tableValues?.findIndex((x: any) => x.trackedEntity === rest.tei)
@@ -55,6 +54,7 @@ export default function MultipleButtons(props: ButtonProps) {
                         setTableValues(copy)
                         setSelected(value)
                         setRefetch((prev: any) => !prev)
+                        if (!attendanceEvent) await completeOrDelete("create", false)
                     }
                 })
         }

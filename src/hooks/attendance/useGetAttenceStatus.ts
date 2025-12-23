@@ -11,14 +11,14 @@ const getOccurredAt = (date: string) => {
 // create a function to verify if the getOccurredAt is included in the setattendanceHeaders, 
 // if exist change the color to green and update in the setattendanceHeaders. 
 
-const verifyOccurredAt = (date: string, setattendanceHeaders: any) => {
+const verifyOccurredAt = (date: string, setattendanceHeaders: any, completed: string) => {
     const occurredAt = getOccurredAt(date)
     setattendanceHeaders((prev: any[]) => {
         const index = prev.findIndex((header: any) => header.id === occurredAt);
 
         if (index !== -1) {
             const newHeaders = [...prev];
-            newHeaders[index].color = "green";
+            newHeaders[index].color = completed == 'true' ? "green" : "orange";
             return newHeaders;
         }
 
@@ -33,13 +33,14 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
     const { school: orgUnit, academicYear, attendanceMode, selectedDate } = urlParameters;
     const { academicYear: academicYearId } = useSchoolCalendarKey()
     const { getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
+    const { attendance } = dataStoreData
 
     async function getEnrollmentStatus() {
         setCompletenessLoading({ loading: true })
         const data = await getEvents({
-            program: dataStoreData.attendance.attendanceStatus?.program,
+            program: attendance?.attendanceStatus?.program,
             fields: "occurredAt,event,dataValues",
-            programStage: dataStoreData.attendance.attendanceStatus?.programStage,
+            programStage: attendance?.attendanceStatus?.programStage,
             filter: [...getFilters() as any, [`${academicYearId}:in:${academicYear}`]],
             ...selectedDates,
             orgUnit: orgUnit as unknown as any,
@@ -48,10 +49,12 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
 
         if (attendanceMode === 'edit') {
             const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
-            if (useQuery.get('position')) remove('position')
 
             setAttendanceEvent(event)
-        } else for (const cdata of data) verifyOccurredAt(cdata.occurredAt, setattendanceHeaders)
+        } else for (const cdata of data) {
+            const attendanceStatusCompleted = cdata?.dataValues?.find((x: any) => x.dataElement == dataStoreData.attendance.attendanceStatus?.status)?.value
+            verifyOccurredAt(cdata.occurredAt, setattendanceHeaders, attendanceStatusCompleted)
+        }
 
         setCompletenessLoading({ loading: false })
     }
