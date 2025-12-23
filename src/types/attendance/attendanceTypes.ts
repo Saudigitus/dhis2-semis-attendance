@@ -11,11 +11,10 @@ export interface useDaveValuesProps {
 export interface attendanceFormProps {
     selectable: boolean
     setSelected: (args: any) => void
-    setRefetch: (args: any) => void    selected: any[]
+    setRefetch: (args: any) => void    
+    selected: any[]
     school: string
     disabled: boolean
     i18n: D2I18n
     attendanceEvent: { event: string } | null
-    completenessLoading: { refetch: boolean, loading: boolean }
-    setCompletenessLoading: (args: { refetch: boolean, loading: boolean }) => void
 }

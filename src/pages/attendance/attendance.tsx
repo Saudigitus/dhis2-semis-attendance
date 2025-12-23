@@ -14,6 +14,8 @@ import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { Button, IconView24, IconViewOff24, Chip } from "@dhis2/ui";
 import { format } from 'date-fns'
 import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus';
+import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
+import { completenessLoading } from '../../schema/attendance/completenessLoading';
 
 export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { program, dataStoreData } = useGetSelectedKeys()
@@ -22,8 +24,8 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
     const [selected, setSelected] = useState<any>([])
-    const [completenessLoading, setCompletenessLoading] = useState<any>({ refetch: false, loading: false })
-    const [attendanceEvent, setAttendanceEvent] = useState<any | null>(null)
+    const [completeness, setCompletenessLoading] = useRecoilState(completenessLoading)
+    const [attendanceEvent, setAttendanceEvent] = useRecoilState(classAttendanceEvent)
     const [refetch, setRefetch] = useState<boolean>(false)
     const reorganizeData = useRecoilValue(TableDataRefetch);
     const [isTableReady, setIsTableReady] = useState(false);
@@ -64,15 +66,16 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
 
     useEffect(() => {
         if (attendance?.attendanceStatus?.allowAttendanceStatus && academicYear && school && areAllSelected() && selectedDates?.occurredAfter && selectedDates?.occurredBefore) {
+            setAttendanceEvent({})
             setAttendanceEvent(null)
             getEnrollmentStatus()
         }
-    }, [selectedDates, completenessLoading.refetch])
+    }, [selectedDates, completeness.refetch])
 
     useEffect(() => {
         let copy: any = []
         const toReplace = tableValues?.findIndex(x => x.replace)
-        const notUpdated = tableData.data?.find(x => x.trackedEntity == tableData?.data?.[toReplace]?.trackedEntity)
+        const notUpdated = tableData.data?.find((x: any) => x.trackedEntity == tableData?.data?.[toReplace]?.trackedEntity)
 
         if (toReplace >= 0) {
             copy = [...tableValues]
@@ -132,8 +135,6 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                                             selectable={selectable}
                                             i18n={i18n}
                                             attendanceEvent={attendanceEvent}
-                                            completenessLoading={completenessLoading}
-                                            setCompletenessLoading={setCompletenessLoading}
                                         />
                                         <Chip selected>
                                             {`${i18n.t('Selected date')}: ${selectedDate && format(new Date(selectedDate), 'dd/MM/yyyy')}`}

@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { SingleSelectProps } from '../../types/singleSelect/singleSelectTypes';
 import { eventBody } from '../../utils/attendance/eventBody';
 import { useShowAlerts, useUploadEvents, useUrlParams } from 'dhis2-semis-functions';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { TableDataState } from '../../schema/table/tableDataSchema';
 import { TableDataRefetch } from 'dhis2-semis-types';
 import { Center } from '@dhis2/ui';
 import { CircularLoader } from '@dhis2/ui';
+import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
+import { useAttendanceCompleteness } from '../../hooks/attendance/attendanceCompleteness';
 
 function SingleSelect(props: SingleSelectProps) {
     const { options, status, disabled, ...rest } = props;
@@ -18,16 +20,16 @@ function SingleSelect(props: SingleSelectProps) {
     const { uploadValues } = useUploadEvents()
     const { urlParameters, add, remove, useQuery } = useUrlParams();
     const { selectedDate } = urlParameters
+    const attendanceEvent = useRecoilValue(classAttendanceEvent)
+    const { completeOrDelete } = useAttendanceCompleteness()
 
-    useEffect(() => {
-        setSelected(status)
-    }, [status])
+    useEffect(() => setSelected(status), [status])
 
     const onchangeValue = async (value: string) => {
         add('position', `${props?.de}${rest.tei}`)
 
         await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value)] }, 'COMMIT', 'CREATE_AND_UPDATE')
-            .then((resp: any) => {
+            .then(async (resp: any) => {
                 if (resp?.validationReport?.errorReports?.length > 0) {
                     show({
                         message: `${("Occurred unknown error!")}`,
@@ -36,6 +38,8 @@ function SingleSelect(props: SingleSelectProps) {
                     setTimeout(hide, 5000);
                     remove('position')
                 } else {
+                    if (!attendanceEvent) await completeOrDelete('create', false)
+
                     const event = resp?.bundleReport?.typeReportMap?.EVENT?.objectReports?.[0]?.uid
                     let copy = [...tableValues], index = tableValues?.findIndex((x: any) => x.trackedEntity === rest.tei)
 
@@ -48,7 +52,7 @@ function SingleSelect(props: SingleSelectProps) {
                     remove('position')
                     setTableValues(copy)
                     setSelected(value)
-                    setRefetch(prev => !prev)
+                    setRefetch((prev: any) => !prev)
                 }
             })
     }

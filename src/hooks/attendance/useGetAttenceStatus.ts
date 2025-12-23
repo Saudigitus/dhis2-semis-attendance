@@ -21,14 +21,15 @@ const verifyOccurredAt = (date: string, setattendanceHeaders: any) => {
             newHeaders[index].color = "green";
             return newHeaders;
         }
+
         return prev;
     });
 }
 
 export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAttendanceEvent, setCompletenessLoading }: { setAttendanceEvent: (args: any) => void, setattendanceHeaders: (args: any) => void, selectedDates: { occurredAfter: string, occurredBefore: string }, setCompletenessLoading: (args: any) => void }) => {
     const { getEvents } = useGetEvents()
-    const { urlParameters } = useUrlParams();
     const { dataStoreData } = useGetSelectedKeys()
+    const { urlParameters, remove, useQuery } = useUrlParams();
     const { school: orgUnit, academicYear, attendanceMode, selectedDate } = urlParameters;
     const { academicYear: academicYearId } = useSchoolCalendarKey()
     const { getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
@@ -37,7 +38,7 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
         setCompletenessLoading({ loading: true })
         const data = await getEvents({
             program: dataStoreData.attendance.attendanceStatus?.program,
-            fields: "occurredAt,event",
+            fields: "occurredAt,event,dataValues",
             programStage: dataStoreData.attendance.attendanceStatus?.programStage,
             filter: [...getFilters() as any, [`${academicYearId}:in:${academicYear}`]],
             ...selectedDates,
@@ -47,11 +48,11 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
 
         if (attendanceMode === 'edit') {
             const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
-            setAttendanceEvent(event)
+            if (useQuery.get('position')) remove('position')
 
-        } else for (const cdata of data) {
-            verifyOccurredAt(cdata.occurredAt, setattendanceHeaders)
-        }
+            setAttendanceEvent(event)
+        } else for (const cdata of data) verifyOccurredAt(cdata.occurredAt, setattendanceHeaders)
+
         setCompletenessLoading({ loading: false })
     }
 
