@@ -1,22 +1,23 @@
 import { eventBody } from "../../utils/attendance/eventBody"
 import { useUploadEvents, useUrlParams } from "dhis2-semis-functions"
-import { useSetRecoilState } from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns"
 import { useDaveValuesProps } from "../../types/attendance/attendanceTypes"
+import { allStudents } from '../../schema/students/allStudentList';
 
 export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelected, setOpen }: useDaveValuesProps) {
     const { useQuery } = useUrlParams()
     const date = useQuery.get('selectedDate')!
     const { uploadValues } = useUploadEvents()
     const disable = useSetRecoilState(DisaleButtonsState)
+    const students = useRecoilValue(allStudents)
 
-    async function formSubmit(values: any, selected: any[]) {
+    async function formSubmit(values: any) {
         setLoading(true)
         let events = []
-
-        for (const tei of selected) {
+        for (const tei of students) {
             const eventId = tei?.[date]?.eventId ?? null
-
+            
             events.push(eventBody({
                 tei: tei.trackedEntity,
                 event: eventId,
@@ -29,7 +30,7 @@ export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelect
                 date: date
             }, values.status))
         }
-
+        
         await uploadValues({ events: events }, 'COMMIT', 'CREATE_AND_UPDATE')
             .then(() => { disable(false); setLoading(false); setRefetch((prev: any) => (!prev)); setOpen(false); setSelected([]) })
             .catch(() => { setLoading(false); setOpen(false); disable(false) })

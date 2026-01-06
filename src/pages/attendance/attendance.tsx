@@ -16,6 +16,7 @@ import { format } from 'date-fns'
 import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus';
 import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
 import { completenessLoading } from '../../schema/attendance/completenessLoading';
+import { useGetAllStudents } from '../../hooks/students/useGetAllStudent';
 
 export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { program, dataStoreData } = useGetSelectedKeys()
@@ -42,6 +43,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: attendance?.programStage });
     const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading })
+    const { loading: loadingStudents } = useGetAllStudents()
 
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
@@ -109,13 +111,13 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                             defaultFilterNumber={5}
                             enableInactiveRowSelection={false}
                             filterState={filterState}
-                            loading={!isTableReady || loading}
+                            loading={!isTableReady || loading || loadingStudents}
                             rightElements={
                                 <EnrollmentActionsButtons
                                     selectable={selectable}
                                     setIsTableReady={setIsTableReady}
                                     setattendanceHeaders={setattendanceHeaders}
-                                    loading={loading}
+                                    loading={loading || loadingStudents}
                                     selectedDataStoreKey={dataStoreData}
                                     setSelectedDates={setSelectedDates}
                                     setSelectable={setSelectable}
