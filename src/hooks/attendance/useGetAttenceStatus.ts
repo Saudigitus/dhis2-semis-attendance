@@ -29,7 +29,7 @@ const verifyOccurredAt = (date: string, setattendanceHeaders: any, completed: st
 export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAttendanceEvent, setCompletenessLoading }: { setAttendanceEvent: (args: any) => void, setattendanceHeaders: (args: any) => void, selectedDates: { occurredAfter: string, occurredBefore: string }, setCompletenessLoading: (args: any) => void }) => {
     const { getEvents } = useGetEvents()
     const { dataStoreData } = useGetSelectedKeys()
-    const { urlParameters, remove, useQuery } = useUrlParams();
+    const { urlParameters } = useUrlParams();
     const { school: orgUnit, academicYear, attendanceMode, selectedDate } = urlParameters;
     const { academicYear: academicYearId } = useSchoolCalendarKey()
     const { getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })

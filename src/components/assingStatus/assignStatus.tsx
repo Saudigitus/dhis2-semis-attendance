@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NoticeBox, Button } from "@dhis2/ui";
 import { WithBorder, ModalComponent, CustomForm, WithPadding } from "dhis2-semis-components";
 import { Form } from "react-final-form";
@@ -7,7 +7,6 @@ import styles from './assignStatus.module.css'
 import { CircularProgress } from "@mui/material";
 import { useSaveValues } from "../../hooks/attendance/saveValues";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { TableDataState } from "../../schema/table/tableDataSchema";
 import { attendanceFormProps } from "../../types/attendance/attendanceTypes";
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns";
 import { CheckCircleOutline, HighlightOff } from "@mui/icons-material";
@@ -29,7 +28,6 @@ export default function AssignStatus({
     const [loading, setLoading] = useState(false)
     const [selectedOption, setSelectedOption] = useState({ value: '', label: '' })
     const [openMarkAll, setOpenMarkAll] = useState(false)
-    const tableValues = useRecoilValue(TableDataState)
     const { dataStoreData } = useGetSelectedKeys()
     const { attendance = {} as unknown as any } = dataStoreData
     const { formSubmit } = useSaveValues({ setLoading, dataStoreData, setSelected, setRefetch, setOpen, })
@@ -79,7 +77,7 @@ export default function AssignStatus({
                     onSave={async () => {
                         setOpenMarkAll(false)
                         disable(true)
-                        await formSubmit({ status: selectedOption.value }, tableValues.filter(x => x?.status !== "CANCELLED"))
+                        await formSubmit({ status: selectedOption.value })
                     }}
                     open={openMarkAll}
                     selectedOption={selectedOption}
@@ -110,7 +108,7 @@ export default function AssignStatus({
                                     ]}
                                     storyBook={false}
                                     withButtons={true}
-                                    onFormSubtmit={(e: any) => formSubmit(e, selected)}
+                                    onFormSubtmit={(e: any) => formSubmit(e)}
                                     onCancel={() => setOpen(false)}
                                 />
                             </WithPadding>
