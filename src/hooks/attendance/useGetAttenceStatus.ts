@@ -13,6 +13,7 @@ const getOccurredAt = (date: string) => {
 
 const verifyOccurredAt = (date: string, setattendanceHeaders: any, completed: string) => {
     const occurredAt = getOccurredAt(date)
+
     setattendanceHeaders((prev: any[]) => {
         const index = prev.findIndex((header: any) => header.id === occurredAt);
 
@@ -26,7 +27,8 @@ const verifyOccurredAt = (date: string, setattendanceHeaders: any, completed: st
     });
 }
 
-export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAttendanceEvent, setCompletenessLoading }: { setAttendanceEvent: (args: any) => void, setattendanceHeaders: (args: any) => void, selectedDates: { occurredAfter: string, occurredBefore: string }, setCompletenessLoading: (args: any) => void }) => {
+export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAttendanceEvent, setCompletenessLoading, attendanceHeaders }:
+    { setAttendanceEvent: (args: any) => void, setattendanceHeaders: (args: any) => void, selectedDates: { occurredAfter: string, occurredBefore: string }, setCompletenessLoading: (args: any) => void, attendanceHeaders: any[] }) => {
     const { getEvents } = useGetEvents()
     const { dataStoreData } = useGetSelectedKeys()
     const { urlParameters } = useUrlParams();
@@ -35,7 +37,7 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
     const { getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { attendance } = dataStoreData
 
-    async function getEnrollmentStatus() {
+    async function getEnrollmentStatus(tableData: any) {
         setCompletenessLoading({ loading: true })
         const data = await getEvents({
             program: attendance?.attendanceStatus?.program,
@@ -51,9 +53,28 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
             const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
 
             setAttendanceEvent(event)
-        } else if(dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus)  for (const cdata of data) {
-            const attendanceStatusCompleted = cdata?.dataValues?.find((x: any) => x.dataElement == dataStoreData.attendance.attendanceStatus?.status)?.value
-            verifyOccurredAt(cdata.occurredAt, setattendanceHeaders, attendanceStatusCompleted)
+        } else if (dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus) {
+            let copy = [...attendanceHeaders]
+
+            for (let header of copy) {
+                const completeNessEvent = data?.find((x: any) => getOccurredAt(x.occurredAt) === header.id)
+
+                if (completeNessEvent) {
+                    const attendanceStatusCompleted = completeNessEvent?.dataValues?.
+                        find((x: any) => x.dataElement == dataStoreData.attendance.attendanceStatus?.status)?.
+                        value
+                    header.color = attendanceStatusCompleted == 'true' ? "green" : "orange";
+                }
+
+                if (header.color != "green" && header.color != "orange") {
+                    for (let student of tableData?.data) {
+                        if (student?.[header?.id]) header.color = 'orange'
+                        break
+                    }
+                }
+            }
+
+            setattendanceHeaders(copy)
         }
 
         setCompletenessLoading({ loading: false })

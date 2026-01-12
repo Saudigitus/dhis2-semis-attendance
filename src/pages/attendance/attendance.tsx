@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { ProgramConfig, VariablesTypes, D2I18n } from 'dhis2-semis-types'
 import React, { useEffect, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
@@ -16,7 +16,7 @@ import { format } from 'date-fns'
 import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus';
 import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
 import { completenessLoading } from '../../schema/attendance/completenessLoading';
-import { useGetAllStudents } from '../../hooks/students/useGetAllStudent';
+import { allStudents } from '../../schema/students/allStudentList';
 
 export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const { program, dataStoreData } = useGetSelectedKeys()
@@ -37,19 +37,19 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     const [seeReason, setSeeReason] = useRecoilState(ReasonOfAbsenseState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
     const [pagination, setPagination] = useState({ page: 1, pageSize: 50, totalPages: 0, totalElements: 0 })
-    const { schoolName, school, selectedDate, attendanceMode, academicYear } = urlParameters;
+    const { schoolName, school, selectedDate, attendanceMode } = urlParameters;
     const { getFilters, areAllSelected } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: attendance?.programStage });
-    const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading })
-    const { loading: loadingStudents } = useGetAllStudents()
+    const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
+    const setAll = useSetRecoilState(allStudents)
 
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
             void getData({
-                page: pagination.page,
-                pageSize: pagination.pageSize,
+                paging: false,
+                skipPaging: true,
                 program: program!?.id as string,
                 orgUnit: urlParameters?.school!,
                 baseProgramStage: dataStoreData?.registration?.programStage,
@@ -62,20 +62,25 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                 ...selectedDates,
                 otherProgramStage: attendance?.programStage,
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
-            }).then(() => setIsTableReady(true))
+            }).then((resp: any) => {
+                setAll(resp?.data)
+                setIsTableReady(true)
+            })
         }
-    }, [filterState.attributes, pagination.page, pagination.pageSize, refetch, selectedDates, urlParameters])
+    }, [filterState.attributes, refetch, selectedDates, urlParameters])
 
     useEffect(() => {
-        if (attendance?.attendanceStatus?.allowAttendanceStatus && academicYear && school && areAllSelected() && selectedDates?.occurredAfter && selectedDates?.occurredBefore) {
+        if (attendance?.attendanceStatus?.allowAttendanceStatus && tableData?.data?.length > 0) {
             setAttendanceEvent({})
             setAttendanceEvent(null)
-            getEnrollmentStatus()
+            getEnrollmentStatus(tableData)
         }
-    }, [selectedDates, completeness.refetch])
+    }, [completeness.refetch, tableData?.data])
 
     useEffect(() => {
         let copy: any = []
+        const start = (pagination?.page - 1) * pagination?.pageSize
+        const end = start + pagination?.pageSize
         const toReplace = tableValues?.findIndex(x => x.replace)
         const notUpdated = tableData.data?.find((x: any) => x.trackedEntity == tableData?.data?.[toReplace]?.trackedEntity)
 
@@ -84,9 +89,10 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
         }
 
-        setPagination((prev) => ({ ...prev, totalPages: tableData.pagination.totalPages, totalElements: tableData.pagination.totalElements }))
-        setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)], attendanceHeaders))
-    }, [tableData, reorganizeData, attendanceMode, seeReason])
+        setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))
+        setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)]?.slice(start, end), attendanceHeaders))
+    }, [tableData, reorganizeData, attendanceMode, seeReason, pagination])
+
 
     return (
         <div style={{ height: "85vh" }}>
@@ -111,13 +117,13 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                             defaultFilterNumber={5}
                             enableInactiveRowSelection={false}
                             filterState={filterState}
-                            loading={!isTableReady || loading || loadingStudents}
+                            loading={!isTableReady || loading}
                             rightElements={
                                 <EnrollmentActionsButtons
                                     selectable={selectable}
                                     setIsTableReady={setIsTableReady}
                                     setattendanceHeaders={setattendanceHeaders}
-                                    loading={loading || loadingStudents}
+                                    loading={loading}
                                     selectedDataStoreKey={dataStoreData}
                                     setSelectedDates={setSelectedDates}
                                     setSelectable={setSelectable}
