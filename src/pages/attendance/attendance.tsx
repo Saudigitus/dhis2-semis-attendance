@@ -83,7 +83,6 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
         const end = start + pagination?.pageSize
         const toReplace = tableValues?.findIndex(x => x.replace)
         const notUpdated = tableData.data?.find((x: any) => x.trackedEntity == tableData?.data?.[toReplace]?.trackedEntity)
-
         if (toReplace >= 0) {
             copy = [...tableValues]
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
@@ -91,7 +90,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
 
         setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))
         setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)]?.slice(start, end), attendanceHeaders))
-    }, [tableData, reorganizeData, attendanceMode, seeReason, pagination])
+    }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page])
 
 
     return (
