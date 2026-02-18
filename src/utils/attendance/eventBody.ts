@@ -4,7 +4,7 @@ export function eventBody(rest: any, value: any) {
 
     return {
         ...(rest.event ? { event: rest.event } : {}),
-        trackedEntityInstance: rest.tei,
+        trackedEntity: rest.tei,
         program: rest.program,
         programStage: rest.stage,
         orgUnit: rest.ou,
