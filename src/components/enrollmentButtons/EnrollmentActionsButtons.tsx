@@ -8,15 +8,13 @@ import { getAttendanceDEHeaders } from '../../utils/common/getAttendanceDEHeader
 import { EnrollmentButtonsProps } from '../../types/enrollmentButons/enrollmentButtonsTypes';
 import { format, subDays } from "date-fns";
 import { generateattendanceHeaders } from '../../utils/header/generateAttendanceDays';
-import { useConfig } from '@dhis2/app-runtime';
 import { Tooltip } from '@mui/material';
 import { Event } from '@mui/icons-material';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { useSchoolCalendarKey } from 'dhis2-semis-components';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n } = props
-    const { baseUrl } = useConfig()
+    const { setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n, baseUrl } = props
     const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
     const { sectionName } = useGetSectionTypeLabel();
