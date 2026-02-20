@@ -11,7 +11,7 @@ export default function Router({ i18n, baseUrl }: { i18n: D2I18n; baseUrl: strin
             <Route path='/'
                 element={<WithHeaderBarLayout baseUrl={baseUrl} />}
             >
-                <Route key={'attendance'} path={'/'} element={<Attendance i18n={i18n} />} />
+                <Route key={'attendance'} path={'/'} element={<Attendance i18n={i18n} baseUrl={baseUrl} />} />
             </Route>
         </Routes>
     );
