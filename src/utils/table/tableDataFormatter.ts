@@ -34,7 +34,7 @@ export function tableDataFormatter() {
 
                         if (seeReason && configKey?.configKey == attendanceConst('absentCode')) {
                             const status = data?.[index]?.[head?.id]?.absenceOption
-                            configKey = { configKey: 'Absense', code: status ?? '--' }
+                            configKey = { configKey: 'Absense', code: status ?? '--', label: status ?? '--' }
                         }
 
                         const icon = getComponent(configKey, attendanceConst, data?.[index]?.status == 'CANCELLED', seeReason)
@@ -97,4 +97,3 @@ export function tableDataFormatter() {
 
     return { formatData }
 }
-

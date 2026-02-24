@@ -28,6 +28,10 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { hide, show } = useShowAlerts()
     const { schoolCalendar, defaults, academicYear: academicYearId } = useSchoolCalendarKey()
     const defaultAcademicYear = schoolCalendar?.find((x: any) => x?.academicYear?.code == defaults?.academicYear)
+    const selectedAcademicYearConfig = schoolCalendar?.find((x: any) =>
+        x?.academicYear?.id == academicYear || x?.academicYear?.code == academicYear
+    )
+    const attendanceCalendarConfig = defaultAcademicYear ?? selectedAcademicYearConfig ?? schoolCalendar?.[0]
     const { getDate } = useIncrementDays()
     const showAlert = (error: any) => {
         show({ message: `${i18n.t('Unknown error')}: ${error}`, type: { critical: true } })
@@ -80,16 +84,14 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     ];
 
     useEffect(() => {
-        if (defaultAcademicYear || editModeValue) {
-            setIsTableReady(false)
-            const formated = format(new Date(start), "yyyy-MM-dd")
-            const fiveDaysBefore = format(subDays(new Date(start), 4), 'yyyy-MM-dd');
-            add('attendanceMode', 'view')
-            add('selectedDate', formated)
-            getValidDays(start, defaultAcademicYear)
-            setSelectedDates((prev: any) => ({ occurredAfter: fiveDaysBefore, occurredBefore: getDate({ selectedDate: start }) }))
-        }
-    }, [viewModeValue])
+        setIsTableReady(false)
+        const formated = format(new Date(start), "yyyy-MM-dd")
+        const fiveDaysBefore = format(subDays(new Date(start), 4), 'yyyy-MM-dd');
+        add('attendanceMode', 'view')
+        add('selectedDate', formated)
+        getValidDays(start, attendanceCalendarConfig)
+        setSelectedDates((prev: any) => ({ occurredAfter: fiveDaysBefore, occurredBefore: getDate({ selectedDate: start }) }))
+    }, [viewModeValue, attendanceCalendarConfig?.academicYear?.id, attendanceCalendarConfig?.academicYear?.code])
 
     useEffect(() => {
         if (editModeValue || attendanceMode == 'edit') {

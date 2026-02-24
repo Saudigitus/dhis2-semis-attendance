@@ -19,7 +19,6 @@ export function useAttendanceCompleteness() {
     const completeOrDelete = async (operation: 'delete' | 'create', completed?: boolean) => {
         setCompletenessLoading((prev) => ({ ...prev, loading: true }))
         const importStrategy = operation == 'delete' ? 'DELETE' : 'CREATE_AND_UPDATE'
-
         const eventData = operation == 'delete' ? { event: savedAttendanceEvent?.event } : {
             ...(savedAttendanceEvent?.event ? { event: savedAttendanceEvent?.event } : {}),
             program: dataStoreData.attendance.attendanceStatus?.program,

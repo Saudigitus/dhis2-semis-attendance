@@ -3,13 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { SingleSelectProps } from '../../types/singleSelect/singleSelectTypes';
 import { eventBody } from '../../utils/attendance/eventBody';
 import { useShowAlerts, useUploadEvents, useUrlParams } from 'dhis2-semis-functions';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { TableDataState } from '../../schema/table/tableDataSchema';
 import { TableDataRefetch } from 'dhis2-semis-types';
 import { Center } from '@dhis2/ui';
 import { CircularLoader } from '@dhis2/ui';
-import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
-import { useAttendanceCompleteness } from '../../hooks/attendance/attendanceCompleteness';
 
 function SingleSelect(props: SingleSelectProps) {
     const { options, status, disabled, ...rest } = props;
@@ -20,8 +18,6 @@ function SingleSelect(props: SingleSelectProps) {
     const { uploadValues } = useUploadEvents()
     const { urlParameters, add, remove, useQuery } = useUrlParams();
     const { selectedDate } = urlParameters
-    const attendanceEvent = useRecoilValue(classAttendanceEvent)
-    const { completeOrDelete } = useAttendanceCompleteness()
 
     useEffect(() => setSelected(status), [status])
 
@@ -43,7 +39,7 @@ function SingleSelect(props: SingleSelectProps) {
                     let copy = [...tableValues], index = tableValues?.findIndex((x: any) => x.trackedEntity === rest.tei)
 
                     if (rest?.absenceReason === rest?.de) {
-                        copy[index] = { ...copy[index], [rest.date]: { ...copy[index][rest.date], absenceReason: value }, replace: true }
+                        copy[index] = { ...copy[index], [rest.date]: { ...copy[index][rest.date], absenceOption: value }, replace: true }
                     } else {
                         copy[index] = { ...copy[index], [rest.date]: { ...copy[index][rest.date], eventId: event, status: value, absenceOption: undefined }, replace: true }
                     }
@@ -52,8 +48,6 @@ function SingleSelect(props: SingleSelectProps) {
                     setTableValues(copy)
                     setSelected(value)
                     setRefetch((prev: any) => !prev)
-                    
-                    if (!attendanceEvent) await completeOrDelete('create', false)
                 }
             })
     }
