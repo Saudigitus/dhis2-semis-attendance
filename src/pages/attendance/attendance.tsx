@@ -48,8 +48,6 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
             void getData({
-                paging: false,
-                skipPaging: true,
                 program: program!?.id as string,
                 orgUnit: urlParameters?.school!,
                 baseProgramStage: dataStoreData?.registration?.programStage,
