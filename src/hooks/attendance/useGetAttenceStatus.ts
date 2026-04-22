@@ -46,7 +46,6 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
             filter: [...getFilters() as any, [`${academicYearId}:in:${academicYear}`]],
             ...selectedDates,
             orgUnit: orgUnit as unknown as any,
-            skipPaging: true
         })
 
         if (attendanceMode === 'edit') {

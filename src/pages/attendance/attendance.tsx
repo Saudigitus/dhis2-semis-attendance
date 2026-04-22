@@ -18,7 +18,7 @@ import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEve
 import { completenessLoading } from '../../schema/attendance/completenessLoading';
 import { allStudents } from '../../schema/students/allStudentList';
 
-export default function Attendance({ i18n }: { i18n: D2I18n }) {
+export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: string }) {
     const { program, dataStoreData } = useGetSelectedKeys()
     const { attendance = {} as unknown as any } = dataStoreData
     const { urlParameters } = useUrlParams(['position']);
@@ -48,8 +48,6 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
             void getData({
-                paging: false,
-                skipPaging: true,
                 program: program!?.id as string,
                 orgUnit: urlParameters?.school!,
                 baseProgramStage: dataStoreData?.registration?.programStage,
@@ -128,6 +126,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                                     setSelectable={setSelectable}
                                     i18n={i18n}
                                     setRefetch={setRefetch}
+                                    baseUrl={baseUrl}
                                 />
                             }
                             beforeSettings={

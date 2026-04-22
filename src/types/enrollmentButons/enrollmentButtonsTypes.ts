@@ -10,4 +10,5 @@ export interface EnrollmentButtonsProps {
     loading: boolean
     selectedDataStoreKey: selectedDataStoreKey
     i18n: D2I18n
+    baseUrl: string
 }
