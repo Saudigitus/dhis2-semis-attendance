@@ -59,7 +59,7 @@ function SingleSelect(props: SingleSelectProps) {
     }
 
     return (
-        <div>
+        <div data-test="attendance-select-reason-container">
             {
                 (useQuery.get('position') != undefined && useQuery.get('position') == `${props?.de}${rest.tei}`) ?
                     <Center>
@@ -71,10 +71,11 @@ function SingleSelect(props: SingleSelectProps) {
                         disabled={!!(disabled || (useQuery.get('position') != undefined && useQuery.get('position') != `${props?.de}${rest.tei}`))}
                         {...rest}
                         selected={selected || null}
+                        data-test="attendance-select-reason"
                         onChange={(e: any) => { onchangeValue(options.find((x: any) => x.code === e.selected).code) }}
                     >
                         {options?.map((x: any) =>
-                            <SingleSelectOption key={x.code} label={x.Component} value={x.code} />
+                            <SingleSelectOption key={x.code} label={x.Component} value={x.code} data-test={`attendance-select-reason-option-${x.code}`}/>
                         )}
                     </SingleSelectField>
             }

@@ -134,6 +134,7 @@ export default function Attendance({ i18n }: { i18n: D2I18n }) {
                                 attendanceMode == 'edit' ?
                                     <>
                                         <AsssignStatus
+                                        
                                             disabled={loading}
                                             setSelected={setSelected}
                                             setRefetch={setRefetch}

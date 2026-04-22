@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NoticeBox, Button } from "@dhis2/ui";
 import { WithBorder, ModalComponent, CustomForm, WithPadding } from "dhis2-semis-components";
 import { Form } from "react-final-form";
@@ -58,18 +58,18 @@ export default function AssignStatus({
                     ? <CheckCircleOutline style={{ color: "#21B26D" }} /> : <HighlightOff />}
                 className={classNames(styles.btn)}
                 destructive={(attendanceEvent && attendanceStatus != 'false')}
+                dataTest={(attendanceEvent && attendanceStatus != 'false') ? "uncomplete-attendance-button" : "complete-attendance-button"}
             >
                 <span>{completeness?.loading && !attendanceEvent ? "" : (attendanceEvent && attendanceStatus != 'false') ? i18n.t("Uncomplete attendance") : i18n.t("Complete attendance")}</span>
             </Button >}
 
-            <span>
-                <DropdownButton
-                    name={<span className={styles.work_buttons_text}>{i18n.t('Mark all as')}</span> as unknown as string}
-                    icon={loading ? <CircularProgress size={14} /> : <IconUserGroup16 />}
-                    options={options}
-                    disabled={disabled || loading}
-                />
-            </span>
+            <DropdownButton
+                dataTest="mark-all-attendances"
+                name={<span className={styles.work_buttons_text}>{i18n.t('Mark all as')}</span> as unknown as string}
+                icon={loading ? <CircularProgress size={14} /> : <IconUserGroup16 />}
+                options={options}
+                disabled={disabled || loading}
+            />
 
             {
                 openMarkAll && <ConfirmModal
@@ -87,6 +87,7 @@ export default function AssignStatus({
 
             {
                 open && <ModalComponent
+                    dataTest="bulk-attendance-modal"
                     children={<WithPadding>
                         <NoticeBox title={`${i18n.t('Warning')}! ${selected.length} ${i18n.t("Students will be affected")}`} warning>
                             {i18n.t("The chosen attendance status will be assigned to the selected students")}

@@ -69,6 +69,7 @@ export default function MultipleButtons(props: ButtonProps) {
                             selected === item?.code && styles["active-button"],
                             styles.label,
                         )}
+                        data-test={`attendance-button-${item?.code}`}
                         onClick={async () => { await onchangeValue(item.code) }}
                     >
                         <span className={styles.simpleButtonLabel}>

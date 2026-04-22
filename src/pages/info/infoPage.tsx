@@ -4,6 +4,7 @@ import { D2I18n } from "dhis2-semis-types";
 export default function InfoPageHolder({ i18n }: { i18n: D2I18n }) {
     return (
         <InfoPage
+            dataTest="attendance-info-page"
             title={i18n.t("SEMIS-Attendance")}
             sections={[
                 {

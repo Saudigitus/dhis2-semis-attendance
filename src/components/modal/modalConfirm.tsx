@@ -6,6 +6,7 @@ export default function ConfirmModal({ open, setOpen, onSave, i18n, selectedOpti
 
     return (
         <ModalComponent
+            dataTest="confirm-attendances-modal"
             children={
                 <div>
                     <NoticeBox title={`${i18n.t('Warning')}! ${i18n.t("All listed students will be affected")}`} warning>

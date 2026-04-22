@@ -110,24 +110,23 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         <div className={styles.container}>
             <ButtonStrip className={styles.work_buttons}>
                 {/* {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckCircleOutlined />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>} */}
-                <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
-                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('Take attendance')!} icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue(() => ({ ...e }))} value={editModeValue} />
+                <Tooltip data-test="take-attendance-tooltip" title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
+                    <DropDownCalendar dataTest="take-attendance-calendar" config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('Take attendance')!} icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue(() => ({ ...e }))} value={editModeValue} />
                 </Tooltip>
 
-                <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
-                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('View attendance records')!} icon={<Event />} setValue={(e) => setViewModeValue(() => ({ ...e }))} value={viewModeValue} />
+                <Tooltip data-test="view-attendance-tooltip" title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
+                    <DropDownCalendar dataTest="view-attendance-calendar" config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('View attendance records')!} icon={<Event />} setValue={(e) => setViewModeValue(() => ({ ...e }))} value={viewModeValue} />
                 </Tooltip>
 
                 {attendanceMode != 'edit' &&
-                    <Tooltip title={!areAllSelected() ? i18n.t("Please select all filters") : ""}>
-                        <span>
-                            <DropdownButton
-                                name={<span className={styles.work_buttons_text}>{i18n.t('Bulk attendance')}</span> as unknown as string}
-                                disabled={!!(orgUnit == undefined || !areAllSelected() || academicYear == undefined)}
-                                icon={<IconUserGroup16 />}
-                                options={enrollmentOptions}
-                            />
-                        </span>
+                    <Tooltip data-test="bulk-attendance-tooltip" title={!areAllSelected() ? i18n.t("Please select all filters") : ""}>
+                        <DropdownButton
+                            dataTest="bulk-attendance-dropdown"
+                            name={<span className={styles.work_buttons_text}>{i18n.t('Bulk attendance')}</span> as unknown as string}
+                            disabled={!!(orgUnit == undefined || !areAllSelected() || academicYear == undefined)}
+                            icon={<IconUserGroup16 />}
+                            options={enrollmentOptions}
+                        />
                     </Tooltip>
                 }
             </ButtonStrip>
