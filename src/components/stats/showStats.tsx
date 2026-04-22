@@ -20,6 +20,7 @@ export default function ShowStats({ stats, open, setOpen }: { setOpen: (args: bo
         <ModalComponent
             open={open}
             handleClose={() => setOpen(!open)}
+            dataTest="attendance-show-stats-modal"
             children={
                 <div>
                     <Tag positive icon={<IconCheckmarkCircle16 />}> Students promotion preview </Tag>
@@ -29,15 +30,15 @@ export default function ShowStats({ stats, open, setOpen }: { setOpen: (args: bo
                     <WithPadding />
 
                     <ButtonStrip>
-                        <SummaryCard color="success" label="Promoted students" value={stats?.posted ?? 0} />
-                        <SummaryCard color="error" label="No promoted students" value={stats?.conflicts?.length ?? 0} />
+                        <SummaryCard dataTest="attendance-promoted-students" color="success" label="Promoted students" value={stats?.posted ?? 0} />
+                        <SummaryCard dataTest="attendance-no-promoted-students" color="error" label="No promoted students" value={stats?.conflicts?.length ?? 0} />
                     </ButtonStrip>
 
                     <WithPadding />
                     {stats?.conflicts?.length > 0 ?
                         <>
                             <ButtonStrip>
-                                <Button small icon={<InfoOutlined />} onClick={() => setShowDetails(!showDetails)}>More details</Button>
+                                <Button dataTest="attendance-stats-more-details-button" small icon={<InfoOutlined />} onClick={() => setShowDetails(!showDetails)}>More details</Button>
                             </ButtonStrip>
                             <br />
                             <span style={{ color: "red" }}>The following students were not promoted. They already exist on the selected academic year</span>
