@@ -30,8 +30,8 @@ export default function ShowStats({ stats, open, setOpen }: { setOpen: (args: bo
                     <WithPadding />
 
                     <ButtonStrip>
-                        <SummaryCard dataTest="attendance-promoted-students" color="success" label="Promoted students" value={stats?.posted ?? 0} />
-                        <SummaryCard dataTest="attendance-no-promoted-students" color="error" label="No promoted students" value={stats?.conflicts?.length ?? 0} />
+                        <SummaryCard dataTest="attendance-promoted-students-card" color="success" label="Promoted students" value={stats?.posted ?? 0} />
+                        <SummaryCard dataTest="attendance-no-promoted-students-card" color="error" label="No promoted students" value={stats?.conflicts?.length ?? 0} />
                     </ButtonStrip>
 
                     <WithPadding />

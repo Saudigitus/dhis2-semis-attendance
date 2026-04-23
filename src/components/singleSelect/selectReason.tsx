@@ -71,7 +71,7 @@ function SingleSelect(props: SingleSelectProps) {
                         disabled={!!(disabled || (useQuery.get('position') != undefined && useQuery.get('position') != `${props?.de}${rest.tei}`))}
                         {...rest}
                         selected={selected || null}
-                        data-test="attendance-select-reason"
+                        data-test="attendance-select-absence-reason"
                         onChange={(e: any) => { onchangeValue(options.find((x: any) => x.code === e.selected).code) }}
                     >
                         {options?.map((x: any) =>
