@@ -61,13 +61,13 @@ export default function AssignStatus({
                     !attendanceEvent ? <EditNote style={{ color: "#ffb300" }} />
                         : (attendanceEvent?.status === 'ACTIVE')
                             ? <CheckCircleOutline style={{ color: "#21B26D" }} />
-                            : <HighlightOff />
+                            : (attendanceEvent?.status === 'COMPLETED') && <HighlightOff />
                 }
                 className={classNames(attendanceEvent ? styles.btn : styles.pulseBtn)}
                 destructive={(attendanceEvent && attendanceEvent?.status === 'COMPLETED')}
             >
                 <span>{
-                    completeness?.loading && !attendanceEvent ? "Start attendance" :
+                    completeness?.loading && !attendanceEvent ? "loading" :
                         attendanceEvent ? attendanceEvent?.status === 'ACTIVE' ? i18n.t("Complete attendance") : attendanceEvent?.status === 'COMPLETED' && i18n.t("Uncomplete attendance") : i18n.t("Start attendance")
                 }
                 </span>

@@ -129,7 +129,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                 />
                             }
                             beforeSettings={
-                                attendanceMode == 'edit' ?
+                                (attendanceMode == 'edit') ?
                                     <>
                                         <AsssignStatus
                                             disabled={loading}
