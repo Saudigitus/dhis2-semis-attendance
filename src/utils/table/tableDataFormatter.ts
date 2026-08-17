@@ -17,7 +17,7 @@ export function tableDataFormatter() {
     const { selectedDate } = urlParameters
     const { validAttendanceStatus } = useAttendanceOptions()
 
-    function formatData(data: any[], headers: any[] = []): any[] {
+    function formatData(data: any[], headers: any[] = [], attendanceEvent: any = null): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/
         const empty = { configKey: 'Empty', code: 'Empty' }
         let copyData = data.map(item => ({ ...item })), configKey: any = {}
@@ -70,9 +70,8 @@ export function tableDataFormatter() {
                         enrollment: copyData[index]?.enrollmentId,
                         absenceReason: attendance.absenceReason,
                         statusDataElement: attendance.status,
+                        disabled: !attendanceEvent
                     }
-
-                    console.log(props)
 
 
                     if (head?.id === attendance.status) options = validAttendanceStatus

@@ -1,4 +1,4 @@
-import { useCheckFilters, useShowAlerts, useUploadEvents, useUrlParams } from "dhis2-semis-functions";
+import { useCheckFilters, useShowAlerts, useUploadEvents, useUrlParams, useGetEvents } from "dhis2-semis-functions";
 import useGetSelectedKeys from "../config/useGetSelectedKeys"
 import { useSchoolCalendarKey } from "dhis2-semis-components";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -15,24 +15,51 @@ export function useAttendanceCompleteness() {
     const { uploadValues } = useUploadEvents()
     const { hide, show } = useShowAlerts()
     const savedAttendanceEvent = useRecoilValue(classAttendanceEvent)
+    const { getEvents } = useGetEvents()
 
-    const completeOrDelete = async (operation: 'delete' | 'create', completed?: boolean) => {
+    const completeOrDelete = async (totalRecords: number | null, selectedDates: any, status: 'ACTIVE' | 'COMPLETED') => {
         setCompletenessLoading((prev) => ({ ...prev, loading: true }))
-        const importStrategy = operation == 'delete' ? 'DELETE' : 'CREATE_AND_UPDATE'
+        const importStrategy = 'CREATE_AND_UPDATE'
+        let summaries = []
+        console.log(status,totalRecords)
+        for (const attendaceStatus of dataStoreData?.attendance?.statusOptions) {
+            if (status == 'COMPLETED' && !!attendaceStatus?.totalSummary) {
+                const { data, pagination } = await getEvents({
+                    program: dataStoreData?.program,
+                    programStage: dataStoreData.attendance?.programStage,
+                    ...selectedDates,
+                    orgUnit: school,
+                    filter: [`${dataStoreData?.attendance?.status}:in:${attendaceStatus?.code}`],
+                    totalPages: true,
+                    pageSize: 1
+                })
+                summaries.push({
+                    dataElement: attendaceStatus?.totalSummary,
+                    value: pagination?.total || 0
+                })
+            } else if (attendaceStatus?.totalSummary) {
+                summaries.push({
+                    dataElement: attendaceStatus.totalSummary,
+                    value: ""
+                })
+            }
 
-        const eventData = operation == 'delete' ? { event: savedAttendanceEvent?.event } : {
+        }
+
+        const eventData = {
             ...(savedAttendanceEvent?.event ? { event: savedAttendanceEvent?.event } : {}),
             program: dataStoreData.attendance.attendanceStatus?.program,
             programStage: dataStoreData.attendance.attendanceStatus?.programStage,
             orgUnit: school,
             dataValues: [
+                ...summaries,
                 {
                     dataElement: academicYearId,
                     value: academicYear
                 },
                 {
-                    dataElement: dataStoreData.attendance.attendanceStatus?.status,
-                    value: savedAttendanceEvent?.event ? true : completed
+                    dataElement: dataStoreData?.attendance?.attendanceStatus?.totalRecords,
+                    value: totalRecords
                 },
                 ...(dataStoreData?.filters?.dataElements?.map((filter: any) => ({
                     dataElement: filter.dataElement,
@@ -40,7 +67,8 @@ export function useAttendanceCompleteness() {
                 })) ?? [])
             ],
             eventDate: selectedDate,
-            occurredAt: selectedDate
+            occurredAt: selectedDate,
+            status
         }
 
         await uploadValues({ events: [eventData] }, 'COMMIT', importStrategy)

@@ -69,7 +69,6 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
 
     useEffect(() => {
         if (attendance?.attendanceStatus?.allowAttendanceStatus && tableData?.data?.length > 0) {
-            setAttendanceEvent({})
             setAttendanceEvent(null)
             getEnrollmentStatus(tableData)
         }
@@ -87,8 +86,8 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         }
 
         setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))
-        setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)]?.slice(start, end), attendanceHeaders))
-    }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page])
+        setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)]?.slice(start, end), attendanceHeaders, attendanceEvent))
+    }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent])
 
 
     return (
@@ -140,6 +139,8 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                             selected={selected}
                                             selectable={selectable}
                                             i18n={i18n}
+                                            selectedDates={selectedDates}
+                                            totalRecords={tableData?.pagination?.totalElements}
                                             attendanceEvent={attendanceEvent}
                                         />
                                         <Chip selected>
