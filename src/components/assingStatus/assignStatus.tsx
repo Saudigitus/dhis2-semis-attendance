@@ -21,7 +21,7 @@ import { useAttendanceOptions } from "../../hooks/attendance/useGetAttendanceOpt
 import { completenessLoading } from "../../schema/attendance/completenessLoading";
 
 export default function AssignStatus({
-    setSelected, selected, school, setRefetch, i18n, disabled, attendanceEvent, totalRecords, selectedDates
+    setSelected, selected, school, setRefetch, i18n, loadingTableData, attendanceEvent, totalRecords, selectedDates
 }: attendanceFormProps) {
     const completeness = useRecoilValue(completenessLoading)
     const [open, setOpen] = useState(false)
@@ -36,6 +36,12 @@ export default function AssignStatus({
     const date = useQuery.get('selectedDate')!
     const { completeOrDelete } = useAttendanceCompleteness()
     const { validAttendanceStatus } = useAttendanceOptions()
+    const allowAttendanceStatus = attendance?.attendanceStatus?.allowAttendanceStatus === true
+
+    const disableMarkAllAs = allowAttendanceStatus && !!!attendanceEvent ? true :
+        allowAttendanceStatus && attendanceEvent?.status === 'ACTIVE' ? false
+            : allowAttendanceStatus && attendanceEvent?.status == 'COMPLETED' ? true : false
+
 
     const options = validAttendanceStatus?.map((item: any) => ({
         label: item.label,
@@ -49,9 +55,9 @@ export default function AssignStatus({
 
     return (
         <>
-            {attendance?.attendanceStatus?.allowAttendanceStatus && <Button
+            {allowAttendanceStatus && <Button
                 loading={completeness?.loading}
-                disabled={completeness?.refetch || disabled}
+                disabled={completeness?.refetch || loadingTableData}
                 onClick={() => completeOrDelete(
                     attendanceEvent?.status === 'ACTIVE' ? totalRecords : null,
                     selectedDates,
@@ -78,7 +84,7 @@ export default function AssignStatus({
                     name={<span className={styles.work_buttons_text}>{i18n.t('Mark all as')}</span> as unknown as string}
                     icon={loading ? <CircularProgress size={14} /> : <IconUserGroup16 />}
                     options={options}
-                    disabled={disabled || loading}
+                    disabled={loadingTableData || loading || completeness?.loading || disableMarkAllAs}
                 />
             </span>
 

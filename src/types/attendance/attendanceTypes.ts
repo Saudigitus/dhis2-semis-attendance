@@ -14,7 +14,7 @@ export interface attendanceFormProps {
     setRefetch: (args: any) => void
     selected: any[]
     school: string
-    disabled: boolean
+    loadingTableData: boolean
     i18n: D2I18n
     attendanceEvent: { event: string, status: 'ACTIVE' | 'COMPLETED' } | null
     totalRecords: number

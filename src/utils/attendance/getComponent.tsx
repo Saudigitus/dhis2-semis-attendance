@@ -16,6 +16,7 @@ export const getComponent = (option: any, attendanceConst: any, disabled = false
             size='small' className={style.reasonOfAbsense}
         />,
         NonSchoolDay: <NotInterestedOutlined style={{ color: "#da344d2e" }} />,
+        null: <CheckCircleOutline style={disabled ? styles : { color: "#21B26D" }} />,
     }
 
     return (

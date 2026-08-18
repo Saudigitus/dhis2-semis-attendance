@@ -21,7 +21,7 @@ export function useAttendanceCompleteness() {
         setCompletenessLoading((prev) => ({ ...prev, loading: true }))
         const importStrategy = 'CREATE_AND_UPDATE'
         let summaries = []
-        console.log(status,totalRecords)
+
         for (const attendaceStatus of dataStoreData?.attendance?.statusOptions) {
             if (status == 'COMPLETED' && !!attendaceStatus?.totalSummary) {
                 const { data, pagination } = await getEvents({
@@ -80,7 +80,8 @@ export function useAttendanceCompleteness() {
                     });
                     setTimeout(hide, 5000);
                 }
-            }).finally(() => setCompletenessLoading((prev: any) => ({ ...prev, refetch: !prev?.refetch })))
+            })
+            .finally(() => setCompletenessLoading((prev: any) => ({ ...prev, refetch: !prev?.refetch })))
 
     }
 
