@@ -111,8 +111,6 @@ export function tableDataFormatter() {
                             updatedOptions?.unshift({ configKey: 'null', code: 'null', key: 'null' })
                         } else updatedOptions = options
 
-                        console.log(status)
-
                         icon = getAttendanceIcon(updatedOptions, attendanceConst, 'attendance', status, props, options?.length > 5)
                     }
 

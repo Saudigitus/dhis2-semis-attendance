@@ -33,7 +33,6 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [selectable, setSelectable] = useState<boolean>(false)
     const { academicYear: academicYearId } = useSchoolCalendarKey()
     const [attendanceHeaders, setattendanceHeaders] = useState<any>([])
-    const [copyData, setCopyData] = useState<any>([])
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const [seeReason, setSeeReason] = useRecoilState(ReasonOfAbsenseState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
@@ -44,7 +43,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: attendance?.programStage });
     const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
-    const setAll = useSetRecoilState(allStudents)
+    const [allData, setAll] = useRecoilState(allStudents)
 
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
@@ -93,13 +92,12 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         if (toReplace >= 0) {
             copy = [...tableValues]
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
-            setCopyData([...copy])
+            setAll([...copy])
         }
 
         setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))
-        setTableValues(formatData([...(copy?.length > 0 ? copy : copyData?.length > 0 ? copyData : tableData?.data)]?.slice(start, end), attendanceHeaders, attendanceEvent))
+        setTableValues(formatData([...(copy?.length > 0 ? copy : allData)]?.slice(start, end), attendanceHeaders, attendanceEvent))
     }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent, attendanceHeaders])
-
 
     return (
         <div style={{ height: "85vh" }}>
@@ -124,7 +122,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                             defaultFilterNumber={5}
                             enableInactiveRowSelection={false}
                             filterState={filterState}
-                            loading={!isTableReady || loading || (completeness?.loading && attendanceMode == 'edit')}
+                            loading={!isTableReady || loading || (completeness?.loading && attendanceMode != 'edit')}
                             rightElements={
                                 <EnrollmentActionsButtons
                                     selectable={selectable}
