@@ -33,6 +33,8 @@ export function useAttendanceCompleteness() {
                     totalPages: true,
                     pageSize: 1
                 })
+
+                console.log(pagination,data)
                 summaries.push({
                     dataElement: attendaceStatus?.totalSummary,
                     value: pagination?.total || 0

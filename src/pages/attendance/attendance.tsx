@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { ProgramConfig, VariablesTypes, D2I18n } from 'dhis2-semis-types'
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
 import { Table, useSchoolCalendarKey } from "dhis2-semis-components";
 import { ReasonOfAbsenseState } from '../../schema/attendance/disableAllBtns';

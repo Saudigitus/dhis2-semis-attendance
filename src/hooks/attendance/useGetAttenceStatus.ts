@@ -60,10 +60,7 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
                 const completeNessEvent = data?.find((x: any) => getOccurredAt(x.occurredAt) === header.id)
 
                 if (completeNessEvent) {
-                    const attendanceStatusCompleted = completeNessEvent?.dataValues?.
-                        find((x: any) => x.dataElement == dataStoreData.attendance.attendanceStatus?.status)?.
-                        value
-                    header.color = attendanceStatusCompleted == 'true' ? "green" : "orange";
+                    header.color = completeNessEvent?.status == 'COMPLETED' ? "green" : "orange";
                 }
 
                 if (header.color != "green" && header.color != "orange") {

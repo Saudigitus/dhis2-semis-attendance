@@ -19,8 +19,8 @@ export function tableDataFormatter() {
 
     function formatData(data: any[], headers: any[] = [], attendanceEvent: any = null): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/
-        const empty = { configKey: 'Empty', code: 'Empty' }
         let copyData = data.map(item => ({ ...item })), configKey: any = {}
+        const empty = { configKey: 'Empty', code: 'Empty' }
         const allowAttendanceStatus = dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus
         const disableAttendance = allowAttendanceStatus === true && !!!attendanceEvent ? true :
             allowAttendanceStatus === true && attendanceEvent?.status === 'ACTIVE' ? false
@@ -29,19 +29,24 @@ export function tableDataFormatter() {
         if (headers?.some(item => regex.test(item?.id))) {
             for (const head of headers?.filter((x) => x.schoolDay)) {
                 for (let index = 0; index < data.length; index++) {
+                    let icon = null
 
                     if (!data[index][head?.id] || data[index][head?.id] === undefined) {
-                        const icon = getComponent(empty, attendanceConst)
+
+                        if (allowAttendanceStatus === true && attendanceEvent) {
+                            icon = getComponent({ configKey: 'null', code: 'null', label: 'null' }, attendanceConst)
+                        } else {
+                            icon = getComponent(empty, attendanceConst)
+                        }
                         copyData[index][head?.id] = icon
                     } else {
                         configKey = (validAttendanceStatus as unknown as any)?.find((x: any) => x.code === data?.[index]?.[head?.id]?.['status'])
-
                         if (seeReason && configKey?.configKey == attendanceConst('absentCode')) {
                             const status = data?.[index]?.[head?.id]?.absenceOption
                             configKey = { configKey: 'Absense', code: status ?? '--', label: status ?? '--' }
                         }
 
-                        const icon = getComponent(configKey, attendanceConst, data?.[index]?.status == 'CANCELLED', seeReason)
+                        const icon = getComponent(configKey ?? { configKey: 'null', code: 'null' }, attendanceConst, data?.[index]?.status == 'CANCELLED', seeReason)
                         copyData[index][head?.id] = icon
                     }
                 }
