@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-export function eventBody(rest: any, value: any, allowAttendanceStatus: any) {
+export function eventBody(rest: any, value: any, allowAttendanceStatus?: any) {
 
     return {
         ...(rest.event ? { event: rest.event } : {}),

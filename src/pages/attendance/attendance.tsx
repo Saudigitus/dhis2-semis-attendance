@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { ProgramConfig, VariablesTypes, D2I18n } from 'dhis2-semis-types'
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
 import { Table, useSchoolCalendarKey } from "dhis2-semis-components";
 import { ReasonOfAbsenseState } from '../../schema/attendance/disableAllBtns';
@@ -33,6 +33,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [selectable, setSelectable] = useState<boolean>(false)
     const { academicYear: academicYearId } = useSchoolCalendarKey()
     const [attendanceHeaders, setattendanceHeaders] = useState<any>([])
+    const [copyData, setCopyData] = useState<any>([])
     const [tableValues, setTableValues] = useRecoilState(TableDataState)
     const [seeReason, setSeeReason] = useRecoilState(ReasonOfAbsenseState)
     const { getData, tableData, loading } = useTableData({ module: Modules.Attendance });
@@ -68,11 +69,18 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     }, [filterState.attributes, refetch, selectedDates, urlParameters])
 
     useEffect(() => {
-        if (attendance?.attendanceStatus?.allowAttendanceStatus && tableData?.data?.length > 0) {
-            setAttendanceEvent(null)
-            getEnrollmentStatus(tableData)
+        if (attendance?.attendanceStatus?.allowAttendanceStatus) {
+            if (attendanceMode == 'edit')
+                getEnrollmentStatus([])
         }
-    }, [completeness.refetch, tableData?.data])
+    }, [completeness.refetch, selectedDates])
+
+    useEffect(() => {
+        if (attendance?.attendanceStatus?.allowAttendanceStatus) {
+            if (tableData?.data?.length > 0 && attendanceMode != 'edit')
+                getEnrollmentStatus(tableData)
+        }
+    }, [tableData?.data])
 
     useEffect(() => {
         let copy: any = []
@@ -83,10 +91,11 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         if (toReplace >= 0) {
             copy = [...tableValues]
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
+            setCopyData([...copy])
         }
 
         setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))
-        setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)]?.slice(start, end), attendanceHeaders, attendanceEvent))
+        setTableValues(formatData([...(copy?.length > 0 ? copy : copyData?.length > 0 ? copyData : tableData?.data)]?.slice(start, end), attendanceHeaders, attendanceEvent))
     }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent])
 
 
@@ -132,7 +141,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                 (attendanceMode == 'edit') ?
                                     <>
                                         <AsssignStatus
-                                            disabled={loading}
+                                            loadingTableData={loading}
                                             setSelected={setSelected}
                                             setRefetch={setRefetch}
                                             school={schoolName!}

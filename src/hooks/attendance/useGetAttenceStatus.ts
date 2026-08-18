@@ -38,6 +38,7 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
     const { attendance } = dataStoreData
 
     async function getEnrollmentStatus(tableData: any) {
+        setAttendanceEvent(null)
         setCompletenessLoading({ loading: true })
         const data = await getEvents({
             program: attendance?.attendanceStatus?.program,

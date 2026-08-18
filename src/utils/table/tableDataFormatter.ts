@@ -22,6 +22,9 @@ export function tableDataFormatter() {
         const empty = { configKey: 'Empty', code: 'Empty' }
         let copyData = data.map(item => ({ ...item })), configKey: any = {}
         const allowAttendanceStatus = dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus
+        const disableAttendance = allowAttendanceStatus === true && !!!attendanceEvent ? true :
+            allowAttendanceStatus === true && attendanceEvent?.status === 'ACTIVE' ? false
+                : allowAttendanceStatus === true && attendanceEvent?.status == 'COMPLETED' ? true : false
 
         if (headers?.some(item => regex.test(item?.id))) {
             for (const head of headers?.filter((x) => x.schoolDay)) {
@@ -74,19 +77,23 @@ export function tableDataFormatter() {
                         enrollment: copyData[index]?.enrollmentId,
                         absenceReason: attendance.absenceReason,
                         statusDataElement: attendance.status,
-                        disabled: !attendanceEvent
+                        disabled: disableAttendance
                     }
 
 
                     if (head?.id === attendance.status) options = validAttendanceStatus
                     else options = head?.options?.optionSet?.options?.map((option: any) => { return { ...option, code: option.value } }) ?? []
 
-                    // console.log(copyData[index],selectedDate)
                     if (copyData[index]?.[selectedDate!]) {
-                        if (head?.id === attendance.absenceReason) status = options.find((x: any) => x.code === copyData[index][selectedDate!]['absenceOption'])?.code
-                        else status = options.find((x: any) => x.code === copyData?.[index]?.[selectedDate!]?.['status'])?.code ?? copyData?.[index]?.[selectedDate!]?.['status']
+                        if (head?.id === attendance.absenceReason) {
+                            status = allowAttendanceStatus === true && !attendanceEvent ? '' : options.find((x: any) => x.code === copyData[index][selectedDate!]['absenceOption'])?.code
+                        } else {
+                            status = allowAttendanceStatus === true && !attendanceEvent ? '' :
+                                options.find((x: any) => x.code === copyData?.[index]?.[selectedDate!]?.['status'])?.code ?? copyData?.[index]?.[selectedDate!]?.['status']
+                        }
                     }
 
+                    // console.log(status,'the status')
                     if (head?.id === attendance.absenceReason && configKey === attendanceConst('absentCode')) {
                         icon = getAttendanceIcon(options, attendanceConst, 'absence', status, props)
                     } else if (head?.id === attendance.status) {
@@ -96,6 +103,8 @@ export function tableDataFormatter() {
                             updatedOptions = options?.filter((option: any) => option.configKey !== 'presentCode')
                             updatedOptions?.unshift({ configKey: 'null', code: 'null', key: 'null' })
                         } else updatedOptions = options
+
+                        console.log(status)
 
                         icon = getAttendanceIcon(updatedOptions, attendanceConst, 'attendance', status, props, options?.length > 5)
                     }
