@@ -5,7 +5,7 @@ import { AccessTime, CheckCircleOutline, ExitToApp, HighlightOff, NotInterestedO
 
 export const getComponent = (option: any, attendanceConst: any, disabled = false, moreThan5?: boolean) => {
     const styles = { color: 'rgba(0, 0, 0, 0.3)' }
-
+console.log(option)
     const codeComponent = {
         [attendanceConst("presentCode")]: <CheckCircleOutline style={disabled ? styles : { color: "#21B26D" }} />,
         [attendanceConst("lateCode")]: <AccessTime style={disabled ? styles : { color: "#EAB631" }} />,

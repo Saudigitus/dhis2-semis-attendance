@@ -77,11 +77,14 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
 
     useEffect(() => {
         if (attendance?.attendanceStatus?.allowAttendanceStatus) {
-            if (tableData?.data?.length > 0 && attendanceMode != 'edit')
+            if (tableData?.data?.length > 0 && attendanceMode != 'edit') {
+                console.log('innn')
                 getEnrollmentStatus(tableData)
+            }
         }
     }, [tableData?.data])
 
+    console.log(attendanceEvent,'hedjo')
     useEffect(() => {
         let copy: any = []
         const start = (pagination?.page - 1) * pagination?.pageSize

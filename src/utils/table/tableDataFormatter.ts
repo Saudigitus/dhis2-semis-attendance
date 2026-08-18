@@ -19,8 +19,7 @@ export function tableDataFormatter() {
 
     function formatData(data: any[], headers: any[] = [], attendanceEvent: any = null): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/
-        let copyData = data.map(item => ({ ...item })), configKey: any = {}
-        const empty = { configKey: 'Empty', code: 'Empty' }
+        let copyData = data.map(item => ({ ...item })), configKey: any = undefined
         const allowAttendanceStatus = dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus
         const disableAttendance = allowAttendanceStatus === true && !!!attendanceEvent ? true :
             allowAttendanceStatus === true && attendanceEvent?.status === 'ACTIVE' ? false
@@ -30,16 +29,19 @@ export function tableDataFormatter() {
             for (const head of headers?.filter((x) => x.schoolDay)) {
                 for (let index = 0; index < data.length; index++) {
                     let icon = null
+                    configKey = undefined
 
                     if (!data[index][head?.id] || data[index][head?.id] === undefined) {
 
                         if (allowAttendanceStatus === true && attendanceEvent) {
                             icon = getComponent({ configKey: 'null', code: 'null', label: 'null' }, attendanceConst)
                         } else {
+                            const empty = { configKey: 'Empty', code: 'Empty' }
                             icon = getComponent(empty, attendanceConst)
                         }
                         copyData[index][head?.id] = icon
                     } else {
+
                         configKey = (validAttendanceStatus as unknown as any)?.find((x: any) => x.code === data?.[index]?.[head?.id]?.['status'])
                         if (seeReason && configKey?.configKey == attendanceConst('absentCode')) {
                             const status = data?.[index]?.[head?.id]?.absenceOption

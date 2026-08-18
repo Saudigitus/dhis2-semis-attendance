@@ -49,11 +49,10 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
             orgUnit: orgUnit as unknown as any,
         })
 
-        if (attendanceMode === 'edit') {
-            const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
+        const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
 
-            setAttendanceEvent(event)
-        } else if (dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus) {
+        setAttendanceEvent(event)
+        if (attendanceMode !== 'edit' && dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus) {
             let copy = [...attendanceHeaders]
 
             for (let header of copy) {
