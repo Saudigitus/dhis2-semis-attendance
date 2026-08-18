@@ -34,15 +34,14 @@ export function useAttendanceCompleteness() {
                     pageSize: 1
                 })
 
-                console.log(pagination,data)
                 summaries.push({
                     dataElement: attendaceStatus?.totalSummary,
-                    value: pagination?.total || 0
+                    value: pagination?.total
                 })
             } else if (attendaceStatus?.totalSummary) {
                 summaries.push({
                     dataElement: attendaceStatus.totalSummary,
-                    value: ""
+                    value: null
                 })
             }
 

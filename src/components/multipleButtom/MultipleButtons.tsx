@@ -19,7 +19,7 @@ export default function MultipleButtons(props: ButtonProps) {
     const setRefetch = useSetRecoilState(TableDataRefetch);
     const { uploadValues } = useUploadEvents()
     const { urlParameters, add, remove, useQuery } = useUrlParams();
-    const { selectedDate } = urlParameters
+    const { selectedDate, school } = urlParameters
     const { dataStoreData } = useGetSelectedKeys()
     const { attendance = {} as any } = dataStoreData
     const allowAttendanceStatus = attendance?.attendanceStatus?.allowAttendanceStatus
@@ -32,7 +32,7 @@ export default function MultipleButtons(props: ButtonProps) {
             add('position', `${value}${rest.tei}`)
             const importStrategy = allowAttendanceStatus === true && value === 'null' ? 'DELETE' : 'CREATE_AND_UPDATE'
 
-            await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value, allowAttendanceStatus)] }, 'COMMIT', importStrategy)
+            await uploadValues({ events: [eventBody({ ...rest, date: selectedDate, school }, value, allowAttendanceStatus)] }, 'COMMIT', importStrategy)
                 .then(async (resp: any) => {
                     if (resp?.validationReport?.errorReports?.length > 0) {
                         show({

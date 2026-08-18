@@ -8,7 +8,7 @@ export function eventBody(rest: any, value: any, allowAttendanceStatus?: any) {
             trackedEntity: rest.tei,
             program: rest.program,
             programStage: rest.stage,
-            orgUnit: rest.ou,
+            orgUnit: rest.school,
             dataValues: [
                 {
                     dataElement: rest.de,

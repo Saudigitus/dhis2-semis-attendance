@@ -42,7 +42,7 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
         setCompletenessLoading({ loading: true })
         const data = await getEvents({
             program: attendance?.attendanceStatus?.program,
-            fields: "occurredAt,event,dataValues,status",
+            fields: "occurredAt,event,status",
             programStage: attendance?.attendanceStatus?.programStage,
             filter: [...getFilters() as any, [`${academicYearId}:in:${academicYear}`]],
             ...selectedDates,
