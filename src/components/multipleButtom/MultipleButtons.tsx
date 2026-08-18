@@ -5,12 +5,11 @@ import { ButtonProps } from "../../types/MultipleBtns/MultipleButtonsTypes";
 import { useShowAlerts, useUploadEvents, useUrlParams } from "dhis2-semis-functions";
 import { eventBody } from "../../utils/attendance/eventBody";
 import { TableDataState } from "../../schema/table/tableDataSchema";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { TableDataRefetch } from "dhis2-semis-types";
 import { CircularLoader } from "@dhis2/ui";
 import { Button, ButtonGroup } from "@mui/material";
-import { classAttendanceEvent } from "../../schema/attendance/classAttendanceEvent";
-import { useAttendanceCompleteness } from "../../hooks/attendance/attendanceCompleteness";
+import useGetSelectedKeys from "../../../../../libs/components/src/hooks/config/useGetSelectedKeys";
 
 export default function MultipleButtons(props: ButtonProps) {
     const { items, status, disabled, ...rest } = props;
@@ -21,16 +20,19 @@ export default function MultipleButtons(props: ButtonProps) {
     const { uploadValues } = useUploadEvents()
     const { urlParameters, add, remove, useQuery } = useUrlParams();
     const { selectedDate } = urlParameters
-    const attendanceEvent = useRecoilValue(classAttendanceEvent)
-    const { completeOrDelete } = useAttendanceCompleteness()
+    const { dataStoreData } = useGetSelectedKeys()
+    const { attendance = {} as any } = dataStoreData
+    const allowAttendanceStatus = attendance?.attendanceStatus?.allowAttendanceStatus
+
 
     useEffect(() => setSelected(status), [status])
 
     const onchangeValue = async (value: string) => {
         if (value !== status) {
             add('position', `${value}${rest.tei}`)
+            const importStrategy = allowAttendanceStatus === true && value === 'null' ? 'DELETE' : 'CREATE_AND_UPDATE'
 
-            await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value)] }, 'COMMIT', 'CREATE_AND_UPDATE')
+            await uploadValues({ events: [eventBody({ ...rest, date: selectedDate }, value, allowAttendanceStatus)] }, 'COMMIT', importStrategy)
                 .then(async (resp: any) => {
                     if (resp?.validationReport?.errorReports?.length > 0) {
                         show({
@@ -47,14 +49,24 @@ export default function MultipleButtons(props: ButtonProps) {
                         if (rest?.absenceReason === rest?.de) {
                             copy[index] = { ...copy[index], [rest.date]: { ...copy[index][rest.date], absenceReason: value }, replace: true }
                         } else {
-                            copy[index] = { ...copy[index], [rest.date]: { ...copy[index][rest.date], eventId: event, status: value, absenceOption: undefined }, replace: true }
+                            const { eventId, ...other } = copy?.[index]?.[rest.date] || {}
+                            copy[index] = {
+                                ...copy[index],
+                                [rest.date]: {
+                                    ...other,
+                                    ...(allowAttendanceStatus === true && value === 'null' ? {} : { eventId: event }),
+                                    status: value,
+                                    absenceOption: undefined
+                                },
+                                replace: true
+                            }
                         }
 
+                        console.log(copy[index], 'the valye')
                         remove('position')
                         setTableValues(copy)
                         setSelected(value)
                         setRefetch((prev: any) => !prev)
-                        if (!attendanceEvent) await completeOrDelete("create", false)
                     }
                 })
         }

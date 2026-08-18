@@ -5,6 +5,7 @@ import AttendaceComponent from "./attendanceComponent";
 export const getAttendanceComponent = () => {
 
     function getAttendanceIcon(attendanceOptions: any, attendanceConst: any, type: string, status: string, props: any, moreThan3?: boolean) {
+        const disabled = props?.disabled || props?.enrollmentStatus == 'CANCELLED'
 
         return (
             <AttendaceComponent
@@ -13,11 +14,11 @@ export const getAttendanceComponent = () => {
                     return {
                         code: option.code,
                         type: type,
-                        Component: type == 'attendance' ? getComponent(option, attendanceConst, false, moreThan3) : option.label,
+                        Component: type == 'attendance' ? getComponent(option, attendanceConst, disabled, moreThan3) : option.label,
                     }
                 })}
                 status={status}
-                disabled={props?.disabled || props?.enrollmentStatus == 'CANCELLED'}
+                disabled={disabled}
                 {...props}
             />
         )
