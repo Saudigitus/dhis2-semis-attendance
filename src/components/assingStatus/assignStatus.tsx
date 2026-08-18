@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NoticeBox, Button } from "@dhis2/ui";
 import { WithBorder, ModalComponent, CustomForm, WithPadding } from "dhis2-semis-components";
 import { Form } from "react-final-form";
@@ -9,7 +9,7 @@ import { useSaveValues } from "../../hooks/attendance/saveValues";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { attendanceFormProps } from "../../types/attendance/attendanceTypes";
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns";
-import { CheckCircleOutline, HighlightOff } from "@mui/icons-material";
+import { CheckCircleOutline, HighlightOff, EditNote } from "@mui/icons-material";
 import useGetSelectedKeys from "../../hooks/config/useGetSelectedKeys";
 import ConfirmModal from "../modal/modalConfirm";
 import { useUrlParams } from "dhis2-semis-functions";
@@ -21,7 +21,7 @@ import { useAttendanceOptions } from "../../hooks/attendance/useGetAttendanceOpt
 import { completenessLoading } from "../../schema/attendance/completenessLoading";
 
 export default function AssignStatus({
-    setSelected, selected, school, setRefetch, i18n, disabled, attendanceEvent
+    setSelected, selected, school, setRefetch, i18n, disabled, attendanceEvent, totalRecords, selectedDates
 }: attendanceFormProps) {
     const completeness = useRecoilValue(completenessLoading)
     const [open, setOpen] = useState(false)
@@ -36,7 +36,6 @@ export default function AssignStatus({
     const date = useQuery.get('selectedDate')!
     const { completeOrDelete } = useAttendanceCompleteness()
     const { validAttendanceStatus } = useAttendanceOptions()
-    const attendanceStatus = (attendanceEvent as any)?.dataValues?.find((x: any) => x.dataElement == dataStoreData.attendance.attendanceStatus?.status)?.value
 
     const options = validAttendanceStatus?.map((item: any) => ({
         label: item.label,
@@ -53,13 +52,25 @@ export default function AssignStatus({
             {attendance?.attendanceStatus?.allowAttendanceStatus && <Button
                 loading={completeness?.loading}
                 disabled={completeness?.refetch || disabled}
-                onClick={() => completeOrDelete(attendanceStatus == 'true' ? 'delete' : 'create', true)}
-                icon={(!attendanceEvent || attendanceStatus == 'false')
-                    ? <CheckCircleOutline style={{ color: "#21B26D" }} /> : <HighlightOff />}
-                className={classNames(styles.btn)}
-                destructive={(attendanceEvent && attendanceStatus != 'false')}
+                onClick={() => completeOrDelete(
+                    attendanceEvent?.status === 'ACTIVE' ? totalRecords : null,
+                    selectedDates,
+                    (attendanceEvent?.status === 'COMPLETED' || !attendanceEvent) ? 'ACTIVE' : 'COMPLETED'
+                )}
+                icon={
+                    !attendanceEvent ? <EditNote style={{ color: "#ffb300" }} />
+                        : (attendanceEvent?.status === 'ACTIVE')
+                            ? <CheckCircleOutline style={{ color: "#21B26D" }} />
+                            : (attendanceEvent?.status === 'COMPLETED') && <HighlightOff />
+                }
+                className={classNames(attendanceEvent ? styles.btn : styles.pulseBtn)}
+                destructive={(attendanceEvent && attendanceEvent?.status === 'COMPLETED')}
             >
-                <span>{completeness?.loading && !attendanceEvent ? "" : (attendanceEvent && attendanceStatus != 'false') ? i18n.t("Uncomplete attendance") : i18n.t("Complete attendance")}</span>
+                <span>{
+                    completeness?.loading && !attendanceEvent ? "loading" :
+                        attendanceEvent ? attendanceEvent?.status === 'ACTIVE' ? i18n.t("Complete attendance") : attendanceEvent?.status === 'COMPLETED' && i18n.t("Uncomplete attendance") : i18n.t("Start attendance")
+                }
+                </span>
             </Button >}
 
             <span>

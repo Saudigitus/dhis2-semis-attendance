@@ -17,7 +17,7 @@ export const getAttendanceComponent = () => {
                     }
                 })}
                 status={status}
-                disabled={props?.enrollmentStatus == 'CANCELLED'}
+                disabled={props?.disabled || props?.enrollmentStatus == 'CANCELLED'}
                 {...props}
             />
         )
