@@ -84,7 +84,6 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         }
     }, [tableData?.data])
 
-    console.log(attendanceEvent,'hedjo')
     useEffect(() => {
         let copy: any = []
         const start = (pagination?.page - 1) * pagination?.pageSize
@@ -99,7 +98,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
 
         setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))
         setTableValues(formatData([...(copy?.length > 0 ? copy : copyData?.length > 0 ? copyData : tableData?.data)]?.slice(start, end), attendanceHeaders, attendanceEvent))
-    }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent])
+    }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent, attendanceHeaders])
 
 
     return (
@@ -125,7 +124,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                             defaultFilterNumber={5}
                             enableInactiveRowSelection={false}
                             filterState={filterState}
-                            loading={!isTableReady || loading}
+                            loading={!isTableReady || loading || (completeness?.loading && attendanceMode == 'edit')}
                             rightElements={
                                 <EnrollmentActionsButtons
                                     selectable={selectable}

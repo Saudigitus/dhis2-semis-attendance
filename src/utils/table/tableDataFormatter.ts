@@ -29,11 +29,10 @@ export function tableDataFormatter() {
             for (const head of headers?.filter((x) => x.schoolDay)) {
                 for (let index = 0; index < data.length; index++) {
                     let icon = null
-                    configKey = undefined
 
                     if (!data[index][head?.id] || data[index][head?.id] === undefined) {
 
-                        if (allowAttendanceStatus === true && attendanceEvent) {
+                        if (allowAttendanceStatus === true && !!head?.completenessStatus) {
                             icon = getComponent({ configKey: 'null', code: 'null', label: 'null' }, attendanceConst)
                         } else {
                             const empty = { configKey: 'Empty', code: 'Empty' }
@@ -51,6 +50,7 @@ export function tableDataFormatter() {
                         const icon = getComponent(configKey ?? { configKey: 'null', code: 'null' }, attendanceConst, data?.[index]?.status == 'CANCELLED', seeReason)
                         copyData[index][head?.id] = icon
                     }
+                    // console.log(icon)
                 }
             }
 
