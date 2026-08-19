@@ -76,7 +76,7 @@ export default function AssignStatus({
             >
                 <span>{
                     completeness?.loading && !attendanceEvent ? "loading" :
-                        attendanceEvent ? attendanceEvent?.status === 'ACTIVE' ? i18n.t("Update attendance") : attendanceEvent?.status === 'COMPLETED' && i18n.t("Uncomplete attendance") : i18n.t("Start attendance")
+                        attendanceEvent ? attendanceEvent?.status === 'ACTIVE' ? i18n.t("Complete attendance") : attendanceEvent?.status === 'COMPLETED' && i18n.t("Update attendance") : i18n.t("Start attendance")
                 }
                 </span>
             </Button >}

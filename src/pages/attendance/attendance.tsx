@@ -12,11 +12,10 @@ import { TableDataState } from '../../schema/table/tableDataSchema';
 import AsssignStatus from '../../components/assingStatus/assignStatus';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { Button, IconView24, IconViewOff24, Chip } from "@dhis2/ui";
-import { format } from 'date-fns'
 import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus';
 import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
 import { completenessLoading } from '../../schema/attendance/completenessLoading';
-import { allStudents } from '../../schema/students/allStudentList';
+import useGetRegistration from '../../hooks/useAllTeis/useGetRegistration';
 
 export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: string }) {
     const { program, dataStoreData } = useGetSelectedKeys()
@@ -43,7 +42,10 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: attendance?.programStage });
     const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
-    const [allData, setAll] = useRecoilState(allStudents)
+    const [allData, setAll] = useState<any>([])
+    const { getRegistrationData } = useGetRegistration()
+
+    useEffect(() => void getRegistrationData(), [])
 
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
@@ -68,19 +70,13 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     }, [filterState.attributes, refetch, selectedDates, urlParameters])
 
     useEffect(() => {
-        if (attendance?.attendanceStatus?.allowAttendanceStatus) {
-            if (attendanceMode == 'edit')
-                getEnrollmentStatus([])
-        }
+        if (attendance?.attendanceStatus?.allowAttendanceStatus && attendanceMode == 'edit')
+            getEnrollmentStatus([])
     }, [completeness.refetch, selectedDates])
 
     useEffect(() => {
-        if (attendance?.attendanceStatus?.allowAttendanceStatus) {
-            if (tableData?.data?.length > 0 && attendanceMode != 'edit') {
-                console.log('innn')
-                getEnrollmentStatus(tableData)
-            }
-        }
+        if (attendance?.attendanceStatus?.allowAttendanceStatus && (tableData?.data?.length > 0 && attendanceMode != 'edit'))
+            getEnrollmentStatus(tableData)
     }, [tableData?.data])
 
     useEffect(() => {
@@ -96,7 +92,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         }
 
         setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))
-        setTableValues(formatData([...(copy?.length > 0 ? copy : allData)]?.slice(start, end), attendanceHeaders, attendanceEvent))
+        setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)]?.slice(start, end), attendanceHeaders, attendanceEvent))
     }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent, attendanceHeaders])
 
     return (
