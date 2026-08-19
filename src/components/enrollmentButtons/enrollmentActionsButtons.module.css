@@ -14,7 +14,7 @@
     }
 }
 
-@media screen and (max-width: 715px){
+@media screen and (max-width: 715px) {
     .work_buttons button {
         font-size: 12px !important;
         padding: 5px 8px;
@@ -25,7 +25,7 @@
     }
 
     .container {
-       display: contents;
+        display: contents;
     }
 
 }

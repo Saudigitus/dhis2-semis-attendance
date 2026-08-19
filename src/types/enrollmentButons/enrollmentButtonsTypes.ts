@@ -11,4 +11,6 @@ export interface EnrollmentButtonsProps {
     selectedDataStoreKey: selectedDataStoreKey
     i18n: D2I18n
     baseUrl: string
+    totalRecords: number
+    selectedDates: any
 }
