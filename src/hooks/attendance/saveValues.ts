@@ -8,16 +8,21 @@ import { allStudents } from '../../schema/students/allStudentList';
 export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelected, setOpen }: useDaveValuesProps) {
     const { useQuery } = useUrlParams()
     const date = useQuery.get('selectedDate')!
+    const orgUnit = useQuery.get('school')!
     const { uploadValues } = useUploadEvents()
     const disable = useSetRecoilState(DisaleButtonsState)
     const students = useRecoilValue(allStudents)
+    const { attendance = {} as unknown as any } = dataStoreData
+    const allowAttendanceStatus = attendance?.attendanceStatus?.allowAttendanceStatus === true
 
     async function formSubmit(values: any) {
         setLoading(true)
         let events = []
+        const importStrategy = (values?.status === 'null' && allowAttendanceStatus) ? 'DELETE' : 'CREATE_AND_UPDATE'
+
         for (const tei of students) {
             const eventId = tei?.[date]?.eventId ?? null
-            
+
             events.push(eventBody({
                 tei: tei.trackedEntity,
                 event: eventId,
@@ -25,13 +30,13 @@ export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelect
                 stage: dataStoreData?.attendance?.programStage,
                 absenceReason: dataStoreData?.attendance?.absenceReason,
                 de: dataStoreData?.attendance?.status,
-                ou: tei.orgUnitId,
+                school: orgUnit,
                 enrollment: tei.enrollmentId,
                 date: date
-            }, values.status))
+            }, values.status, allowAttendanceStatus))
         }
-        
-        await uploadValues({ events: events }, 'COMMIT', 'CREATE_AND_UPDATE')
+
+        await uploadValues({ events: events }, 'COMMIT', importStrategy)
             .then(() => { disable(false); setLoading(false); setRefetch((prev: any) => (!prev)); setOpen(false); setSelected([]) })
             .catch(() => { setLoading(false); setOpen(false); disable(false) })
     }

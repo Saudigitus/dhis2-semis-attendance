@@ -83,7 +83,14 @@ export default function AssignStatus({
                 <DropdownButton
                     name={<span className={styles.work_buttons_text}>{i18n.t('Mark all as')}</span> as unknown as string}
                     icon={loading ? <CircularProgress size={14} /> : <IconUserGroup16 />}
-                    options={options}
+                    options={allowAttendanceStatus ? [...options,
+                    {
+                        label: "Present", value: "null", onClick: () => {
+                            setSelectedOption({ value: "null", label: "Present" })
+                            setOpenMarkAll(true)
+                        }
+                    }
+                    ] : options}
                     disabled={loadingTableData || loading || completeness?.loading || disableMarkAllAs}
                 />
             </span>

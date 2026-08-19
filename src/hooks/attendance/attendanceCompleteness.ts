@@ -33,14 +33,15 @@ export function useAttendanceCompleteness() {
                     totalPages: true,
                     pageSize: 1
                 })
+
                 summaries.push({
                     dataElement: attendaceStatus?.totalSummary,
-                    value: pagination?.total || 0
+                    value: pagination?.total
                 })
             } else if (attendaceStatus?.totalSummary) {
                 summaries.push({
                     dataElement: attendaceStatus.totalSummary,
-                    value: ""
+                    value: null
                 })
             }
 

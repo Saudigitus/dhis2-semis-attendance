@@ -9,7 +9,7 @@ export default function ConfirmModal({ open, setOpen, onSave, i18n, selectedOpti
             children={
                 <div>
                     <NoticeBox title={`${i18n.t('Warning')}! ${i18n.t("All listed students will be affected")}`} warning>
-                        {i18n.t(`The ${selectedOption.label} attendance status will be assigned to all students`)}!
+                        {i18n.t(`The ${selectedOption.label} attendance status will be assigned to all visisble students in the table`)}!
                     </NoticeBox>
 
                     <p style={{ margin: "25px 0" }}>{i18n.t(`Are you sure you want to mark all as ${selectedOption.label}?`)}!</p>

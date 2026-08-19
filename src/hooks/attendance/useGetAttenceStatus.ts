@@ -2,6 +2,7 @@ import { useCheckFilters, useGetEvents, useUrlParams } from "dhis2-semis-functio
 import useGetSelectedKeys from "../config/useGetSelectedKeys"
 import { format } from "date-fns";
 import { useSchoolCalendarKey } from "dhis2-semis-components";
+import { useState } from "react";
 
 //create a function to get occurredAt and format it to yyyy-MM-dd
 const getOccurredAt = (date: string) => {
@@ -40,44 +41,45 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
     async function getEnrollmentStatus(tableData: any) {
         setAttendanceEvent(null)
         setCompletenessLoading({ loading: true })
-        const data = await getEvents({
+        
+        await getEvents({
             program: attendance?.attendanceStatus?.program,
-            fields: "occurredAt,event,dataValues,status",
+            fields: "occurredAt,event,status",
             programStage: attendance?.attendanceStatus?.programStage,
             filter: [...getFilters() as any, [`${academicYearId}:in:${academicYear}`]],
             ...selectedDates,
             orgUnit: orgUnit as unknown as any,
-        })
+        }).then((data) => {
 
-        if (attendanceMode === 'edit') {
-            const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
+            if (dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus) {
+                if (attendanceMode === 'edit') {
+                    const event = data.find((cdata: any) => getOccurredAt(cdata.occurredAt) === selectedDate)
+                    setAttendanceEvent(event)
+                } else {
+                    let copy = [...attendanceHeaders]
 
-            setAttendanceEvent(event)
-        } else if (dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus) {
-            let copy = [...attendanceHeaders]
+                    for (let header of copy) {
+                        const completeNessEvent = data?.find((x: any) => getOccurredAt(x.occurredAt) === header.id)
+                        header.completenessStatus = completeNessEvent?.status
 
-            for (let header of copy) {
-                const completeNessEvent = data?.find((x: any) => getOccurredAt(x.occurredAt) === header.id)
+                        if (completeNessEvent) {
+                            header.color = completeNessEvent?.status == 'COMPLETED' ? "green"
+                                : completeNessEvent?.status == 'ACTIVE' && "orange";
+                        }
 
-                if (completeNessEvent) {
-                    const attendanceStatusCompleted = completeNessEvent?.dataValues?.
-                        find((x: any) => x.dataElement == dataStoreData.attendance.attendanceStatus?.status)?.
-                        value
-                    header.color = attendanceStatusCompleted == 'true' ? "green" : "orange";
-                }
-
-                if (header.color != "green" && header.color != "orange") {
-                    for (let student of tableData?.data) {
-                        if (student?.[header?.id]) header.color = 'orange'
-                        break
+                        if (header.color != "green" && header.color != "orange") {
+                            for (let student of tableData?.data) {
+                                if (student?.[header?.id]) header.color = 'orange'
+                                break
+                            }
+                        }
                     }
+
+                    setattendanceHeaders(copy)
                 }
             }
-
-            setattendanceHeaders(copy)
-        }
-
-        setCompletenessLoading({ loading: false })
+            setCompletenessLoading({ loading: false })
+        })
     }
 
     return { getEnrollmentStatus }
