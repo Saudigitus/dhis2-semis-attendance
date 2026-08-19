@@ -152,9 +152,6 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                             totalRecords={tableData?.pagination?.totalElements}
                                             attendanceEvent={attendanceEvent}
                                         />
-                                        <Chip selected>
-                                            {`${i18n.t('Selected date')}: ${selectedDate && format(new Date(selectedDate), 'dd/MM/yyyy')}`}
-                                        </Chip>
                                     </>
                                     : <Button onClick={() => setSeeReason(!seeReason)} icon={seeReason ? <IconViewOff24 /> : <IconView24 />}>
                                         {seeReason ? i18n.t('Hide reason of absense') : i18n.t('View reason of absense')}
