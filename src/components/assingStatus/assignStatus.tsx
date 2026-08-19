@@ -19,9 +19,10 @@ import classNames from "classnames";
 import { useAttendanceCompleteness } from "../../hooks/attendance/attendanceCompleteness";
 import { useAttendanceOptions } from "../../hooks/attendance/useGetAttendanceOptions";
 import { completenessLoading } from "../../schema/attendance/completenessLoading";
+import { classAttendanceEvent } from "../../schema/attendance/classAttendanceEvent";
 
 export default function AssignStatus({
-    setSelected, selected, school, setRefetch, i18n, loadingTableData, attendanceEvent, totalRecords, selectedDates
+    setSelected, selected, school, setRefetch, i18n, loadingTableData, totalRecords, selectedDates
 }: attendanceFormProps) {
     const completeness = useRecoilValue(completenessLoading)
     const [open, setOpen] = useState(false)
@@ -37,6 +38,7 @@ export default function AssignStatus({
     const { completeOrDelete } = useAttendanceCompleteness()
     const { validAttendanceStatus } = useAttendanceOptions()
     const allowAttendanceStatus = attendance?.attendanceStatus?.allowAttendanceStatus === true
+    const attendanceEvent = useRecoilValue(classAttendanceEvent)
 
     const disableMarkAllAs = allowAttendanceStatus && !!!attendanceEvent ? true :
         allowAttendanceStatus && attendanceEvent?.status === 'ACTIVE' ? false
@@ -74,7 +76,7 @@ export default function AssignStatus({
             >
                 <span>{
                     completeness?.loading && !attendanceEvent ? "loading" :
-                        attendanceEvent ? attendanceEvent?.status === 'ACTIVE' ? i18n.t("Complete attendance") : attendanceEvent?.status === 'COMPLETED' && i18n.t("Uncomplete attendance") : i18n.t("Start attendance")
+                        attendanceEvent ? attendanceEvent?.status === 'ACTIVE' ? i18n.t("Update attendance") : attendanceEvent?.status === 'COMPLETED' && i18n.t("Uncomplete attendance") : i18n.t("Start attendance")
                 }
                 </span>
             </Button >}

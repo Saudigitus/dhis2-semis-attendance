@@ -135,6 +135,8 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                     i18n={i18n}
                                     setRefetch={setRefetch}
                                     baseUrl={baseUrl}
+                                    totalRecords={tableData?.pagination?.totalElements}
+                                    selectedDates={selectedDates}
                                 />
                             }
                             beforeSettings={
@@ -150,7 +152,6 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                             i18n={i18n}
                                             selectedDates={selectedDates}
                                             totalRecords={tableData?.pagination?.totalElements}
-                                            attendanceEvent={attendanceEvent}
                                         />
                                     </>
                                     : <Button onClick={() => setSeeReason(!seeReason)} icon={seeReason ? <IconViewOff24 /> : <IconView24 />}>

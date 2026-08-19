@@ -12,9 +12,12 @@ import { Tooltip } from '@mui/material';
 import { Event } from '@mui/icons-material';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { useSchoolCalendarKey } from 'dhis2-semis-components';
+import AttendanceSummary from '../attendaceSummry/attendanceSummary';
+import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
+import { useRecoilValue } from 'recoil';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n, baseUrl } = props
+    const { setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n, baseUrl, totalRecords, selectedDates } = props
     const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
     const { sectionName } = useGetSectionTypeLabel();
@@ -29,11 +32,14 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { schoolCalendar, defaults, academicYear: academicYearId } = useSchoolCalendarKey()
     const defaultAcademicYear = schoolCalendar?.find((x: any) => x?.academicYear?.code == defaults?.academicYear)
     const { getDate } = useIncrementDays()
+    const attendanceEvent = useRecoilValue(classAttendanceEvent)
+
     const showAlert = (error: any) => {
         show({ message: `${i18n.t('Unknown error')}: ${error}`, type: { critical: true } })
         setTimeout(hide, 5000);
     }
     const start = new Date(viewModeValue?.selectedDate ?? selectedDate)
+    const allowAttendanceStatus = dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus === true
 
     const enrollmentOptions: any = [
         {
@@ -108,6 +114,8 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         <div className={styles.container}>
             <ButtonStrip className={styles.work_buttons}>
                 {/* {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckCircleOutlined />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>} */}
+                {(allowAttendanceStatus && !!attendanceEvent && attendanceMode == 'edit') && <AttendanceSummary totalRecords={totalRecords} selectedDates={selectedDates} />}
+
                 <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
                     <DropDownCalendar showSelected={attendanceMode == 'edit'} config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('Take attendance')!} icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue(() => ({ ...e }))} value={editModeValue?.selectedDate ?? selectedDate} />
                 </Tooltip>

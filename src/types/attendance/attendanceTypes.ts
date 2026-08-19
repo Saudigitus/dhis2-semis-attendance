@@ -16,7 +16,6 @@ export interface attendanceFormProps {
     school: string
     loadingTableData: boolean
     i18n: D2I18n
-    attendanceEvent: { event: string, status: 'ACTIVE' | 'COMPLETED' } | null
     totalRecords: number
     selectedDates: { occurredAfter: string, occurredBefore: string }
 }
