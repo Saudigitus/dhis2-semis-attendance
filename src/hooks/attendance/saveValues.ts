@@ -4,6 +4,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil"
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns"
 import { useDaveValuesProps } from "../../types/attendance/attendanceTypes"
 import { allStudents } from '../../schema/students/allStudentList';
+import useGetRegitration from "../../utils/common/useGetRegistration"
 
 export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelected, setOpen }: useDaveValuesProps) {
     const { useQuery } = useUrlParams()
@@ -14,11 +15,13 @@ export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelect
     const students = useRecoilValue(allStudents)
     const { attendance = {} as unknown as any } = dataStoreData
     const allowAttendanceStatus = attendance?.attendanceStatus?.allowAttendanceStatus === true
+    const { useGetRegitrationDataElements } = useGetRegitration()
 
     async function formSubmit(values: any) {
         setLoading(true)
         let events = []
         const importStrategy = (values?.status === 'null' && allowAttendanceStatus) ? 'DELETE' : 'CREATE_AND_UPDATE'
+        const rDataElements = useGetRegitrationDataElements()
 
         for (const tei of students) {
             const eventId = tei?.[date]?.eventId ?? null
@@ -32,7 +35,8 @@ export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelect
                 de: dataStoreData?.attendance?.status,
                 school: orgUnit,
                 enrollment: tei.enrollmentId,
-                date: date
+                date: date,
+                dataElements: rDataElements,
             }, values.status, allowAttendanceStatus))
         }
 

@@ -1,6 +1,6 @@
 .attendanceStats {
     display: flex;
-    margin-top: -10px;
+    margin-top: -6px;
     align-items: center;
     gap: 6px;
 }
@@ -76,4 +76,100 @@
 .absentBadge .statValue {
     background: #e95b54;
     color: white;
+}
+
+.warningMessage {
+    width: 100%;
+    min-height: 40px;
+    max-height: 50px;
+    padding: 6px 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    background: #fff8e1;
+    border: 1px solid #ffd966;
+    border-radius: 6px;
+
+    color: #6b5500;
+    font-size: 13px;
+    line-height: 1.4;
+
+    overflow: hidden;
+}
+
+.warningIcon {
+    font-size: 18px;
+    color: #e8a100;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.warningText {
+    flex: 1;
+    font-weight: 500;
+    color: #6b4800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.missingTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.missingTable thead th {
+    padding: 10px 12px;
+    background: #f5f7f9;
+    border-bottom: 2px solid #e1e5ea;
+    text-align: left;
+    font-weight: 600;
+    color: #404b5a;
+}
+
+.missingTable tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eef0f3;
+    color: #404b5a;
+    vertical-align: middle;
+}
+
+.missingTable tbody tr:hover {
+    background: #fafbfc;
+}
+
+.missingTable code {
+    background: #f0f3f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #304056;
+}
+
+.missingTable .mono {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #5a6370;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.badgeFilter {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.badgeAcademic {
+    background: #f3e5f5;
+    color: #7b1fa2;
 }

@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { ProgramConfig, VariablesTypes, D2I18n } from 'dhis2-semis-types'
 import React, { useEffect, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
@@ -12,10 +12,10 @@ import { TableDataState } from '../../schema/table/tableDataSchema';
 import AsssignStatus from '../../components/assingStatus/assignStatus';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
 import { Button, IconView24, IconViewOff24, Chip } from "@dhis2/ui";
-import { format } from 'date-fns'
 import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus';
 import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
 import { completenessLoading } from '../../schema/attendance/completenessLoading';
+import useGetRegistration from '../../hooks/useAllTeis/useGetRegistration';
 import { allStudents } from '../../schema/students/allStudentList';
 
 export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: string }) {
@@ -43,7 +43,10 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: attendance?.programStage });
     const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
-    const [allData, setAll] = useRecoilState(allStudents)
+    const [students, setAllData] = useRecoilState(allStudents)
+    const { getRegistrationData } = useGetRegistration()
+
+    useEffect(() => void getRegistrationData(), [])
 
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
@@ -61,26 +64,20 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                 otherProgramStage: attendance?.programStage,
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
             }).then((resp: any) => {
-                setAll(resp?.data)
+                setAllData(resp?.data)
                 setIsTableReady(true)
             })
         }
     }, [filterState.attributes, refetch, selectedDates, urlParameters])
 
     useEffect(() => {
-        if (attendance?.attendanceStatus?.allowAttendanceStatus) {
-            if (attendanceMode == 'edit')
-                getEnrollmentStatus([])
-        }
+        if (attendance?.attendanceStatus?.allowAttendanceStatus && attendanceMode == 'edit')
+            getEnrollmentStatus([])
     }, [completeness.refetch, selectedDates])
 
     useEffect(() => {
-        if (attendance?.attendanceStatus?.allowAttendanceStatus) {
-            if (tableData?.data?.length > 0 && attendanceMode != 'edit') {
-                console.log('innn')
-                getEnrollmentStatus(tableData)
-            }
-        }
+        if (attendance?.attendanceStatus?.allowAttendanceStatus && (tableData?.data?.length > 0 && attendanceMode != 'edit'))
+            getEnrollmentStatus(tableData)
     }, [tableData?.data])
 
     useEffect(() => {
@@ -92,11 +89,11 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         if (toReplace >= 0) {
             copy = [...tableValues]
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
-            setAll([...copy])
+            setAllData([...copy])
         }
 
         setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))
-        setTableValues(formatData([...(copy?.length > 0 ? copy : allData)]?.slice(start, end), attendanceHeaders, attendanceEvent))
+        setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)]?.slice(start, end), attendanceHeaders, attendanceEvent))
     }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent, attendanceHeaders])
 
     return (

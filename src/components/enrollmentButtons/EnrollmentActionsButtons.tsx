@@ -114,7 +114,10 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         <div className={styles.container}>
             <ButtonStrip className={styles.work_buttons}>
                 {/* {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckCircleOutlined />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>} */}
-                {(allowAttendanceStatus && !!attendanceEvent && attendanceMode == 'edit') && <AttendanceSummary totalRecords={totalRecords} selectedDates={selectedDates} />}
+                {
+                    (allowAttendanceStatus && !!attendanceEvent && attendanceMode == 'edit')
+                    && <AttendanceSummary totalRecords={totalRecords} selectedDates={selectedDates} />
+                }
 
                 <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
                     <DropDownCalendar showSelected={attendanceMode == 'edit'} config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('Take attendance')!} icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue(() => ({ ...e }))} value={editModeValue?.selectedDate ?? selectedDate} />

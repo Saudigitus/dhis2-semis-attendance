@@ -6,6 +6,7 @@ import { useUrlParams } from "dhis2-semis-functions";
 import { useRecoilValue } from "recoil";
 import { ReasonOfAbsenseState } from "../../schema/attendance/disableAllBtns";
 import { useAttendanceOptions } from "../../hooks/attendance/useGetAttendanceOptions";
+import useCheckAttendaceDataElements from "../../hooks/common/useCheckDataElements";
 
 export function tableDataFormatter() {
     const seeReason = useRecoilValue(ReasonOfAbsenseState)
@@ -16,14 +17,17 @@ export function tableDataFormatter() {
     const { urlParameters } = useUrlParams()
     const { selectedDate } = urlParameters
     const { validAttendanceStatus } = useAttendanceOptions()
+    const { verifyStageDataElements } = useCheckAttendaceDataElements()
+    const { allPresent } = verifyStageDataElements()
 
     function formatData(data: any[], headers: any[] = [], attendanceEvent: any = null): any[] {
         const regex = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}|\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2})\b/
         let copyData = data.map(item => ({ ...item })), configKey: any = undefined
         const allowAttendanceStatus = dataStoreData?.attendance?.attendanceStatus?.allowAttendanceStatus
-        const disableAttendance = allowAttendanceStatus === true && !!!attendanceEvent ? true :
-            allowAttendanceStatus === true && attendanceEvent?.status === 'ACTIVE' ? false
-                : allowAttendanceStatus === true && attendanceEvent?.status == 'COMPLETED' ? true : false
+        const disableAttendance = !allPresent && allowAttendanceStatus === true ? true
+            : allowAttendanceStatus === true && !!!attendanceEvent ? true :
+                allowAttendanceStatus === true && attendanceEvent?.status === 'ACTIVE' ? false
+                    : allowAttendanceStatus === true && attendanceEvent?.status == 'COMPLETED' ? true : false
 
         if (headers?.some(item => regex.test(item?.id))) {
             for (const head of headers?.filter((x) => x.schoolDay)) {
@@ -50,7 +54,6 @@ export function tableDataFormatter() {
                         const icon = getComponent(configKey ?? { configKey: 'null', code: 'null' }, attendanceConst, data?.[index]?.status == 'CANCELLED', seeReason)
                         copyData[index][head?.id] = icon
                     }
-                    // console.log(icon)
                 }
             }
 

@@ -16,6 +16,7 @@ export function useAttendanceCompleteness() {
     const { hide, show } = useShowAlerts()
     const savedAttendanceEvent = useRecoilValue(classAttendanceEvent)
     const { getEvents } = useGetEvents()
+    const { getFilters } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
 
     const completeOrDelete = async (totalRecords: number | null, selectedDates: any, status: 'ACTIVE' | 'COMPLETED') => {
         setCompletenessLoading((prev) => ({ ...prev, loading: true }))
@@ -29,7 +30,11 @@ export function useAttendanceCompleteness() {
                     programStage: dataStoreData.attendance?.programStage,
                     ...selectedDates,
                     orgUnit: school,
-                    filter: [`${dataStoreData?.attendance?.status}:in:${attendaceStatus?.code}`],
+                    filter: [
+                        [`${dataStoreData?.attendance?.status}:in:${attendaceStatus?.code}`],
+                        ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
+                        ...getFilters(),
+                    ],
                     totalPages: true,
                     pageSize: 1
                 })
