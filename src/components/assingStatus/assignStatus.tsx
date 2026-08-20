@@ -20,6 +20,7 @@ import { useAttendanceCompleteness } from "../../hooks/attendance/attendanceComp
 import { useAttendanceOptions } from "../../hooks/attendance/useGetAttendanceOptions";
 import { completenessLoading } from "../../schema/attendance/completenessLoading";
 import { classAttendanceEvent } from "../../schema/attendance/classAttendanceEvent";
+import useCheckAttendaceDataElements from "../../hooks/common/useCheckDataElements";
 
 export default function AssignStatus({
     setSelected, selected, school, setRefetch, i18n, loadingTableData, totalRecords, selectedDates
@@ -39,10 +40,13 @@ export default function AssignStatus({
     const { validAttendanceStatus } = useAttendanceOptions()
     const allowAttendanceStatus = attendance?.attendanceStatus?.allowAttendanceStatus === true
     const attendanceEvent = useRecoilValue(classAttendanceEvent)
+    const { verifyStageDataElements } = useCheckAttendaceDataElements()
+    const { allPresent } = verifyStageDataElements()
 
-    const disableMarkAllAs = allowAttendanceStatus && !!!attendanceEvent ? true :
-        allowAttendanceStatus && attendanceEvent?.status === 'ACTIVE' ? false
-            : allowAttendanceStatus && attendanceEvent?.status == 'COMPLETED' ? true : false
+    const disableMarkAllAs = (allowAttendanceStatus && !allPresent) ? true :
+        allowAttendanceStatus && !!!attendanceEvent ? true :
+            allowAttendanceStatus && attendanceEvent?.status === 'ACTIVE' ? false
+                : allowAttendanceStatus && attendanceEvent?.status == 'COMPLETED' ? true : false
 
 
     const options = validAttendanceStatus?.map((item: any) => ({
@@ -59,7 +63,7 @@ export default function AssignStatus({
         <>
             {allowAttendanceStatus && <Button
                 loading={completeness?.loading}
-                disabled={completeness?.refetch || loadingTableData}
+                disabled={completeness?.refetch || loadingTableData || !allPresent}
                 onClick={() => completeOrDelete(
                     attendanceEvent?.status === 'ACTIVE' ? totalRecords : null,
                     selectedDates,

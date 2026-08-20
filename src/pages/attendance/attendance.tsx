@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { ProgramConfig, VariablesTypes, D2I18n } from 'dhis2-semis-types'
 import React, { useEffect, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
@@ -16,6 +16,7 @@ import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus'
 import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
 import { completenessLoading } from '../../schema/attendance/completenessLoading';
 import useGetRegistration from '../../hooks/useAllTeis/useGetRegistration';
+import { allStudents } from '../../schema/students/allStudentList';
 
 export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: string }) {
     const { program, dataStoreData } = useGetSelectedKeys()
@@ -42,7 +43,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: attendance?.programStage });
     const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
-    const [allData, setAll] = useState<any>([])
+    const [students, setAllData] = useRecoilState(allStudents)
     const { getRegistrationData } = useGetRegistration()
 
     useEffect(() => void getRegistrationData(), [])
@@ -63,7 +64,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                 otherProgramStage: attendance?.programStage,
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
             }).then((resp: any) => {
-                setAll(resp?.data)
+                setAllData(resp?.data)
                 setIsTableReady(true)
             })
         }
@@ -88,7 +89,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         if (toReplace >= 0) {
             copy = [...tableValues]
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
-            setAll([...copy])
+            setAllData([...copy])
         }
 
         setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))

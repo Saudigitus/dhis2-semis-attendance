@@ -10,6 +10,7 @@ import { TableDataRefetch } from "dhis2-semis-types";
 import { CircularLoader } from "@dhis2/ui";
 import { Button, ButtonGroup } from "@mui/material";
 import useGetSelectedKeys from "../../../../../libs/components/src/hooks/config/useGetSelectedKeys";
+import useGetRegitration from "../../utils/common/useGetRegistration";
 
 export default function MultipleButtons(props: ButtonProps) {
     const { items, status, disabled, ...rest } = props;
@@ -23,16 +24,19 @@ export default function MultipleButtons(props: ButtonProps) {
     const { dataStoreData } = useGetSelectedKeys()
     const { attendance = {} as any } = dataStoreData
     const allowAttendanceStatus = attendance?.attendanceStatus?.allowAttendanceStatus
+    const { useGetRegitrationDataElements } = useGetRegitration()
 
 
     useEffect(() => setSelected(status), [status])
 
     const onchangeValue = async (value: string) => {
         if (value !== status) {
+            const rDataElements = useGetRegitrationDataElements()
+
             add('position', `${value}${rest.tei}`)
             const importStrategy = allowAttendanceStatus === true && value === 'null' ? 'DELETE' : 'CREATE_AND_UPDATE'
 
-            await uploadValues({ events: [eventBody({ ...rest, date: selectedDate, school }, value, allowAttendanceStatus)] }, 'COMMIT', importStrategy)
+            await uploadValues({ events: [eventBody({ ...rest, date: selectedDate, school, dataElements: rDataElements }, value, allowAttendanceStatus)] }, 'COMMIT', importStrategy)
                 .then(async (resp: any) => {
                     if (resp?.validationReport?.errorReports?.length > 0) {
                         show({
@@ -62,7 +66,6 @@ export default function MultipleButtons(props: ButtonProps) {
                             }
                         }
 
-                        console.log(copy[index], 'the valye')
                         remove('position')
                         setTableValues(copy)
                         setSelected(value)
