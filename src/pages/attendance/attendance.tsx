@@ -46,7 +46,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [students, setAllData] = useRecoilState(allStudents)
     const { getRegistrationData } = useGetRegistration()
 
-    useEffect(() => void getRegistrationData(), [])
+    useEffect(() => void getRegistrationData(), [school])
 
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
