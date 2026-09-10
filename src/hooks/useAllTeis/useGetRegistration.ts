@@ -14,6 +14,8 @@ export default function useGetRegistration() {
     const setAll = useSetRecoilState(allStudents)
 
     async function getRegistrationData() {
+        if (!orgUnit) return
+        
         let events = [], page = 1, pageSize = 100, fetchedEvents: any = []
         do {
             events = await getEvents({
