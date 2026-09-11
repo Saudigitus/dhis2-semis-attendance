@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { ProgramConfig, VariablesTypes, D2I18n } from 'dhis2-semis-types'
+import { ProgramConfig, D2I18n } from 'dhis2-semis-types'
 import React, { useEffect, useState } from "react";
 import { TableDataRefetch, Modules } from "dhis2-semis-types"
 import { Table, useSchoolCalendarKey } from "dhis2-semis-components";
@@ -41,7 +41,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const { getFilters, areAllSelected } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
-    const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: attendance?.programStage });
+    const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: "" });
     const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
     const [students, setAllData] = useRecoilState(allStudents)
     const { getRegistrationData } = useGetRegistration()
@@ -108,15 +108,13 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                             title={i18n.t('Attendance title')}
                             viewPortWidth={viewPortWidth}
                             columns={[
-                                ...(columns ?? []).filter((x: any) => x.visible && x.type !== VariablesTypes.DataElement),
-                                ...(columns ?? []).filter((x: any) => dataStoreData?.filters?.dataElements?.some((y: any) => y.dataElement == x.id)),
+                                ...(columns ?? []),
                                 ...(Array.isArray(attendanceHeaders) ? attendanceHeaders : []),
                             ]}
                             selected={selected}
                             setSelected={setSelected}
                             selectable={selectable}
                             tableData={tableValues}
-                            defaultFilterNumber={5}
                             enableInactiveRowSelection={false}
                             filterState={filterState}
                             loading={!isTableReady || loading || (completeness?.loading && attendanceMode != 'edit')}
