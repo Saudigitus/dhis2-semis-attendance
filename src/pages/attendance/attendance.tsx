@@ -108,8 +108,8 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                             title={i18n.t('Attendance title')}
                             viewPortWidth={viewPortWidth}
                             columns={[
-                                ...(columns ?? []),
-                                ...(Array.isArray(attendanceHeaders) ? attendanceHeaders : []),
+                                ...(columns ?? []).filter((x: any) => x.visible && x.type !== VariablesTypes.DataElement),
+                                ...(Array.isArray(attendanceHeaders) ? attendanceHeaders : [])
                             ]}
                             selected={selected}
                             setSelected={setSelected}
