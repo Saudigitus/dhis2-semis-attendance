@@ -8,13 +8,15 @@ import { allStudents } from '../../schema/students/allStudentList';
 import { ModalComponent, useSchoolCalendarKey } from 'dhis2-semis-components';
 import useCheckAttendaceDataElements from '../../hooks/common/useCheckDataElements';
 import { Button, NoticeBox } from '@dhis2/ui';
+import { CircularLoader } from "@dhis2/ui"
 
-export default function AttendanceSummary({ totalRecords, selectedDates }: { totalRecords: number, selectedDates: any }) {
+export default function AttendanceSummary({ loading: loadingTableData, totalRecords, selectedDates }: { loading: boolean, totalRecords: number, selectedDates: any }) {
     const reorganizeData = useRecoilValue(TableDataRefetch);
     const { dataStoreData } = useGetSelectedKeys()
     const { urlParameters } = useUrlParams();
     const { school } = urlParameters;
     const [totalAbsent, setTotalAbsent] = useState(0)
+    const [loading, setLoading] = useState(false)
     const { getEvents } = useGetEvents()
     const allSt = useRecoilValue(allStudents)
     const { getFilters } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
@@ -26,24 +28,23 @@ export default function AttendanceSummary({ totalRecords, selectedDates }: { tot
     useEffect(() => {
 
         const fetchAttendanceSummary = async () => {
-            for (const attendanceStatus of dataStoreData?.attendance?.statusOptions ?? []) {
-                const { data, pagination } = await getEvents({
-                    program: dataStoreData?.program,
-                    programStage: dataStoreData.attendance?.programStage,
-                    ...selectedDates,
-                    orgUnit: school,
-                    filter: [
-                        [`${dataStoreData?.attendance?.status}:in:${attendanceStatus?.code}`],
-                        ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
-                        ...getFilters(),
-                    ],
-                    trackedEntities: allSt?.map(x => x?.trackedEntity).join(';'),
-                    totalPages: true,
-                    pageSize: 100
-                })
+            setLoading(true)
+            const { pagination } = await getEvents({
+                program: dataStoreData?.program,
+                programStage: dataStoreData.attendance?.programStage,
+                ...selectedDates,
+                orgUnit: school,
+                filter: [
+                    [`${dataStoreData?.attendance?.status}:in:${dataStoreData?.attendance?.statusOptions?.[0]?.code}`],
+                    ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
+                    ...getFilters(),
+                ],
+                totalPages: true,
+                pageSize: 1
+            })
 
-                setTotalAbsent(pagination?.total || 0)
-            }
+            setTotalAbsent(pagination?.total || 0)
+            setLoading(false)
         }
 
         if (allPresent && selectedDates?.occurredAfter && selectedDates?.occurredBefore && allSt!?.length > 0) fetchAttendanceSummary()
@@ -117,16 +118,22 @@ export default function AttendanceSummary({ totalRecords, selectedDates }: { tot
         <div className={styles.attendanceStats}>
             <div className={`${styles.statBadge} ${styles.presentBadge}`}>
                 <span className={styles.statLabel}>Present</span>
-                <strong className={styles.statValue}>
-                    {totalRecords - totalAbsent}
-                </strong>
+                {
+                    loadingTableData ? <CircularLoader small /> :
+                        <strong className={styles.statValue}>
+                            {totalRecords - totalAbsent}
+                        </strong>
+                }
             </div>
 
             <div className={`${styles.statBadge} ${styles.absentBadge}`}>
                 <span className={styles.statLabel}>Absent</span>
-                <strong className={styles.statValue}>
-                    {totalAbsent}
-                </strong>
+                {
+                    (loading) ? <CircularLoader small /> :
+                        <strong className={styles.statValue}>
+                            {totalAbsent}
+                        </strong>
+                }
             </div>
         </div>
     )

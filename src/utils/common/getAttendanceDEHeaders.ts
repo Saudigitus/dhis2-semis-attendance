@@ -4,6 +4,7 @@ export function getAttendanceDEHeaders({ setattendanceHeaders }: { setattendance
 
     function getDataElementsHeaders(programData: any, attendanceStage: string) {
         const dataElements = programData?.programStages?.find((x: any) => x.id === attendanceStage)?.programStageDataElements?.map((x: any) => {
+
             return {
                 id: x.dataElement.id,
                 displayName: x.dataElement.displayName,
@@ -14,7 +15,7 @@ export function getAttendanceDEHeaders({ setattendanceHeaders }: { setattendance
                 valueType: 'custom',
                 options: { optionSet: x?.dataElement?.optionSet },
                 initialOptions: { optionSet: x?.dataElement?.optionSet },
-                visible: true,
+                visible: x?.displayInReports,
                 disabled: false,
                 pattern: '',
                 searchable: false,

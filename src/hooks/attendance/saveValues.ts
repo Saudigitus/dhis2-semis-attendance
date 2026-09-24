@@ -1,10 +1,9 @@
 import { eventBody } from "../../utils/attendance/eventBody"
-import { useUploadEvents, useUrlParams } from "dhis2-semis-functions"
+import { useGetRegitration, useUploadEvents, useUrlParams } from "dhis2-semis-functions"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { DisaleButtonsState } from "../../schema/attendance/disableAllBtns"
 import { useDaveValuesProps } from "../../types/attendance/attendanceTypes"
 import { allStudents } from '../../schema/students/allStudentList';
-import useGetRegitration from "../../utils/common/useGetRegistration"
 
 export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelected, setOpen }: useDaveValuesProps) {
     const { useQuery } = useUrlParams()

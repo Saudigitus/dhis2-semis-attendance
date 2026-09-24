@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 
 export function eventBody(rest: any, value: any, allowAttendanceStatus?: any) {
-console.log(rest)
+
     return {
         ...(rest.event ? { event: rest.event } : {}),
         ...(allowAttendanceStatus === true && value === 'null' ? {} : {
