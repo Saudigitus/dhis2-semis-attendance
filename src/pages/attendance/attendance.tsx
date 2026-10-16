@@ -90,10 +90,13 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
         }
 
-        const formatedData = formatData([...(copy?.length > 0 ? copy : tableData?.data)], attendanceHeaders, attendanceEvent)
-      
+        const formatedData = formatData([...(
+            (toReplace >= 0 || tableValues?.length == 0) ? copy?.length > 0 ? copy : tableData?.data : tableValues)
+        ], attendanceHeaders, attendanceEvent)
+
+        console.log(formatedData, tableValues)
         setPagination((prev) => ({ ...prev, totalPages: pagination?.totalPages, totalElements: tableData?.data?.length }))
-        setTableValues((toReplace >= 0 || tableValues?.length == 0) ? formatedData : tableValues)
+        setTableValues(formatedData)
     }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent, attendanceHeaders])
 
     return (
