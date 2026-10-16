@@ -29,21 +29,32 @@ export default function AttendanceSummary({ loading: loadingTableData, totalReco
 
         const fetchAttendanceSummary = async () => {
             setLoading(true)
-            const { pagination } = await getEvents({
-                program: dataStoreData?.program,
-                programStage: dataStoreData.attendance?.programStage,
-                ...selectedDates,
-                orgUnit: school,
-                filter: [
-                    [`${dataStoreData?.attendance?.status}:in:${dataStoreData?.attendance?.statusOptions?.[0]?.code}`],
-                    ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
-                    ...getFilters(),
-                ],
-                totalPages: true,
-                pageSize: 1
-            })
+            let events = [], page = 1, pageSize = 500, fetchedEvents: any = []
+            const enrollmentIds = new Set(allSt.map(item => item.enrollmentId))
 
-            setTotalAbsent(pagination?.total || 0)
+            do {
+
+                events = await getEvents({
+                    program: dataStoreData?.program,
+                    orgUnitMode: "SELECTED",
+                    programStage: dataStoreData.attendance?.programStage,
+                    ...selectedDates,
+                    orgUnit: school,
+                    filter: [
+                        [`${dataStoreData?.attendance?.status}:in:${dataStoreData?.attendance?.statusOptions?.[0]?.code}`],
+                        ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
+                        ...getFilters(),
+                    ],
+                    pageSize,
+                    page,
+                    fields: "enrollment,event"
+                })
+
+                fetchedEvents = [...fetchedEvents, ...events]
+                page++
+            } while (events?.length === pageSize)
+
+            setTotalAbsent(fetchedEvents?.filter((item: any) => enrollmentIds.has(item.enrollment))?.length)
             setLoading(false)
         }
 

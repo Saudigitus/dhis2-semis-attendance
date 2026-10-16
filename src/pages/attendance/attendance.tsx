@@ -11,7 +11,7 @@ import InfoPageHolder from '../info/infoPage';
 import { TableDataState } from '../../schema/table/tableDataSchema';
 import AsssignStatus from '../../components/assingStatus/assignStatus';
 import useGetSelectedKeys from '../../hooks/config/useGetSelectedKeys';
-import { Button, IconView24, IconViewOff24, Chip } from "@dhis2/ui";
+import { Button, IconView24, IconViewOff24 } from "@dhis2/ui";
 import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus';
 import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
 import { completenessLoading } from '../../schema/attendance/completenessLoading';
@@ -108,7 +108,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                             title={i18n.t('Attendance title')}
                             viewPortWidth={viewPortWidth}
                             columns={[
-                                ...(columns ?? []).filter((x: any) => x.visible && x.type !== VariablesTypes.DataElement),
+                                ...(columns ?? []),
                                 ...(Array.isArray(attendanceHeaders) ? attendanceHeaders : [])
                             ]}
                             selected={selected}
