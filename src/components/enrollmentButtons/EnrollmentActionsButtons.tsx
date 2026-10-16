@@ -101,11 +101,11 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
         if (editModeValue || attendanceMode == 'edit') {
             setIsTableReady(false)
             let currentDate = format(new Date(editModeValue?.selectedDate ?? selectedDate), "yyyy-MM-dd")
-            const fiveDaysBefore = format(subDays(new Date(currentDate), 1), 'yyyy-MM-dd');
+            // const fiveDaysBefore = format(subDays(new Date(currentDate), 1), 'yyyy-MM-dd');
             add('selectedDate', currentDate)
             add('attendanceMode', 'edit')
 
-            setSelectedDates((prev: any) => ({ occurredAfter: fiveDaysBefore, occurredBefore: getDate({ selectedDate: new Date(currentDate) }) }))
+            setSelectedDates((prev: any) => ({ occurredAfter: format(new Date(currentDate), 'yyyy-MM-dd'), occurredBefore: getDate({ selectedDate: new Date(currentDate) }) }))
             getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage)
         }
     }, [editModeValue])
