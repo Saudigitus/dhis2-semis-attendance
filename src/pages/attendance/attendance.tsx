@@ -43,7 +43,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: "" });
     const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
-    const [students, setAllData] = useRecoilState(allStudents)
+    const [_, setAllData] = useRecoilState(allStudents)
     const { getRegistrationData } = useGetRegistration()
 
     useEffect(() => void getRegistrationData(), [school])
@@ -82,18 +82,21 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
 
     useEffect(() => {
         let copy: any = []
-        const start = (pagination?.page - 1) * pagination?.pageSize
-        const end = start + pagination?.pageSize
         const toReplace = tableValues?.findIndex(x => x.replace)
         const notUpdated = tableData.data?.find((x: any) => x.trackedEntity == tableData?.data?.[toReplace]?.trackedEntity)
+
         if (toReplace >= 0) {
             copy = [...tableValues]
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
-            setAllData([...copy])
         }
 
-        setPagination((prev) => ({ ...prev, totalPages: Math.ceil(tableData?.data?.length / pagination.pageSize), totalElements: tableData?.data?.length }))
-        setTableValues(formatData([...(copy?.length > 0 ? copy : tableData?.data)]?.slice(start, end), attendanceHeaders, attendanceEvent))
+        const formatedData = formatData([...(
+            (toReplace >= 0 || tableValues?.length == 0) ? copy?.length > 0 ? copy : tableData?.data : tableValues)
+        ], attendanceHeaders, attendanceEvent)
+
+        console.log(formatedData, tableValues)
+        setPagination((prev) => ({ ...prev, totalPages: pagination?.totalPages, totalElements: tableData?.data?.length }))
+        setTableValues(formatedData)
     }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent, attendanceHeaders])
 
     return (
