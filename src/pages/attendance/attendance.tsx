@@ -50,6 +50,8 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
             void getData({
                 program: program!?.id as string,
+                page: pagination?.page,
+                pageSize: pagination?.pageSize,
                 orgUnit: urlParameters?.school!,
                 baseProgramStage: dataStoreData?.registration?.programStage,
                 attributeFilters: filterState.attributes,
@@ -66,7 +68,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                 setIsTableReady(true)
             })
         }
-    }, [filterState.attributes, refetch, selectedDates, urlParameters])
+    }, [filterState.attributes, refetch, selectedDates, urlParameters, pagination?.page, pagination?.pageSize])
 
     useEffect(() => {
         if (attendance?.attendanceStatus?.allowAttendanceStatus && attendanceMode == 'edit')
@@ -92,7 +94,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
             (toReplace >= 0 || tableValues?.length == 0) ? copy?.length > 0 ? copy : tableData?.data : tableValues)
         ], attendanceHeaders, attendanceEvent)
 
-        setPagination((prev) => ({ ...prev, totalPages: pagination?.totalPages, totalElements: tableData?.data?.length }))
+        setPagination((prev) => ({ ...prev, totalPages: tableData?.pagination?.totalPages, totalElements: tableData?.pagination?.totalElements }))
         setTableValues(formatedData)
     }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent, attendanceHeaders])
 
@@ -129,6 +131,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                     setSelectable={setSelectable}
                                     i18n={i18n}
                                     setRefetch={setRefetch}
+                                    refetch={refetch}
                                     baseUrl={baseUrl}
                                     totalRecords={tableData?.pagination?.totalElements}
                                     selectedDates={selectedDates}
@@ -155,7 +158,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                     </Button>
                             }
                             setFilterState={setFilterState}
-                            pagination={pagination}
+                            pagination={tableData?.pagination}
                             setPagination={setPagination}
                             paginate={!loading}
                         />

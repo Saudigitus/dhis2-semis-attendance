@@ -32,7 +32,7 @@ export default function AssignStatus({
     const [openMarkAll, setOpenMarkAll] = useState(false)
     const { dataStoreData } = useGetSelectedKeys()
     const { attendance = {} as unknown as any } = dataStoreData
-    const { formSubmit } = useSaveValues({ setLoading, dataStoreData, setSelected, setRefetch, setOpen, })
+    const { formSubmit } = useSaveValues({ setLoading, dataStoreData, setSelected, setRefetch, setOpen, selectedDates })
     const disable = useSetRecoilState(DisaleButtonsState)
     const { useQuery } = useUrlParams()
     const date = useQuery.get('selectedDate')!

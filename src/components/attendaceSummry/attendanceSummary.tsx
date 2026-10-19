@@ -10,11 +10,11 @@ import useCheckAttendaceDataElements from '../../hooks/common/useCheckDataElemen
 import { Button, NoticeBox } from '@dhis2/ui';
 import { CircularLoader } from "@dhis2/ui"
 
-export default function AttendanceSummary({ loading: loadingTableData, totalRecords, selectedDates }: { loading: boolean, totalRecords: number, selectedDates: any }) {
+export default function AttendanceSummary({ refetch, loading: loadingTableData, totalRecords, selectedDates }: { refetch: any, loading: boolean, totalRecords: number, selectedDates: any }) {
     const reorganizeData = useRecoilValue(TableDataRefetch);
     const { dataStoreData } = useGetSelectedKeys()
     const { urlParameters } = useUrlParams();
-    const { school } = urlParameters;
+    const { school, attendanceMode } = urlParameters;
     const [totalAbsent, setTotalAbsent] = useState(0)
     const [loading, setLoading] = useState(false)
     const { getEvents } = useGetEvents()
@@ -53,13 +53,13 @@ export default function AttendanceSummary({ loading: loadingTableData, totalReco
                 fetchedEvents = [...fetchedEvents, ...events]
                 page++
             } while (events?.length === pageSize)
-console.log(fetchedEvents,enrollmentIds,allSt)
+
             setTotalAbsent(fetchedEvents?.filter((item: any) => enrollmentIds.has(item.enrollment))?.length)
             setLoading(false)
         }
 
-        if (allPresent && selectedDates?.occurredAfter && selectedDates?.occurredBefore && allSt!?.length > 0) fetchAttendanceSummary()
-    }, [reorganizeData, selectedDates, setTotalAbsent, allSt, allPresent, urlParameters])
+        if (attendanceMode === 'edit' && allPresent && selectedDates?.occurredAfter && selectedDates?.occurredBefore && allSt!?.length > 0) fetchAttendanceSummary()
+    }, [reorganizeData, selectedDates, setTotalAbsent, allSt, allPresent, urlParameters, refetch])
 
     if (!allPresent) {
         return (
