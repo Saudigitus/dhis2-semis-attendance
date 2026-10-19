@@ -30,7 +30,7 @@ export default function AttendanceSummary({ loading: loadingTableData, totalReco
         const fetchAttendanceSummary = async () => {
             setLoading(true)
             let events = [], page = 1, pageSize = 500, fetchedEvents: any = []
-            const enrollmentIds = new Set(allSt.map(item => item.enrollmentId))
+            const enrollmentIds = new Set(allSt.map(item => item.enrollment))
 
             do {
 
@@ -53,13 +53,13 @@ export default function AttendanceSummary({ loading: loadingTableData, totalReco
                 fetchedEvents = [...fetchedEvents, ...events]
                 page++
             } while (events?.length === pageSize)
-
+console.log(fetchedEvents,enrollmentIds,allSt)
             setTotalAbsent(fetchedEvents?.filter((item: any) => enrollmentIds.has(item.enrollment))?.length)
             setLoading(false)
         }
 
         if (allPresent && selectedDates?.occurredAfter && selectedDates?.occurredBefore && allSt!?.length > 0) fetchAttendanceSummary()
-    }, [reorganizeData, selectedDates, setTotalAbsent, allSt, allPresent])
+    }, [reorganizeData, selectedDates, setTotalAbsent, allSt, allPresent, urlParameters])
 
     if (!allPresent) {
         return (

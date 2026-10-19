@@ -16,7 +16,6 @@ import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus'
 import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
 import { completenessLoading } from '../../schema/attendance/completenessLoading';
 import useGetRegistration from '../../hooks/useAllTeis/useGetRegistration';
-import { allStudents } from '../../schema/students/allStudentList';
 
 export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: string }) {
     const { program, dataStoreData } = useGetSelectedKeys()
@@ -43,10 +42,9 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: "" });
     const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
-    const [_, setAllData] = useRecoilState(allStudents)
-    const { getRegistrationData } = useGetRegistration()
+    const { getRegistrationData, loadingAllStudens } = useGetRegistration()
 
-    useEffect(() => void getRegistrationData(), [school])
+    useEffect(() => void getRegistrationData(), [urlParameters])
 
     useEffect(() => {
         if (selectedDates?.occurredAfter && selectedDates?.occurredBefore && areAllSelected()) {
@@ -63,8 +61,8 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                 ...selectedDates,
                 otherProgramStage: attendance?.programStage,
                 order: dataStoreData.defaults.defaultOrder || "occurredAt:desc",
-            }).then((resp: any) => {
-                setAllData(resp?.data)
+            }).then(_ => {
+                setTableValues([])
                 setIsTableReady(true)
             })
         }
@@ -73,12 +71,12 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     useEffect(() => {
         if (attendance?.attendanceStatus?.allowAttendanceStatus && attendanceMode == 'edit')
             getEnrollmentStatus([])
-    }, [completeness.refetch, selectedDates])
+    }, [completeness.refetch, selectedDates, urlParameters])
 
     useEffect(() => {
         if (attendance?.attendanceStatus?.allowAttendanceStatus && (tableData?.data?.length > 0 && attendanceMode != 'edit'))
             getEnrollmentStatus(tableData)
-    }, [tableData?.data])
+    }, [tableData?.data, urlParameters])
 
     useEffect(() => {
         let copy: any = []
@@ -94,7 +92,6 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
             (toReplace >= 0 || tableValues?.length == 0) ? copy?.length > 0 ? copy : tableData?.data : tableValues)
         ], attendanceHeaders, attendanceEvent)
 
-        console.log(formatedData, tableValues)
         setPagination((prev) => ({ ...prev, totalPages: pagination?.totalPages, totalElements: tableData?.data?.length }))
         setTableValues(formatedData)
     }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent, attendanceHeaders])
@@ -120,7 +117,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                             tableData={tableValues}
                             enableInactiveRowSelection={false}
                             filterState={filterState}
-                            loading={!isTableReady || loading || (completeness?.loading && attendanceMode != 'edit')}
+                            loading={!isTableReady || loading || (completeness?.loading && attendanceMode != 'edit') || loadingAllStudens}
                             rightElements={
                                 <EnrollmentActionsButtons
                                     selectable={selectable}
@@ -141,6 +138,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                 (attendanceMode == 'edit') ?
                                     <>
                                         <AsssignStatus
+                                            disabled={tableData?.data?.length == 0}
                                             loadingTableData={loading}
                                             setSelected={setSelected}
                                             setRefetch={setRefetch}

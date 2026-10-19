@@ -23,7 +23,7 @@ import { classAttendanceEvent } from "../../schema/attendance/classAttendanceEve
 import useCheckAttendaceDataElements from "../../hooks/common/useCheckDataElements";
 
 export default function AssignStatus({
-    setSelected, selected, school, setRefetch, i18n, loadingTableData, totalRecords, selectedDates
+    setSelected, selected, school, setRefetch, i18n, loadingTableData, totalRecords, selectedDates, disabled
 }: attendanceFormProps) {
     const completeness = useRecoilValue(completenessLoading)
     const [open, setOpen] = useState(false)
@@ -48,7 +48,6 @@ export default function AssignStatus({
             allowAttendanceStatus && attendanceEvent?.status === 'ACTIVE' ? false
                 : allowAttendanceStatus && attendanceEvent?.status == 'COMPLETED' ? true : false
 
-
     const options = validAttendanceStatus?.map((item: any) => ({
         label: item.label,
         onClick: () => {
@@ -63,7 +62,7 @@ export default function AssignStatus({
         <>
             {allowAttendanceStatus && <Button
                 loading={completeness?.loading}
-                disabled={completeness?.refetch || loadingTableData || !allPresent}
+                disabled={completeness?.refetch || loadingTableData || !allPresent || disabled}
                 onClick={() => completeOrDelete(
                     attendanceEvent?.status === 'ACTIVE' ? totalRecords : null,
                     selectedDates,
@@ -95,8 +94,7 @@ export default function AssignStatus({
                             setSelectedOption({ value: "null", label: "Present" })
                             setOpenMarkAll(true)
                         }
-                    }
-                    ] : options}
+                    }] : options}
                     disabled={loadingTableData || loading || completeness?.loading || disableMarkAllAs}
                 />
             </span>
