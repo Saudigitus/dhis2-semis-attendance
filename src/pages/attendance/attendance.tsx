@@ -27,7 +27,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [completeness, setCompletenessLoading] = useRecoilState(completenessLoading)
     const [attendanceEvent, setAttendanceEvent] = useRecoilState(classAttendanceEvent)
     const [refetch, setRefetch] = useState<boolean>(false)
-    const reorganizeData = useRecoilValue(TableDataRefetch);
+    const [reorganizeData, setReorganize] = useRecoilState(TableDataRefetch);
     const [isTableReady, setIsTableReady] = useState(false);
     const [selectable, setSelectable] = useState<boolean>(false)
     const { academicYear: academicYearId } = useSchoolCalendarKey()
@@ -41,7 +41,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     const [filterState, setFilterState] = useState<{ dataElements: any[], attributes: any[] }>({ attributes: [], dataElements: [] });
     const [selectedDates, setSelectedDates] = useState<{ occurredAfter: string, occurredBefore: string }>({ occurredAfter: "", occurredBefore: "" })
     const { columns } = useHeader({ dataStoreData, programConfigData: program as unknown as ProgramConfig, programStage: "" });
-    const { getEnrollmentStatus } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
+    const { getAttendanceCompleteness } = useGetAttenceStatus({ setAttendanceEvent, setattendanceHeaders, selectedDates, setCompletenessLoading, attendanceHeaders })
     const { getRegistrationData, loadingAllStudens } = useGetRegistration()
 
     useEffect(() => void getRegistrationData(), [urlParameters])
@@ -72,15 +72,19 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
 
     useEffect(() => {
         if (attendance?.attendanceStatus?.allowAttendanceStatus && attendanceMode == 'edit')
-            getEnrollmentStatus([])
-    }, [completeness.refetch, selectedDates, urlParameters])
+            getAttendanceCompleteness([])
+
+        if (attendanceMode == 'edit') setReorganize(prev => !prev)
+    }, [completeness.refetch, tableData?.data])
 
     useEffect(() => {
-        if (attendance?.attendanceStatus?.allowAttendanceStatus && (tableData?.data?.length > 0 && attendanceMode != 'edit'))
-            getEnrollmentStatus(tableData)
-    }, [tableData?.data, urlParameters])
+        if (attendance?.attendanceStatus?.allowAttendanceStatus && tableData?.data?.length > 0 && attendanceMode != 'edit')
+            getAttendanceCompleteness(tableData)
+    }, [tableData?.data])
 
     useEffect(() => {
+        if (attendanceHeaders?.length <= 0 || tableData?.data?.length <= 0) return
+
         let copy: any = []
         const toReplace = tableValues?.findIndex(x => x.replace)
         const notUpdated = tableData.data?.find((x: any) => x.trackedEntity == tableData?.data?.[toReplace]?.trackedEntity)
@@ -94,9 +98,11 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
             (toReplace >= 0 || tableValues?.length == 0) ? copy?.length > 0 ? copy : tableData?.data : tableValues)
         ], attendanceHeaders, attendanceEvent)
 
-        setPagination((prev) => ({ ...prev, totalPages: tableData?.pagination?.totalPages, totalElements: tableData?.pagination?.totalElements }))
         setTableValues(formatedData)
-    }, [tableData, reorganizeData, attendanceMode, seeReason, pagination.page, attendanceEvent, attendanceHeaders])
+        setPagination((prev) => ({ ...prev, totalPages: tableData?.pagination?.totalPages, totalElements: tableData?.pagination?.totalElements }))
+
+    }, [reorganizeData, seeReason, attendanceHeaders, attendanceMode, attendanceEvent])
+
 
     return (
         <div style={{ height: "85vh" }}>
