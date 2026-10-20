@@ -17,7 +17,7 @@ import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEve
 import { useRecoilValue } from 'recoil';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { loading,setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n, baseUrl, totalRecords, selectedDates } = props
+    const { loading, setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n, baseUrl, totalRecords, selectedDates } = props
     const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
     const { sectionName } = useGetSectionTypeLabel();
@@ -30,7 +30,9 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
     const { areAllSelected, getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { hide, show } = useShowAlerts()
     const { schoolCalendar, defaults, academicYear: academicYearId } = useSchoolCalendarKey()
+    const selectedAcademicYear = schoolCalendar?.find((x: any) => x?.academicYear?.code == academicYear)
     const defaultAcademicYear = schoolCalendar?.find((x: any) => x?.academicYear?.code == defaults?.academicYear)
+    const calendarAcademicYear = selectedAcademicYear ?? defaultAcademicYear
     const { getDate } = useIncrementDays()
     const attendanceEvent = useRecoilValue(classAttendanceEvent)
 
@@ -120,11 +122,30 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 }
 
                 <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
-                    <DropDownCalendar showSelected={attendanceMode == 'edit'} config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('Take attendance')!} icon={<IconAddCircle24 />} setValue={(e) => setEditModeValue(() => ({ ...e }))} value={editModeValue?.selectedDate ?? selectedDate} />
+                    <DropDownCalendar
+                        showSelected={attendanceMode == 'edit'}
+                        config={calendarAcademicYear as unknown as any}
+                        academicYear={academicYear ?? undefined}
+                        academicYearPeriod={calendarAcademicYear?.academicYear as unknown as any}
+                        dateDisabler={unavailableDays as unknown as any}
+                        label={i18n.t('Take attendance')!}
+                        icon={<IconAddCircle24 />}
+                        setValue={(e) => setEditModeValue(() => ({ ...e }))}
+                        value={editModeValue?.selectedDate ?? selectedDate}
+                    />
                 </Tooltip>
 
                 <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>
-                    <DropDownCalendar config={defaultAcademicYear as unknown as any} dateDisabler={unavailableDays as unknown as any} label={i18n.t('View attendance records')!} icon={<Event />} setValue={(e) => setViewModeValue(() => ({ ...e }))} value={viewModeValue} />
+                    <DropDownCalendar
+                        config={calendarAcademicYear as unknown as any}
+                        academicYear={academicYear ?? undefined}
+                        academicYearPeriod={calendarAcademicYear?.academicYear as unknown as any}
+                        dateDisabler={unavailableDays as unknown as any}
+                        label={i18n.t('View attendance records')!}
+                        icon={<Event />}
+                        setValue={(e) => setViewModeValue(() => ({ ...e }))}
+                        value={viewModeValue}
+                    />
                 </Tooltip>
 
                 {attendanceMode != 'edit' &&
