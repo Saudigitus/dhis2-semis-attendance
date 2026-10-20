@@ -17,7 +17,7 @@ import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEve
 import { useRecoilValue } from 'recoil';
 
 function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
-    const { loading, setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n, baseUrl, totalRecords, selectedDates } = props
+    const { refetch, loading, setRefetch, setIsTableReady, selectedDataStoreKey, setattendanceHeaders, setSelectedDates, i18n, baseUrl, totalRecords, selectedDates } = props
     const { dataStoreData, program: programData } = useGetSelectedKeys()
     const { urlParameters, add } = useUrlParams();
     const { sectionName } = useGetSectionTypeLabel();
@@ -118,7 +118,7 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
                 {/* {attendanceMode == 'edit' && <Button destructive={selectable} onClick={() => setSelectable((prev: any) => !prev)} icon={<PlaylistAddCheckCircleOutlined />}> {selectable ? `Cancel multi-attendance` : `Multi-attendance`}</Button>} */}
                 {
                     (allowAttendanceStatus && !!attendanceEvent && attendanceMode == 'edit')
-                    && <AttendanceSummary loading={loading} totalRecords={totalRecords} selectedDates={selectedDates} />
+                    && <AttendanceSummary refetch={refetch} loading={loading} totalRecords={totalRecords} selectedDates={selectedDates} />
                 }
 
                 <Tooltip title={orgUnit === null ? i18n.t('Please select an organisation unit before') : ""}>

@@ -6,6 +6,7 @@ export interface useDaveValuesProps {
     setRefetch: (args: any) => void
     dataStoreData: DataStoreProps[0]
     setLoading: (args: boolean) => void
+    selectedDates: { occurredAfter: string, occurredBefore: string }
 }
 
 export interface attendanceFormProps {
@@ -18,4 +19,5 @@ export interface attendanceFormProps {
     i18n: D2I18n
     totalRecords: number
     selectedDates: { occurredAfter: string, occurredBefore: string }
+    disabled: boolean
 }

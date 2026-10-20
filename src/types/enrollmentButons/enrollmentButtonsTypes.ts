@@ -13,4 +13,5 @@ export interface EnrollmentButtonsProps {
     baseUrl: string
     totalRecords: number
     selectedDates: any
+    refetch: any
 }
