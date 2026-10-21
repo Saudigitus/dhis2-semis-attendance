@@ -2,8 +2,12 @@ import { VariablesTypes } from "dhis2-semis-types"
 
 export function getAttendanceDEHeaders({ setattendanceHeaders }: { setattendanceHeaders: (args: any[]) => void }) {
 
-    function getDataElementsHeaders(programData: any, attendanceStage: string) {
-        const dataElements = programData?.programStages?.find((x: any) => x.id === attendanceStage)?.programStageDataElements?.map((x: any) => {
+    // Only the attendance status and the reason of absence become columns: the other fields of the stage
+    // (grade, class/section...) would hide the enrollment values of the same data elements (SEMIS-227).
+    function getDataElementsHeaders(programData: any, attendanceStage: string, columnDataElements: string[]) {
+        const dataElements = programData?.programStages?.find((x: any) => x.id === attendanceStage)?.programStageDataElements
+            ?.filter((x: any) => columnDataElements.includes(x.dataElement.id))
+            ?.map((x: any) => {
 
             return {
                 id: x.dataElement.id,
