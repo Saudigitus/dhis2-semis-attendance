@@ -22,14 +22,14 @@ function SingleSelect(props: SingleSelectProps) {
     return (
         <div>
             {
-                (useQuery.get('position') != undefined && useQuery.get('position') == `${props?.de}${rest.tei}`) ?
+                (useQuery.get('savingAttendance') != undefined && useQuery.get('savingAttendance') == `${props?.de}${rest.tei}`) ?
                     <Center>
                         <CircularLoader small />
                     </Center>
                     :
                     <SingleSelectField
                         className="select"
-                        disabled={!!(disabled || (useQuery.get('position') != undefined && useQuery.get('position') != `${props?.de}${rest.tei}`))}
+                        disabled={!!(disabled || (useQuery.get('savingAttendance') != undefined && useQuery.get('savingAttendance') != `${props?.de}${rest.tei}`))}
                         {...rest}
                         selected={selected || null}
                         onChange={(e: any) => { onchangeValue(options.find((x: any) => x.code === e.selected).code) }}

@@ -21,7 +21,7 @@ import { attendanceStageFields, onlyStageFilters } from '../../utils/attendance/
 export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: string }) {
     const { program, dataStoreData } = useGetSelectedKeys()
     const { attendance = {} as unknown as any } = dataStoreData
-    const { urlParameters } = useUrlParams(['position']);
+    const { urlParameters } = useUrlParams(['savingAttendance']);
     const { formatData } = tableDataFormatter()
     const { viewPortWidth } = useViewPortWidth();
     const [selected, setSelected] = useState<any>([])
@@ -122,7 +122,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                     <>
                         <Table
                             programConfig={program as unknown as any}
-                            title={i18n.t('Attendance title')}
+                            title={i18n.t('Attendance')}
                             viewPortWidth={viewPortWidth}
                             columns={[
                                 ...(columns ?? []),
@@ -169,7 +169,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                                         />
                                     </>
                                     : <Button onClick={() => setSeeReason(!seeReason)} icon={seeReason ? <IconViewOff24 /> : <IconView24 />}>
-                                        {seeReason ? i18n.t('Hide reason of absense') : i18n.t('View reason of absense')}
+                                        {seeReason ? i18n.t('Hide reason of absence') : i18n.t('View reason of absence')}
                                     </Button>
                             }
                             setFilterState={setFilterState}

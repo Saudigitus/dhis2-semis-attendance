@@ -16,13 +16,15 @@
     "Please select all filters": "Please select all filters",
     "All listed students will be affected": "All listed students will be affected",
     "Cancel": "Cancel",
-    "Yes im sure": "Yes im sure",
-    "Attendance title": "Attendance title",
+    "Yes, I'm sure": "Yes, I'm sure",
     "Selected date": "Selected date",
-    "Hide reason of absense": "Hide reason of absense",
-    "View reason of absense": "View reason of absense",
+    "Hide reason of absence": "Hide reason of absence",
+    "View reason of absence": "View reason of absence",
     "SEMIS-Attendance": "SEMIS-Attendance",
     "Follow the instructions to proceed": "Follow the instructions to proceed",
     "Select the Organization unit you want to view data": "Select the Organization unit you want to view data",
-    "Use global filters(Class, Grade and Academic Year)": "Use global filters(Class, Grade and Academic Year)"
+    "Use global filters(Class, Grade and Academic Year)": "Use global filters(Class, Grade and Academic Year)",
+    "Warning! {{count}} learners will be affected": "Warning! {{count}} learners will be affected",
+    "{{count}} learners will be marked {{status}}.": "{{count}} learners will be marked {{status}}.",
+    "Are you sure you want to mark all as {{status}}?": "Are you sure you want to mark all as {{status}}?"
 }
