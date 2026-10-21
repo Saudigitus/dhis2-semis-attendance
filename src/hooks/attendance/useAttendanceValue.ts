@@ -28,7 +28,7 @@ export default function useAttendanceValue({
     const onchangeValue = async (value: string) => {
         if (skipIfUnchanged === value) return;
 
-        add("position", position(value));
+        add("savingAttendance", position(value));
         // Class values only when the attendance stage has the field (both modes).
         const dataElements = onlyStageValues(useGetRegitrationDataElements(), attendanceStageFields(program, attendance?.programStage));
         const importStrategy = allowAttendanceStatus && value === "null" ? "DELETE" : "CREATE_AND_UPDATE";
@@ -47,7 +47,7 @@ export default function useAttendanceValue({
             if (response?.validationReport?.errorReports?.length > 0) {
                 show({ message: "Occurred unknown error!", type: { critical: true } });
                 setTimeout(hide, 5000);
-                remove("position");
+                remove("savingAttendance");
                 return;
             }
 
@@ -76,7 +76,7 @@ export default function useAttendanceValue({
                 };
             }
 
-            remove("position");
+            remove("savingAttendance");
             setTableValues(copy);
             setSelected(value);
             setRefetch((previous: any) => !previous);

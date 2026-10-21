@@ -18,16 +18,18 @@
     "The present attendance status will be assigned to all students": "O estado de presença atual será atribuído a todos os estudantes",
     "Are you sure you want to mark all as present?": "Tem certeza de que deseja marcar todos como presentes?",
     "Cancel": "Cancelar",
-    "Yes im sure": "Sim, tenho certeza",
-    "Attendance title": "Título da presença",
+    "Yes, I'm sure": "Sim, tenho certeza",
     "Selected date": "Data selecionada",
-    "Hide reason of absense": "Ocultar motivo da ausência",
-    "View reason of absense": "Ver motivo da ausência",
+    "Hide reason of absence": "Ocultar motivo da ausência",
+    "View reason of absence": "Ver motivo da ausência",
     "Export {{section}} attendances": "Exportar presenças de {{section}}",
     "Import {{section}} attendances": "Importar presenças de {{section}}",
     "student": "estudante",
     "staff": "funcionário",
     "Select the Organization unit you want to view data": "Selecione a unidade organizacional que deseja visualizar os dados",
     "Use global filters(Class, Grade and Academic Year)": "Use os filtros globais (Turma, Grau e Ano Letivo)",
-    "Follow the instructions to proceed": "Siga as instruções para continuar"
+    "Follow the instructions to proceed": "Siga as instruções para continuar",
+    "Warning! {{count}} learners will be affected": "Aviso! {{count}} alunos serão afetados",
+    "{{count}} learners will be marked {{status}}.": "{{count}} alunos serão marcados como {{status}}.",
+    "Are you sure you want to mark all as {{status}}?": "Tem a certeza de que deseja marcar todos como {{status}}?"
 }

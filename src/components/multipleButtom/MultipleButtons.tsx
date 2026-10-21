@@ -24,7 +24,7 @@ export default function MultipleButtons(props: ButtonProps) {
         <ButtonGroup color="primary">
             {items?.map((item) => {
                 return (
-                    <Button disabled={!!(disabled || (useQuery.get('position') != undefined && useQuery.get('position') != `${item?.code}${rest.tei}`))} key={item?.code}
+                    <Button disabled={!!(disabled || (useQuery.get('savingAttendance') != undefined && useQuery.get('savingAttendance') != `${item?.code}${rest.tei}`))} key={item?.code}
                         className={classNames(
                             selected === item?.code && styles["active-button"],
                             styles.label,
@@ -33,7 +33,7 @@ export default function MultipleButtons(props: ButtonProps) {
                     >
                         <span className={styles.simpleButtonLabel}>
                             {
-                                (useQuery.get('position') != undefined && useQuery.get('position') == `${item?.code}${rest.tei}`)
+                                (useQuery.get('savingAttendance') != undefined && useQuery.get('savingAttendance') == `${item?.code}${rest.tei}`)
                                     ? <CircularLoader small /> :
                                     item.Component
                             }

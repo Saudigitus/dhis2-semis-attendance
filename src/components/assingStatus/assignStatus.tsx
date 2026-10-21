@@ -63,11 +63,13 @@ export default function AssignStatus({
             {allowAttendanceStatus && <Button
                 loading={completeness?.loading}
                 disabled={completeness?.refetch || loadingTableData || !allPresent || disabled}
-                onClick={() => completeOrDelete(
+                // After completing, read the register again from the server: the rows read when the date
+                // was opened do not have the statuses marked since then.
+                onClick={() => void completeOrDelete(
                     attendanceEvent?.status === 'ACTIVE' ? totalRecords : null,
                     selectedDates,
                     (attendanceEvent?.status === 'COMPLETED' || !attendanceEvent) ? 'ACTIVE' : 'COMPLETED'
-                )}
+                ).then(() => setRefetch((prev: any) => !prev))}
                 icon={
                     !attendanceEvent ? <EditNote style={{ color: "#ffb300" }} />
                         : (attendanceEvent?.status === 'ACTIVE')
@@ -110,6 +112,7 @@ export default function AssignStatus({
                     open={openMarkAll}
                     selectedOption={selectedOption}
                     setOpen={setOpenMarkAll}
+                    count={totalRecords}
                 />
             }
 
