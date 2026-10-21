@@ -80,7 +80,9 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         if (attendance?.attendanceStatus?.allowAttendanceStatus && attendanceMode == 'edit')
             getAttendanceCompleteness([])
 
-        if (attendanceMode == 'edit') setReorganize(prev => !prev)
+        // Redraw the table with the records just read, in both modes: without attendance completeness
+        // configured nothing else redraws the View table.
+        setReorganize(prev => !prev)
     }, [completeness.refetch, tableData?.data])
 
     useEffect(() => {
@@ -89,6 +91,7 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
     }, [tableData?.data])
 
     useEffect(() => {
+        setPagination((prev) => ({ ...prev, totalPages: tableData?.pagination?.totalPages, totalElements: tableData?.pagination?.totalElements }))
         if (attendanceHeaders?.length <= 0 || tableData?.data?.length <= 0) return
 
         let copy: any = []
@@ -106,7 +109,6 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
         ], attendanceHeaders, attendanceEvent)
 
         setTableValues(formatedData)
-        setPagination((prev) => ({ ...prev, totalPages: tableData?.pagination?.totalPages, totalElements: tableData?.pagination?.totalElements }))
 
     }, [reorganizeData, seeReason, attendanceHeaders, attendanceMode, attendanceEvent])
 
