@@ -108,7 +108,8 @@ function EnrollmentActionsButtons(props: EnrollmentButtonsProps) {
             add('attendanceMode', 'edit')
 
             setSelectedDates((prev: any) => ({ occurredAfter: format(new Date(currentDate), 'yyyy-MM-dd'), occurredBefore: getDate({ selectedDate: new Date(currentDate) }) }))
-            getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage)
+            getDataElementsHeaders(programData, selectedDataStoreKey?.['attendance']?.programStage,
+                [selectedDataStoreKey?.['attendance']?.status, selectedDataStoreKey?.['attendance']?.absenceReason].filter(Boolean))
         }
     }, [editModeValue])
 
