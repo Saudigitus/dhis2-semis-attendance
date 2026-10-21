@@ -5,6 +5,7 @@ import { TableDataState } from "../../schema/table/tableDataSchema";
 import { UseAttendanceValueProps } from "../../types/attendance/attendanceValueTypes";
 import { eventBody } from "../../utils/attendance/eventBody";
 import useGetSelectedKeys from "../config/useGetSelectedKeys";
+import { attendanceStageFields, onlyStageValues } from "../../utils/attendance/stageFields";
 
 export default function useAttendanceValue({
     data,
@@ -20,7 +21,7 @@ export default function useAttendanceValue({
     const { useGetRegitrationDataElements } = useGetRegitration();
     const { urlParameters } = useUrlParams();
     const { selectedDate, school } = urlParameters
-    const { dataStoreData } = useGetSelectedKeys()
+    const { dataStoreData, program } = useGetSelectedKeys()
     const { attendance = {} as any } = dataStoreData
     const allowAttendanceStatus = attendance?.attendanceStatus?.allowAttendanceStatus
 
@@ -28,7 +29,8 @@ export default function useAttendanceValue({
         if (skipIfUnchanged === value) return;
 
         add("position", position(value));
-        const dataElements = useGetRegitrationDataElements();
+        // Class values only when the attendance stage has the field (both modes).
+        const dataElements = onlyStageValues(useGetRegitrationDataElements(), attendanceStageFields(program, attendance?.programStage));
         const importStrategy = allowAttendanceStatus && value === "null" ? "DELETE" : "CREATE_AND_UPDATE";
         const eventData = {
             ...data,
