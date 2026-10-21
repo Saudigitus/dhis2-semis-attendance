@@ -6,6 +6,8 @@ import { useDaveValuesProps } from "../../types/attendance/attendanceTypes"
 import { allStudents } from '../../schema/students/allStudentList';
 import { useSchoolCalendarKey } from "dhis2-semis-components"
 import { format } from "date-fns"
+import useGetSelectedKeys from "../config/useGetSelectedKeys"
+import { attendanceStageFields, onlyStageFilters, onlyStageValues } from "../../utils/attendance/stageFields"
 
 export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelected, setOpen, selectedDates }: useDaveValuesProps) {
     const { useQuery, urlParameters } = useUrlParams()
@@ -20,12 +22,16 @@ export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelect
     const { getFilters } = useCheckFilters({ filters: (dataStoreData?.filters?.dataElements ?? []) as unknown as any })
     const { getEvents } = useGetEvents()
     const { academicYear: academicYearId } = useSchoolCalendarKey()
+    const { program: programConfig } = useGetSelectedKeys()
 
     async function formSubmit(values: any) {
         setLoading(true)
         let events = []
         const importStrategy = (values?.status === 'null' && allowAttendanceStatus) ? 'DELETE' : 'CREATE_AND_UPDATE'
-        const rDataElements = useGetRegitrationDataElements()
+        // Class values are saved, and used to find the records of the day, only when the attendance
+        // stage has the field (both modes); the records are matched to the persons of the list.
+        const stageFields = attendanceStageFields(programConfig, attendance?.programStage)
+        const rDataElements = onlyStageValues(useGetRegitrationDataElements(), stageFields)
 
         let loadedEvents = [], page = 1, pageSize = 500, fetchedEvents: any = []
 
@@ -36,10 +42,10 @@ export function useSaveValues({ setLoading, dataStoreData, setRefetch, setSelect
                 programStage: dataStoreData.attendance?.programStage,
                 ...selectedDates,
                 orgUnit: orgUnit,
-                filter: [
+                filter: onlyStageFilters([
                     ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
                     ...getFilters(),
-                ] as any,
+                ], stageFields) as any,
                 pageSize,
                 page,
                 fields: "enrollment,event,occurredAt"

@@ -16,6 +16,7 @@ import { useGetAttenceStatus } from '../../hooks/attendance/useGetAttenceStatus'
 import { classAttendanceEvent } from '../../schema/attendance/classAttendanceEvent';
 import { completenessLoading } from '../../schema/attendance/completenessLoading';
 import useGetRegistration from '../../hooks/useAllTeis/useGetRegistration';
+import { attendanceStageFields, onlyStageFilters } from '../../utils/attendance/stageFields';
 
 export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: string }) {
     const { program, dataStoreData } = useGetSelectedKeys()
@@ -59,6 +60,11 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
                     ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
                     ...getFilters() as unknown as any
                 ],
+                // Attendance records are searched only by the class fields that the attendance stage has.
+                attendanceDataElementFilters: onlyStageFilters([
+                    ...(urlParameters?.academicYear ? [`${academicYearId}:in:${urlParameters?.academicYear}`] : []),
+                    ...getFilters() as unknown as any
+                ], attendanceStageFields(program, attendance?.programStage)),
                 attendanceConfig: attendance,
                 ...selectedDates,
                 otherProgramStage: attendance?.programStage,
@@ -94,8 +100,9 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
         }
 
+        // Build the table from the records just read; re-using the rows already drawn hid the saved absences in View.
         const formatedData = formatData([...(
-            (toReplace >= 0 || tableValues?.length == 0) ? copy?.length > 0 ? copy : tableData?.data : tableValues)
+            copy?.length > 0 ? copy : tableData?.data)
         ], attendanceHeaders, attendanceEvent)
 
         setTableValues(formatedData)

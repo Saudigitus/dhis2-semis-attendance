@@ -10,7 +10,7 @@ export function eventBody(rest: any, value: any, allowAttendanceStatus?: any) {
             programStage: rest.stage,
             orgUnit: rest.school,
             dataValues: [
-                ...rest?.dataElements,
+                ...(rest?.dataElements ?? []),
                 {
                     dataElement: rest.de,
                     value: value
