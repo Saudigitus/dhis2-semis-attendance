@@ -38,7 +38,7 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
     const { getFilters } = useCheckFilters({ filters: (dataStoreData.filters.dataElements ?? []) as unknown as any })
     const { attendance } = dataStoreData
 
-    async function getEnrollmentStatus(tableData: any) {
+    async function getAttendanceCompleteness(tableData: any) {
         if (!orgUnit) return
         setAttendanceEvent(null)
         setCompletenessLoading({ loading: true })
@@ -83,5 +83,5 @@ export const useGetAttenceStatus = ({ setattendanceHeaders, selectedDates, setAt
         })
     }
 
-    return { getEnrollmentStatus }
+    return { getAttendanceCompleteness }
 }
