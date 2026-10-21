@@ -96,8 +96,9 @@ export default function Attendance({ i18n, baseUrl }: { i18n: D2I18n, baseUrl: s
             copy[toReplace] = { ...notUpdated, [selectedDate!]: tableValues?.[toReplace]?.[selectedDate!] }
         }
 
+        // Build the table from the records just read; re-using the rows already drawn hid the saved absences in View.
         const formatedData = formatData([...(
-            (toReplace >= 0 || tableValues?.length == 0) ? copy?.length > 0 ? copy : tableData?.data : tableValues)
+            copy?.length > 0 ? copy : tableData?.data)
         ], attendanceHeaders, attendanceEvent)
 
         setPagination((prev) => ({ ...prev, totalPages: tableData?.pagination?.totalPages, totalElements: tableData?.pagination?.totalElements }))
